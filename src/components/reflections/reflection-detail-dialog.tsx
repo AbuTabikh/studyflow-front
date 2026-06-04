@@ -4,6 +4,7 @@ import { getMoodInfo } from "@/lib/reflections/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SmilePlus, Smile, Meh, Frown, Coffee, CloudRain, CalendarDays, Edit2, Trash2, Heart } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface ReflectionDetailDialogProps {
   open: boolean;
@@ -14,6 +15,7 @@ interface ReflectionDetailDialogProps {
 }
 
 export function ReflectionDetailDialog({ open, onOpenChange, reflection, onEditClick, onDeleteClick }: ReflectionDetailDialogProps) {
+  const { tr, t } = useTranslation();
   if (!reflection) return null;
 
   const moodInfo = getMoodInfo(reflection.mood);
@@ -72,20 +74,20 @@ export function ReflectionDetailDialog({ open, onOpenChange, reflection, onEditC
           <div className="sm:hidden block">
              <Badge variant="outline" className={`w-full justify-center py-2 text-sm capitalize shadow-none border ${moodInfo.colorClass}`}>
                   {renderMoodIcon(moodInfo.icon, "w-4 h-4 mr-2")}
-                  Feeling {moodInfo.label}
+                  {tr(t.reflectionsPage.feelingLabel)} {moodInfo.label}
              </Badge>
           </div>
 
-          <Section title="What I Achieved" content={reflection.achieved} />
-          <Section title="What Was Difficult" content={reflection.difficult} />
-          <Section title="What I Learned" content={reflection.learned} />
-          <Section title="What to Improve Next" content={reflection.improveNext} />
+          <Section title={tr(t.reflectionsPage.achievedTitle)} content={reflection.achieved} />
+          <Section title={tr(t.reflectionsPage.difficultTitle)} content={reflection.difficult} />
+          <Section title={tr(t.reflectionsPage.learnedTitle)} content={reflection.learned} />
+          <Section title={tr(t.reflectionsPage.improveTitle)} content={reflection.improveNext} />
           
           {reflection.gratitude && (
               <div className="flex gap-3 bg-pink-500/10 border border-pink-500/20 rounded-xl p-4 text-pink-700/90 items-start">
                   <Heart className="w-5 h-5 shrink-0 mt-0.5" />
                   <div>
-                      <span className="font-semibold block mb-0.5">I am grateful for...</span>
+                      <span className="font-semibold block mb-0.5">{tr(t.reflectionsPage.gratitudeNote)}</span>
                       {reflection.gratitude}
                   </div>
               </div>
@@ -93,7 +95,7 @@ export function ReflectionDetailDialog({ open, onOpenChange, reflection, onEditC
 
           {(reflection.tags && reflection.tags.length > 0) && (
               <div className="pt-4 border-t border-border/50">
-                 <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Tags</h4>
+                 <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">{tr(t.reflectionsPage.tagsSection)}</h4>
                  <div className="flex flex-wrap gap-2">
                     {reflection.tags.map(tag => (
                         <Badge key={tag} variant="secondary" className="bg-muted hover:bg-muted text-muted-foreground text-sm">#{tag}</Badge>
@@ -106,18 +108,18 @@ export function ReflectionDetailDialog({ open, onOpenChange, reflection, onEditC
         
         <DialogFooter className="px-6 py-4 border-t bg-muted/10 shrink-0 gap-2 sm:gap-0 justify-between items-center sm:justify-between w-full">
            <Button variant="ghost" onClick={onDeleteClick} className="text-destructive hover:bg-destructive/10 hover:text-destructive hidden sm:flex">
-                <Trash2 className="w-4 h-4 mr-2" /> Delete
+                <Trash2 className="w-4 h-4 mr-2" /> {tr(t.actions.delete)}
            </Button>
-           
+
            <div className="flex gap-2 w-full sm:w-auto">
                <Button variant="outline" onClick={onEditClick} className="rounded-xl flex-1 sm:flex-none">
-                    <Edit2 className="w-4 h-4 mr-2" /> Edit Info
+                    <Edit2 className="w-4 h-4 mr-2" /> {tr(t.reflectionsPage.editInfo)}
                </Button>
-               <Button onClick={() => onOpenChange(false)} className="rounded-xl flex-1 sm:flex-none">Close</Button>
+               <Button onClick={() => onOpenChange(false)} className="rounded-xl flex-1 sm:flex-none">{tr(t.actions.close)}</Button>
            </div>
-           
+
            <Button variant="ghost" onClick={onDeleteClick} className="text-destructive hover:bg-destructive/10 hover:text-destructive flex sm:hidden w-full mt-2">
-                <Trash2 className="w-4 h-4 mr-2" /> Delete Entry
+                <Trash2 className="w-4 h-4 mr-2" /> {tr(t.reflectionsPage.deleteEntry)}
            </Button>
         </DialogFooter>
         

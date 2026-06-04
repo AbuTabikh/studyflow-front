@@ -8,6 +8,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Clock, MapPin } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface DayViewProps {
   events: CalendarEvent[];
@@ -16,6 +17,7 @@ interface DayViewProps {
 }
 
 export function DayView({ events, currentDate, onEventClick }: DayViewProps) {
+  const { tr, t } = useTranslation();
   const dateString = currentDate.toISOString().split("T")[0];
   const dayEvents = events
     .filter((e) => e.date.split("T")[0] === dateString)
@@ -53,7 +55,7 @@ export function DayView({ events, currentDate, onEventClick }: DayViewProps) {
       {allDayEvents.length > 0 && (
         <div className="mb-6">
           <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">
-            All Day
+            {tr(t.calendar.allDay)}
           </h3>
           <div className="space-y-2">
             {allDayEvents.map((event) => (
@@ -135,7 +137,7 @@ export function DayView({ events, currentDate, onEventClick }: DayViewProps) {
       ) : allDayEvents.length === 0 ? (
         <Card className="p-8 text-center">
           <p className="text-slate-500 dark:text-slate-400">
-            No events scheduled for this day
+            {tr(t.calendar.noEventsDay)}
           </p>
         </Card>
       ) : null}

@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Calendar, Plus } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface CalendarHeaderProps {
   currentDate: Date;
@@ -22,31 +23,32 @@ export function CalendarHeader({
   onViewChange,
   onAddEvent,
 }: CalendarHeaderProps) {
+  const { tr, t } = useTranslation();
   const monthYear = currentDate.toLocaleDateString("en-US", {
     month: "long",
     year: "numeric",
   });
 
   const viewOptions = [
-    { id: "month", label: "Month" },
-    { id: "week", label: "Week" },
-    { id: "day", label: "Day" },
-    { id: "agenda", label: "Agenda" },
+    { id: "month", label: tr(t.calendar.month) },
+    { id: "week", label: tr(t.calendar.week) },
+    { id: "day", label: tr(t.calendar.day) },
+    { id: "agenda", label: tr(t.calendar.agenda) },
   ] as const;
 
   return (
     <div className="border-b border-border bg-background sticky top-15 z-20">
          <div className="flex  flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-card p-6 md:p-8 rounded-2xl border shadow-sm w-full mb-5">
             <div className="space-y-1 max-w-2xl">
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">Academic Calendar</h1>
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">{tr(t.calendar.headerTitle)}</h1>
               <p className="mt-1 text-muted-foreground">
-                Manage and track all your academic courses.
+                {tr(t.calendar.headerDesc)}
               </p>
             </div>
             <div className="flex w-full md:w-auto shrink-0">
               <Button onClick={onAddEvent} className="w-full sm:w-auto shadow-sm" size="lg">
                 <Plus className="mr-2 h-5 w-5" />
-                Add Event
+                {tr(t.calendar.addEvent)}
               </Button>
             </div>
           </div>
@@ -68,7 +70,7 @@ export function CalendarHeader({
               onClick={onToday}
               className="min-w-fit"
             >
-              Today
+              {tr(t.calendar.today)}
             </Button>
             <Button
               size="sm"

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ interface TaskFormDialogProps {
 const TASK_TYPES: TaskType[] = ["general", "study-task", "assignment", "quiz", "exam", "self-learning-milestone"];
 
 export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: TaskFormDialogProps) {
+  const { tr, t } = useTranslation();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [type, setType] = useState<TaskType>("general");
@@ -110,14 +112,14 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
         <DialogHeader className="px-6 py-4 border-b bg-muted/20 shrink-0">
           <DialogTitle className="text-xl">
             {initialData ? (
-              initialData.sourceModule === "self-learning" ? "Edit Learning Task" :
-              initialData.sourceModule === "course" ? "Edit Course Task" : "Edit Task"
-            ) : "Add New Task"}
+              initialData.sourceModule === "self-learning" ? tr(t.tasksPage.editLearning) :
+              initialData.sourceModule === "course" ? tr(t.tasksPage.editCourse) : tr(t.tasksPage.editTask)
+            ) : tr(t.tasksPage.addNewTask)}
           </DialogTitle>
           <DialogDescription>
-            {initialData?.sourceModule === "self-learning" ? "Update your learning stage task details." :
-             initialData?.sourceModule === "course" ? "Update your course assignment or study task." :
-             "Fill in the details below to create a new task."}
+            {initialData?.sourceModule === "self-learning" ? tr(t.tasksPage.updateLearning) :
+             initialData?.sourceModule === "course" ? tr(t.tasksPage.updateCourse) :
+             tr(t.tasksPage.fillDetails)}
           </DialogDescription>
         </DialogHeader>
 
@@ -125,10 +127,10 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
           
           {/* Title */}
           <div className="space-y-2">
-            <Label htmlFor="task-title" className="font-semibold">Title <span className="text-red-500">*</span></Label>
+            <Label htmlFor="task-title" className="font-semibold">{tr(t.tasks.title_field)} <span className="text-red-500">*</span></Label>
             <Input
               id="task-title"
-              placeholder="e.g. Prepare for Algorithms midterm"
+              placeholder={tr(t.tasksPage.formTitlePh)}
               value={title}
               onChange={e => setTitle(e.target.value)}
               className="h-11"
@@ -139,11 +141,11 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
           {/* Description - Hide for Stage Tasks but keep for Milestones and Others */}
           {(initialData?.sourceModule !== "self-learning" || initialData?.id.startsWith("milestone-")) && (
             <div className="space-y-2">
-              <Label htmlFor="task-description" className="font-semibold text-muted-foreground">Description</Label>
-              <span className="text-[10px] text-muted-foreground ml-2">(Optional)</span>
+              <Label htmlFor="task-description" className="font-semibold text-muted-foreground">{tr(t.tasks.description)}</Label>
+              <span className="text-[10px] text-muted-foreground ml-2">{tr(t.tasksPage.formOptional)}</span>
               <Textarea
                 id="task-description"
-                placeholder="Add more context..."
+                placeholder={tr(t.tasksPage.formDescPh)}
                 value={description}
                 onChange={e => setDescription(e.target.value)}
                 className="resize-none min-h-[70px]"
@@ -155,7 +157,7 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
             {/* Type - Hide for Course and Self-Learning (fixed context) */}
             {(!initialData || initialData.sourceModule === "general") && (
               <div className="space-y-2">
-                <Label htmlFor="task-type" className="font-semibold">Task Type <span className="text-red-500">*</span></Label>
+                <Label htmlFor="task-type" className="font-semibold">{tr(t.tasksPage.formTypeLabel)} <span className="text-red-500">*</span></Label>
                 <Select value={type} onValueChange={(v: TaskType) => setType(v)}>
                   <SelectTrigger id="task-type" className="h-10">
                     <SelectValue />
@@ -172,15 +174,15 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
             {/* Priority - Hide for Self-Learning */}
             {initialData?.sourceModule !== "self-learning" && (
               <div className="space-y-2">
-                <Label htmlFor="task-priority" className="font-semibold">Priority <span className="text-red-500">*</span></Label>
+                <Label htmlFor="task-priority" className="font-semibold">{tr(t.tasks.priority)} <span className="text-red-500">*</span></Label>
                 <Select value={priority} onValueChange={(v: TaskPriority) => setPriority(v)}>
                   <SelectTrigger id="task-priority" className="h-10">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="high">{tr(t.tasksPage.high)}</SelectItem>
+                    <SelectItem value="medium">{tr(t.tasksPage.medium)}</SelectItem>
+                    <SelectItem value="low">{tr(t.tasksPage.low)}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -188,7 +190,7 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
 
             {/* Due Date */}
             <div className="space-y-2">
-              <Label htmlFor="task-due-date" className="font-semibold text-muted-foreground">Due Date</Label>
+              <Label htmlFor="task-due-date" className="font-semibold text-muted-foreground">{tr(t.tasks.dueDate)}</Label>
               <Input
                 id="task-due-date"
                 type="date"
@@ -200,7 +202,7 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
 
             {/* Due Time */}
             <div className="space-y-2">
-              <Label htmlFor="task-due-time" className="font-semibold text-muted-foreground">Due Time</Label>
+              <Label htmlFor="task-due-time" className="font-semibold text-muted-foreground">{tr(t.tasksPage.formDueTime)}</Label>
               <Input
                 id="task-due-time"
                 type="time"
@@ -213,7 +215,7 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
 
             {/* Status */}
             <div className="space-y-2">
-              <Label htmlFor="task-status" className="font-semibold text-muted-foreground">Status</Label>
+              <Label htmlFor="task-status" className="font-semibold text-muted-foreground">{tr(t.tasks.status)}</Label>
               <Select value={status} onValueChange={(v: TaskStatus) => setStatus(v)}>
                 <SelectTrigger id="task-status" className="h-10">
                   <SelectValue />
@@ -221,14 +223,14 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
                 <SelectContent>
                   {initialData?.sourceModule === "self-learning" ? (
                     <>
-                      <SelectItem value="todo">Pending</SelectItem>
-                      <SelectItem value="done">Completed</SelectItem>
+                      <SelectItem value="todo">{tr(t.tasks.pending)}</SelectItem>
+                      <SelectItem value="done">{tr(t.tasksPage.done)}</SelectItem>
                     </>
                   ) : (
                     <>
-                      <SelectItem value="todo">To Do</SelectItem>
-                      <SelectItem value="in-progress">In Progress</SelectItem>
-                      <SelectItem value="done">Done</SelectItem>
+                      <SelectItem value="todo">{tr(t.tasksPage.toDo)}</SelectItem>
+                      <SelectItem value="in-progress">{tr(t.tasksPage.inProgress)}</SelectItem>
+                      <SelectItem value="done">{tr(t.tasksPage.done)}</SelectItem>
                     </>
                   )}
                 </SelectContent>
@@ -238,10 +240,10 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
             {/* Linked Course (optional) - Hide for existing Course/Self-Learning tasks */}
             {(!initialData || initialData.sourceModule === "general") && (
               <div className="space-y-2">
-                <Label htmlFor="task-course" className="font-semibold text-muted-foreground">Linked Course (optional)</Label>
+                <Label htmlFor="task-course" className="font-semibold text-muted-foreground">{tr(t.tasksPage.formLinkedCourse)}</Label>
                 <Input
                   id="task-course"
-                  placeholder="e.g. Data Structures"
+                  placeholder={tr(t.tasksPage.formLinkedPh)}
                   value={linkedCourseTitle}
                   onChange={e => setLinkedCourseTitle(e.target.value)}
                   className="h-10 placeholder:text-muted-foreground/50"
@@ -253,10 +255,10 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
           {/* Notes - Hide for Self-Learning and Milestones (minimalist) */}
           {(initialData?.sourceModule !== "self-learning") && (
             <div className="space-y-2">
-              <Label htmlFor="task-notes" className="font-semibold text-muted-foreground">Notes</Label>
+              <Label htmlFor="task-notes" className="font-semibold text-muted-foreground">{tr(t.tasksPage.formNotes)}</Label>
               <Textarea
                 id="task-notes"
-                placeholder="Private notes, references, or reminders..."
+                placeholder={tr(t.tasksPage.formNotesPh)}
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
                 className="resize-none min-h-[60px]"
@@ -267,7 +269,7 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
           {/* Reminder Section - Hide for Self-Learning (minimalist) */}
           {initialData?.sourceModule !== "self-learning" && (
             <div className="space-y-2 pt-2">
-              <Label className="font-semibold">Reminder</Label>
+              <Label className="font-semibold">{tr(t.tasksPage.formReminder)}</Label>
               <ReminderFields 
                 config={reminderConfig} 
                 onChange={(updates) => setReminderConfig({ ...reminderConfig, ...updates })}
@@ -279,7 +281,7 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
           {(!initialData || initialData.sourceModule === "general") && (
             <div className="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800">
               <div className="flex items-center justify-between">
-                <Label htmlFor="recurrence" className="font-semibold cursor-pointer">Repeat Task (Recurring)</Label>
+                <Label htmlFor="recurrence" className="font-semibold cursor-pointer">{tr(t.tasksPage.formRecurrence)}</Label>
                 <input 
                   type="checkbox" 
                   id="recurrence"
@@ -292,20 +294,20 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
               {recurrenceEnabled && (
                 <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 animate-in slide-in-from-top-2 duration-300">
                   <div className="space-y-2">
-                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Frequency</Label>
+                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{tr(t.tasksPage.formFrequency)}</Label>
                     <Select value={frequency} onValueChange={(v: any) => setFrequency(v)}>
                       <SelectTrigger className="h-9 bg-white dark:bg-slate-950">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="daily">Daily</SelectItem>
-                        <SelectItem value="weekly">Weekly</SelectItem>
-                        <SelectItem value="monthly">Monthly</SelectItem>
+                        <SelectItem value="daily">{tr(t.tasksPage.freqDaily)}</SelectItem>
+                        <SelectItem value="weekly">{tr(t.tasksPage.freqWeekly)}</SelectItem>
+                        <SelectItem value="monthly">{tr(t.tasksPage.freqMonthly)}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Every (Interval)</Label>
+                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{tr(t.tasksPage.formInterval)}</Label>
                     <div className="flex items-center gap-2">
                       <Input 
                         type="number" 
@@ -315,7 +317,7 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
                         className="h-9 w-16 bg-white dark:bg-slate-950"
                       />
                       <span className="text-xs text-muted-foreground">
-                        {frequency === "daily" ? "days" : frequency === "weekly" ? "weeks" : "months"}
+                        {frequency === "daily" ? tr(t.tasksPage.intDays) : frequency === "weekly" ? tr(t.tasksPage.intWeeks) : tr(t.tasksPage.intMonths)}
                       </span>
                     </div>
                   </div>
@@ -327,9 +329,9 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
         </div>
 
         <DialogFooter className="px-6 py-4 border-t bg-muted/10 shrink-0 gap-2 sm:gap-0">
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl w-full sm:w-auto">Cancel</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl w-full sm:w-auto">{tr(t.actions.cancel)}</Button>
           <Button onClick={handleSave} disabled={isSaveDisabled} className="rounded-xl w-full sm:w-auto">
-            {initialData ? "Save Changes" : "Add Task"}
+            {initialData ? tr(t.actions.saveChanges) : tr(t.tasksPage.addTask)}
           </Button>
         </DialogFooter>
 

@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { LearningStage, StageStatus } from "@/types/self-learning";
 import { generatePlanId } from "@/lib/self-learning/utils";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface StageFormDialogProps {
   open: boolean;
@@ -18,6 +19,7 @@ interface StageFormDialogProps {
 }
 
 export function StageFormDialog({ open, onOpenChange, onSave, initialData, planId, nextOrder }: StageFormDialogProps) {
+  const { tr, t } = useTranslation();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [targetDuration, setTargetDuration] = useState("");
@@ -55,40 +57,40 @@ export function StageFormDialog({ open, onOpenChange, onSave, initialData, planI
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[480px] rounded-2xl">
         <DialogHeader>
-          <DialogTitle>{initialData ? "Edit Stage" : "Add Stage"}</DialogTitle>
-          <DialogDescription>Break your learning plan into manageable stages.</DialogDescription>
+          <DialogTitle>{initialData ? tr(t.selfLearning.editStageTitle) : tr(t.selfLearning.addStageTitle)}</DialogTitle>
+          <DialogDescription>{tr(t.selfLearning.stageFormDesc)}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <Label>Stage Title <span className="text-red-500">*</span></Label>
-            <Input placeholder="e.g. Fundamentals" value={title} onChange={e => setTitle(e.target.value)} autoFocus className="h-10" />
+            <Label>{tr(t.selfLearning.stageTitleLabel)} <span className="text-red-500">*</span></Label>
+            <Input placeholder={tr(t.selfLearning.stageTitlePh)} value={title} onChange={e => setTitle(e.target.value)} autoFocus className="h-10" />
           </div>
           <div className="space-y-2">
-            <Label className="text-muted-foreground">Description</Label>
-            <Textarea placeholder="What does this stage cover?" value={description} onChange={e => setDescription(e.target.value)} className="resize-none min-h-[60px]" />
+            <Label className="text-muted-foreground">{tr(t.selfLearning.stageDescLabel)}</Label>
+            <Textarea placeholder={tr(t.selfLearning.stageDescPh)} value={description} onChange={e => setDescription(e.target.value)} className="resize-none min-h-[60px]" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label className="text-muted-foreground">Target Duration</Label>
-              <Input placeholder="e.g. 2 weeks" value={targetDuration} onChange={e => setTargetDuration(e.target.value)} className="h-10" />
+              <Label className="text-muted-foreground">{tr(t.selfLearning.stageDuration)}</Label>
+              <Input placeholder={tr(t.selfLearning.stageDurationPh)} value={targetDuration} onChange={e => setTargetDuration(e.target.value)} className="h-10" />
             </div>
             <div className="space-y-2">
-              <Label className="text-muted-foreground">Status</Label>
+              <Label className="text-muted-foreground">{tr(t.tasks.status)}</Label>
               <select value={status} onChange={e => setStatus(e.target.value as StageStatus)} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
-                <option value="not-started">Not Started</option>
-                <option value="active">Active</option>
-                <option value="completed">Completed</option>
+                <option value="not-started">{tr(t.selfLearning.notStarted)}</option>
+                <option value="active">{tr(t.selfLearning.active)}</option>
+                <option value="completed">{tr(t.selfLearning.completed)}</option>
               </select>
             </div>
           </div>
           <div className="space-y-2">
-            <Label className="text-muted-foreground">Goals / What you'll learn</Label>
-            <Textarea placeholder="List key things you want to learn in this stage..." value={goals} onChange={e => setGoals(e.target.value)} className="resize-none min-h-[60px]" />
+            <Label className="text-muted-foreground">{tr(t.selfLearning.stageGoals)}</Label>
+            <Textarea placeholder={tr(t.selfLearning.stageGoalsPh)} value={goals} onChange={e => setGoals(e.target.value)} className="resize-none min-h-[60px]" />
           </div>
         </div>
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl">Cancel</Button>
-          <Button onClick={handleSave} disabled={!title.trim()} className="rounded-xl">{initialData ? "Save Changes" : "Add Stage"}</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl">{tr(t.actions.cancel)}</Button>
+          <Button onClick={handleSave} disabled={!title.trim()} className="rounded-xl">{initialData ? tr(t.actions.saveChanges) : tr(t.selfLearning.addStageBtn)}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

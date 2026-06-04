@@ -3,6 +3,7 @@
 import { CourseStatus } from "@/types/course";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface CoursesTabsProps {
   activeTab: CourseStatus | "all";
@@ -20,11 +21,12 @@ export function CoursesTabs({
   onTabChange,
   counts,
 }: CoursesTabsProps) {
+  const { tr, t } = useTranslation();
   const tabs: { id: CourseStatus | "all"; label: string; count: number }[] = [
-    { id: "all", label: "All", count: counts.all },
-    { id: "current", label: "Current", count: counts.current },
-    { id: "completed", label: "Completed", count: counts.completed },
-    { id: "planned", label: "Planned", count: counts.planned },
+    { id: "all", label: tr(t.courses.tabsAll), count: counts.all },
+    { id: "current", label: tr(t.courses.tabsCurrent), count: counts.current },
+    { id: "completed", label: tr(t.courses.tabsCompleted), count: counts.completed },
+    { id: "planned", label: tr(t.courses.tabsPlanned), count: counts.planned },
   ];
 
   return (

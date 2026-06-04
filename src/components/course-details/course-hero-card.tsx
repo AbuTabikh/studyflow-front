@@ -6,12 +6,14 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface CourseHeroCardProps {
   course: Course;
 }
 
 export function CourseHeroCard({ course }: CourseHeroCardProps) {
+  const { tr, t } = useTranslation();
   const router = useRouter();
 
   // Calculate progress percentage
@@ -120,17 +122,16 @@ export function CourseHeroCard({ course }: CourseHeroCardProps) {
                 {/* Progress Text */}
                 <div className="flex-1">
                   <h3 className="font-semibold text-slate-900 dark:text-white">
-                    You&apos;re making progress!
+                    {tr(t.courseDetails.heroProgress)}
                   </h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-                    {currentWeek} of {course.durationWeeks} weeks complete.{" "}
+                    {currentWeek} of {course.durationWeeks} {tr(t.courseDetails.weeksComplete)}{" "}
                     {remainingWeeks > 0 ? (
                       <>
-                        {remainingWeeks} week{remainingWeeks !== 1 ? "s" : ""}{" "}
-                        remaining. Keep pushing to complete your final exams.
+                        {remainingWeeks} {tr(t.courseDetails.weekRemaining)}
                       </>
                     ) : (
-                      "You've completed all weeks! Time to prepare for finals."
+                      tr(t.courseDetails.allWeeksDone)
                     )}
                   </p>
                 </div>
@@ -149,7 +150,7 @@ export function CourseHeroCard({ course }: CourseHeroCardProps) {
               variant="outline"
               className="font-semibold text-xs uppercase tracking-wide"
             >
-              {course.durationWeeks} Weeks
+              {course.durationWeeks} {tr(t.courseDetails.weeksLabel)}
             </Badge>
           </div>
         </div>

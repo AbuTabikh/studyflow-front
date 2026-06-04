@@ -1,4 +1,5 @@
 import { UserProfile } from "@/types/settings";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,7 @@ interface AcademicSettingsSectionProps {
 }
 
 export function AcademicSettingsSection({ profile, onUpdate }: AcademicSettingsSectionProps) {
+  const { tr, t } = useTranslation();
   const totalHours = parseInt(profile.totalCreditHours) || 0;
   const completedHours = parseInt(profile.completedCreditHours) || 0;
   const isInvalid = completedHours > totalHours && totalHours > 0;
@@ -21,15 +23,15 @@ export function AcademicSettingsSection({ profile, onUpdate }: AcademicSettingsS
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <CardTitle>Academic Settings</CardTitle>
+            <CardTitle>{tr(t.settingsPage.academicTitle)}</CardTitle>
             <CardDescription>
-              Information about your academic progress and goals.
+              {tr(t.settingsPage.academicSubtitle)}
             </CardDescription>
           </div>
           {totalHours > 0 && !isInvalid && (
             <div className="text-right">
-              <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">Remaining</div>
-              <div className="text-2xl font-black text-primary">{remainingHours} <span className="text-sm font-medium text-muted-foreground">hrs</span></div>
+              <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">{tr(t.settingsPage.remaining)}</div>
+              <div className="text-2xl font-black text-primary">{remainingHours} <span className="text-sm font-medium text-muted-foreground">{tr(t.settingsPage.hrs)}</span></div>
             </div>
           )}
         </div>
@@ -37,7 +39,7 @@ export function AcademicSettingsSection({ profile, onUpdate }: AcademicSettingsS
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="academicYear">Academic Year</Label>
+            <Label htmlFor="academicYear">{tr(t.settingsPage.academicYear)}</Label>
             <div className="relative">
               <GraduationCap className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -45,13 +47,13 @@ export function AcademicSettingsSection({ profile, onUpdate }: AcademicSettingsS
                 value={profile.academicYear}
                 onChange={(e) => onUpdate({ academicYear: e.target.value })}
                 className="pl-9"
-                placeholder="e.g., 3rd Year"
+                placeholder={tr(t.settingsPage.academicYearPh)}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="currentGPA">GPA / Average</Label>
+            <Label htmlFor="currentGPA">{tr(t.settingsPage.gpaAverage)}</Label>
             <div className="relative">
               <Trophy className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -60,13 +62,13 @@ export function AcademicSettingsSection({ profile, onUpdate }: AcademicSettingsS
                 value={profile.currentGPA}
                 onChange={(e) => onUpdate({ currentGPA: e.target.value })}
                 className="pl-9"
-                placeholder="e.g., 3.50 or 85%"
+                placeholder={tr(t.settingsPage.gpaPh)}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="totalCreditHours">Total Credit Hours Required</Label>
+            <Label htmlFor="totalCreditHours">{tr(t.settingsPage.totalCredits)}</Label>
             <div className="relative">
               <Hash className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -75,13 +77,13 @@ export function AcademicSettingsSection({ profile, onUpdate }: AcademicSettingsS
                 value={profile.totalCreditHours}
                 onChange={(e) => onUpdate({ totalCreditHours: e.target.value })}
                 className={cn("pl-9", isInvalid && "border-destructive focus-visible:ring-destructive")}
-                placeholder="e.g., 120"
+                placeholder={tr(t.settingsPage.totalCreditsPh)}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="completedCreditHours">Credit Hours Completed</Label>
+            <Label htmlFor="completedCreditHours">{tr(t.settingsPage.completedCredits)}</Label>
             <div className="relative">
               <Hash className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -90,7 +92,7 @@ export function AcademicSettingsSection({ profile, onUpdate }: AcademicSettingsS
                 value={profile.completedCreditHours}
                 onChange={(e) => onUpdate({ completedCreditHours: e.target.value })}
                 className={cn("pl-9", isInvalid && "border-destructive focus-visible:ring-destructive")}
-                placeholder="e.g., 45"
+                placeholder={tr(t.settingsPage.completedCreditsPh)}
               />
             </div>
           </div>
@@ -102,10 +104,9 @@ export function AcademicSettingsSection({ profile, onUpdate }: AcademicSettingsS
               <AlertCircle className="h-4 w-4 text-destructive" />
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-bold text-destructive">Invalid Credit Hours</p>
+              <p className="text-sm font-bold text-destructive">{tr(t.settingsPage.invalidCredits)}</p>
               <p className="text-xs text-destructive/80 leading-relaxed">
-                Completed hours ({completedHours}) cannot exceed the total required hours ({totalHours}). 
-                Please adjust either the total required or the completed hours.
+                {tr(t.settingsPage.invalidCreditsMsg)}
               </p>
             </div>
           </div>

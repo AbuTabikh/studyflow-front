@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { LearningPlan, PlanStatus } from "@/types/self-learning";
 import { generatePlanId } from "@/lib/self-learning/utils";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface PlanFormDialogProps {
   open: boolean;
@@ -16,9 +17,10 @@ interface PlanFormDialogProps {
   initialData?: LearningPlan | null;
 }
 
-const CATEGORIES = ["Programming", "Design", "Language", "Mathematics", "Science", "Business", "Arts", "Health", "Other"];
+const CATEGORIES = ["Programming", "Design", "Language", "Mathematics", "Science", "Business", "Arts", "Health", "Other"] as const;
 
 export function LearningPlanFormDialog({ open, onOpenChange, onSave, initialData }: PlanFormDialogProps) {
+  const { tr, t } = useTranslation();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [goal, setGoal] = useState("");
@@ -73,57 +75,61 @@ export function LearningPlanFormDialog({ open, onOpenChange, onSave, initialData
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[580px] h-[90vh] sm:max-h-[90vh] flex flex-col p-0 overflow-hidden rounded-2xl">
         <DialogHeader className="px-6 py-4 border-b bg-muted/20 shrink-0">
-          <DialogTitle className="text-xl">{initialData ? "Edit Learning Plan" : "New Learning Plan"}</DialogTitle>
-          <DialogDescription>Define your personal learning goal and track your progress.</DialogDescription>
+          <DialogTitle className="text-xl">{initialData ? tr(t.selfLearning.editPlanFormTitle) : tr(t.selfLearning.newPlanFormTitle)}</DialogTitle>
+          <DialogDescription>{tr(t.selfLearning.planFormDesc)}</DialogDescription>
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-5">
           <div className="space-y-2">
-            <Label>Plan Title <span className="text-red-500">*</span></Label>
-            <Input placeholder="e.g. Learn React from scratch" value={title} onChange={e => setTitle(e.target.value)} className="h-11" autoFocus />
+            <Label>{tr(t.selfLearning.planTitle)} <span className="text-red-500">*</span></Label>
+            <Input placeholder={tr(t.selfLearning.planTitlePh)} value={title} onChange={e => setTitle(e.target.value)} className="h-11" autoFocus />
           </div>
 
           <div className="space-y-2">
-            <Label>Goal <span className="text-red-500">*</span></Label>
-            <Textarea placeholder="What do you want to achieve? e.g. Build a full-stack web app" value={goal} onChange={e => setGoal(e.target.value)} className="resize-none min-h-[70px]" />
+            <Label>{tr(t.selfLearning.planGoalLabel)} <span className="text-red-500">*</span></Label>
+            <Textarea placeholder={tr(t.selfLearning.planGoalPh)} value={goal} onChange={e => setGoal(e.target.value)} className="resize-none min-h-[70px]" />
           </div>
 
           <div className="space-y-2">
-            <Label className="text-muted-foreground">Description</Label>
-            <Textarea placeholder="Optional context about this plan..." value={description} onChange={e => setDescription(e.target.value)} className="resize-none min-h-[60px]" />
+            <Label className="text-muted-foreground">{tr(t.selfLearning.planDescLabel)}</Label>
+            <Textarea placeholder={tr(t.selfLearning.planDescPh)} value={description} onChange={e => setDescription(e.target.value)} className="resize-none min-h-[60px]" />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-muted-foreground">Category</Label>
+              <Label className="text-muted-foreground">{tr(t.selfLearning.planCategory)}</Label>
               <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="h-10"><SelectValue placeholder="Pick one..." /></SelectTrigger>
+                <SelectTrigger className="h-10"><SelectValue placeholder={tr(t.selfLearning.planCategoryPh)} /></SelectTrigger>
                 <SelectContent>
-                  {CATEGORIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  {CATEGORIES.map(c => {
+                    const catKey = `cat${c}` as keyof typeof t.selfLearning;
+                    const catVal = t.selfLearning[catKey] as { en: string; ar: string };
+                    return <SelectItem key={c} value={c}>{tr(catVal)}</SelectItem>;
+                  })}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-muted-foreground">Target Skill</Label>
-              <Input placeholder="e.g. TypeScript" value={targetSkill} onChange={e => setTargetSkill(e.target.value)} className="h-10" />
+              <Label className="text-muted-foreground">{tr(t.selfLearning.planTargetSkill)}</Label>
+              <Input placeholder={tr(t.selfLearning.planTargetSkillPh)} value={targetSkill} onChange={e => setTargetSkill(e.target.value)} className="h-10" />
             </div>
             <div className="space-y-2">
-              <Label>Start Date <span className="text-red-500">*</span></Label>
+              <Label>{tr(t.selfLearning.planStartDate)} <span className="text-red-500">*</span></Label>
               <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="h-10" />
             </div>
             <div className="space-y-2">
-              <Label className="text-muted-foreground">End Date (optional)</Label>
+              <Label className="text-muted-foreground">{tr(t.selfLearning.planEndDate)}</Label>
               <Input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="h-10" min={startDate} />
             </div>
             <div className="space-y-2">
-              <Label>Status</Label>
+              <Label>{tr(t.tasks.status)}</Label>
               <Select value={status} onValueChange={(v: PlanStatus) => setStatus(v)}>
                 <SelectTrigger className="h-10"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="planned">Planned</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="paused">Paused</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="planned">{tr(t.selfLearning.planned)}</SelectItem>
+                  <SelectItem value="active">{tr(t.selfLearning.active)}</SelectItem>
+                  <SelectItem value="paused">{tr(t.selfLearning.paused)}</SelectItem>
+                  <SelectItem value="completed">{tr(t.selfLearning.completed)}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -131,8 +137,8 @@ export function LearningPlanFormDialog({ open, onOpenChange, onSave, initialData
         </div>
 
         <DialogFooter className="px-6 py-4 border-t bg-muted/10 shrink-0 gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl">Cancel</Button>
-          <Button onClick={handleSave} disabled={!canSave} className="rounded-xl">{initialData ? "Save Changes" : "Create Plan"}</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl">{tr(t.actions.cancel)}</Button>
+          <Button onClick={handleSave} disabled={!canSave} className="rounded-xl">{initialData ? tr(t.actions.saveChanges) : tr(t.selfLearning.createPlan)}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Clock, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface UpcomingTasksProps {
   tasks: StudyTask[];
@@ -19,6 +20,7 @@ export function UpcomingTasks({
   exams,
   onTaskComplete,
 }: UpcomingTasksProps) {
+  const { tr, t } = useTranslation();
   // Combine and sort all items by date
   const allItems = [
     ...tasks.map((t) => ({
@@ -85,13 +87,13 @@ export function UpcomingTasks({
       <div className="flex items-center gap-2 mb-4">
         <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
         <h3 className="font-semibold text-slate-900 dark:text-white">
-          Upcoming Items
+          {tr(t.courseDetails.upcomingItems)}
         </h3>
       </div>
 
       {allItems.length === 0 ? (
         <p className="text-sm text-slate-500 dark:text-slate-400 py-8 text-center">
-          No upcoming items
+          {tr(t.courseDetails.noUpcomingItems)}
         </p>
       ) : (
         <div className="space-y-3">

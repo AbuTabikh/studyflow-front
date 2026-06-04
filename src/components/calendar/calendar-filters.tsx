@@ -3,6 +3,7 @@
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { CalendarFilters } from "@/lib/calendar-utils";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface FiltersProps {
   filters: CalendarFilters;
@@ -15,23 +16,24 @@ export function CalendarFilters({
   onFiltersChange,
   courses,
 }: FiltersProps) {
+  const { tr, t } = useTranslation();
   return (
     <Card className="p-4 border-slate-200 dark:border-slate-800">
       {/* Event Type Filters */}
       <div className="mb-6">
         <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">
-          Event Types
+          {tr(t.calendar.eventTypes)}
         </h3>
         <div className="space-y-2">
           {[
-            { key: "tasks", label: "Tasks", color: "bg-blue-100" },
+            { key: "tasks", label: tr(t.calendar.filterTasks), color: "bg-blue-100" },
             {
               key: "assignments",
-              label: "Assignments",
+              label: tr(t.calendar.filterAssignments),
               color: "bg-orange-100",
             },
-            { key: "quizzes", label: "Quizzes", color: "bg-yellow-100" },
-            { key: "exams", label: "Exams & Finals", color: "bg-red-100" },
+            { key: "quizzes", label: tr(t.calendar.filterQuizzes), color: "bg-yellow-100" },
+            { key: "exams", label: tr(t.calendar.filterExams), color: "bg-red-100" },
           ].map(({ key, label, color }) => (
             <label key={key} className="flex items-center gap-3 cursor-pointer">
               <Checkbox
@@ -67,7 +69,7 @@ export function CalendarFilters({
             }}
           />
           <span className="text-sm text-slate-700 dark:text-slate-300">
-            Show Completed
+            {tr(t.calendar.showCompleted)}
           </span>
         </label>
       </div>
@@ -76,7 +78,7 @@ export function CalendarFilters({
       {courses.length > 0 && (
         <div>
           <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">
-            Courses
+            {tr(t.calendar.filterCourses)}
           </h3>
           <div className="space-y-2 max-h-48 overflow-y-auto">
             {courses.map((course) => (

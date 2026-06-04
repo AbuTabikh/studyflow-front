@@ -2,12 +2,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ReflectionEntry } from "@/types/reflections";
 import { getMoodInfo, isDateInThisWeek } from "@/lib/reflections/utils";
 import { LineChart, BookOpen, Flame, SmilePlus, Smile, Meh, Frown, Coffee, CloudRain } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface ReflectionsStatsProps {
   reflections: ReflectionEntry[];
 }
 
 export function ReflectionsStats({ reflections }: ReflectionsStatsProps) {
+  const { tr, t } = useTranslation();
   const totalCount = reflections.length;
   const thisWeekCount = reflections.filter(r => isDateInThisWeek(r.date)).length;
 
@@ -35,7 +37,7 @@ export function ReflectionsStats({ reflections }: ReflectionsStatsProps) {
       {/* Total Reflections */}
       <Card className="border shadow-sm bg-card hover:shadow-md transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Total Reflections</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">{tr(t.reflectionsPage.statsTotal)}</CardTitle>
           <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
             <BookOpen className="h-4 w-4 text-blue-600" />
           </div>
@@ -45,7 +47,7 @@ export function ReflectionsStats({ reflections }: ReflectionsStatsProps) {
             {totalCount}
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-             Journaling entries overall
+             {tr(t.reflectionsPage.statsTotalDesc)}
           </p>
         </CardContent>
       </Card>
@@ -53,7 +55,7 @@ export function ReflectionsStats({ reflections }: ReflectionsStatsProps) {
       {/* This Week */}
       <Card className="border shadow-sm bg-card hover:shadow-md transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-          <CardTitle className="text-sm font-medium text-muted-foreground">This Week</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">{tr(t.reflectionsPage.statsWeek)}</CardTitle>
           <div className="w-8 h-8 rounded-full bg-orange-500/10 flex items-center justify-center">
             <Flame className="h-4 w-4 text-orange-600" />
           </div>
@@ -63,7 +65,7 @@ export function ReflectionsStats({ reflections }: ReflectionsStatsProps) {
             {thisWeekCount}
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-             Entries recorded this week
+             {tr(t.reflectionsPage.statsWeekDesc)}
           </p>
         </CardContent>
       </Card>
@@ -71,7 +73,7 @@ export function ReflectionsStats({ reflections }: ReflectionsStatsProps) {
       {/* Latest Mood */}
       <Card className="border shadow-sm bg-card hover:shadow-md transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Latest Mood</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">{tr(t.reflectionsPage.statsMood)}</CardTitle>
           <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
             <LineChart className="h-4 w-4 text-emerald-600" />
           </div>
@@ -96,7 +98,7 @@ export function ReflectionsStats({ reflections }: ReflectionsStatsProps) {
               <div className="text-3xl font-bold tracking-tight text-foreground opacity-50">
                  --
               </div>
-              <p className="text-xs text-muted-foreground mt-1">No entries yet</p>
+              <p className="text-xs text-muted-foreground mt-1">{tr(t.reflectionsPage.statsNoEntries)}</p>
             </div>
           )}
         </CardContent>

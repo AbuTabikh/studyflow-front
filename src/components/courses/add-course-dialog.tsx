@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import { Course, CourseStatus } from "@/types/course";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,6 +58,7 @@ export function AddCourseDialog({
   isEditing = false,
   semesterId,
 }: AddCourseDialogProps) {
+  const { tr, t } = useTranslation();
   const { state } = useAppState();
   const semesters = state.academicPlanning.semesters;
   const allStateCourses = state.courses;
@@ -181,7 +183,7 @@ export function AddCourseDialog({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) {
-      toast.error("Please fix the highlighted fields.");
+      toast.error(tr(t.academicPlanning.fixFields));
       return;
     }
     
@@ -210,7 +212,7 @@ export function AddCourseDialog({
         ...finalData,
         createdAt: new Date().toISOString(),
       });
-      toast.success(isEditing ? "Course updated successfully" : "Course added successfully");
+      toast.success(isEditing ? tr(t.academicPlanning.courseUpdated) : tr(t.academicPlanning.courseAdded));
       handleClose(true);
     } catch (err) {
       if (process.env.NODE_ENV !== "production") {
@@ -240,7 +242,7 @@ export function AddCourseDialog({
         <Card className="w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl animate-in fade-in zoom-in-95 duration-200">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-foreground">
-              {isEditing ? "Edit Course" : "Add Course"}
+              {isEditing ? `${tr(t.actions.edit)} ${tr(t.courses.title)}` : tr(t.academicPlanning.addCourse)}
             </h2>
             <Button variant="ghost" size="icon" onClick={() => handleClose()} className="h-8 w-8 rounded-full">
               <X className="h-5 w-5 text-muted-foreground" />
@@ -252,24 +254,24 @@ export function AddCourseDialog({
                 {/* Left Column */}
                 <div className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="title" className="font-semibold">Course Title *</Label>
+                        <Label htmlFor="title" className="font-semibold">{tr(t.academicPlanning.courseTitle)} *</Label>
                         <Input
                             id="title"
                             value={formData.title}
                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                            placeholder="e.g., Software Architecture"
+                            placeholder={tr(t.academicPlanning.courseTitlePh)}
                             className={errors.title ? "border-red-500" : ""}
                         />
                         {errors.title && <p className="text-sm text-red-500">{errors.title}</p>}
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="code" className="font-semibold text-muted-foreground">Course Code (Optional)</Label>
+                        <Label htmlFor="code" className="font-semibold text-muted-foreground">{tr(t.academicPlanning.courseCode)}</Label>
                         <Input
                             id="code"
                             value={formData.code}
                             onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                            placeholder="e.g. CS402"
+                            placeholder={tr(t.academicPlanning.courseCodePh)}
                             className="uppercase"
                         />
                     </div>
@@ -288,7 +290,7 @@ export function AddCourseDialog({
                     )}
 
                     <div className="space-y-2">
-                        <Label htmlFor="instructor" className="font-semibold">Instructor</Label>
+                        <Label htmlFor="instructor" className="font-semibold">{tr(t.academicPlanning.instructor)}</Label>
                         <Input
                             id="instructor"
                             value={formData.instructor}
@@ -348,7 +350,7 @@ export function AddCourseDialog({
                         </div>
                         {semesterId !== "prior-completed" && (
                             <div className="space-y-2">
-                                <Label htmlFor="durationWeeks" className="font-semibold">Duration (Weeks) *</Label>
+                                <Label htmlFor="durationWeeks" className="font-semibold">{tr(t.academicPlanning.duration)} *</Label>
                                 <Input
                                     id="durationWeeks"
                                     type="number"
@@ -396,7 +398,7 @@ export function AddCourseDialog({
                                 onValueChange={(val) => setFormData({ ...formData, semesterId: val })}
                             >
                                 <SelectTrigger id="semester" className="w-full">
-                                    <SelectValue placeholder="Select a semester" />
+                                    <SelectValue placeholder={tr(t.academicPlanning.selectSemester)} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {semesters.map(s => (
@@ -412,7 +414,7 @@ export function AddCourseDialog({
 
                     {semesterId !== "prior-completed" && (
                         <div className="space-y-2">
-                            <Label className="font-semibold">Course Status</Label>
+                            <Label className="font-semibold">{tr(t.academicPlanning.courseStatus)}</Label>
                             <CourseStatusSelector
                                 value={formData.status}
                                 onChange={(status) => setFormData({ ...formData, status })}
@@ -423,7 +425,7 @@ export function AddCourseDialog({
 
                     {formData.status === "current" && (
                         <div className="space-y-2 animate-in fade-in slide-in-from-left-2">
-                            <Label htmlFor="progress" className="font-semibold text-sm">Progress (%)</Label>
+                            <Label htmlFor="progress" className="font-semibold text-sm">{tr(t.academicPlanning.progress)}</Label>
                             <Input
                                 id="progress"
                                 type="number"
@@ -438,7 +440,7 @@ export function AddCourseDialog({
 
                     {(formData.status === "completed" || isPriorMode) && (
                         <div className="space-y-2 animate-in fade-in slide-in-from-left-2 text-emerald-600 dark:text-emerald-400">
-                            <Label htmlFor="grade" className="font-semibold text-sm">Numeric Grade (0-100) *</Label>
+                            <Label htmlFor="grade" className="font-semibold text-sm">{tr(t.academicPlanning.numericGrade)} *</Label>
                             <Input
                                 id="grade"
                                 type="text"
@@ -471,7 +473,7 @@ export function AddCourseDialog({
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="description" className="font-semibold text-muted-foreground">Description / Notes</Label>
+              <Label htmlFor="description" className="font-semibold text-muted-foreground">{tr(t.academicPlanning.description)}</Label>
               <textarea
                 id="description"
                 value={formData.description}
@@ -483,10 +485,10 @@ export function AddCourseDialog({
 
             <div className="flex gap-3 pt-2">
               <Button variant="outline" type="button" onClick={() => handleClose()} className="flex-1 rounded-xl h-11">
-                Cancel
+                {tr(t.actions.cancel)}
               </Button>
               <Button type="submit" className="flex-1 rounded-xl h-11 bg-primary hover:bg-secondary">
-                {isEditing ? "Save Changes" : "Create Course"}
+                {isEditing ? tr(t.actions.saveChanges) : tr(t.academicPlanning.createCourse)}
               </Button>
             </div>
           </form>

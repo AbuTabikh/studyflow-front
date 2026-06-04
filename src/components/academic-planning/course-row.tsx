@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { getGradeStatus } from "@/lib/academic-planning/grading";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface CourseRowProps {
   course: Course;
@@ -22,19 +23,20 @@ interface CourseRowProps {
 
 export function CourseRow({ course, onEdit, onDelete }: CourseRowProps) {
   const router = useRouter();
+  const { tr, t } = useTranslation();
   
   const renderStatusBadge = () => {
     switch (course.status) {
       case "planned":
         return (
           <Badge variant="outline" className="text-muted-foreground bg-muted/30 border-muted-foreground/20 font-normal">
-            <Circle className="w-3 h-3 mr-1.5" /> Planned
+            <Circle className="w-3 h-3 mr-1.5" /> {tr(t.academicPlanning.courseRowPlanned)}
           </Badge>
         );
       case "current":
         return (
           <Badge variant="secondary" className="bg-blue-500/10 text-blue-700 hover:bg-blue-500/20 border-blue-500/20 font-medium">
-            <Clock className="w-3 h-3 mr-1.5" /> In Progress
+            <Clock className="w-3 h-3 mr-1.5" /> {tr(t.academicPlanning.courseRowCurrent)}
           </Badge>
         );
       case "completed":
@@ -43,18 +45,18 @@ export function CourseRow({ course, onEdit, onDelete }: CourseRowProps) {
           if (status === "passed") {
             return (
               <Badge variant="default" className="bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/20 border-emerald-500/20 font-medium shadow-none">
-                <CheckCircle2 className="w-3 h-3 mr-1.5" /> Passed
+                <CheckCircle2 className="w-3 h-3 mr-1.5" /> {tr(t.academicPlanning.courseRowPassed)}
               </Badge>
             );
           } else {
             return (
               <Badge variant="destructive" className="bg-red-500/10 text-red-700 hover:bg-red-500/20 border-red-500/20 font-medium shadow-none">
-                <XCircle className="w-3 h-3 mr-1.5" /> Failed
+                <XCircle className="w-3 h-3 mr-1.5" /> {tr(t.academicPlanning.courseRowFailed)}
               </Badge>
             );
           }
         }
-        return <Badge variant="outline" className="font-normal">Completed</Badge>;
+        return <Badge variant="outline" className="font-normal">{tr(t.academicPlanning.courseRowCompleted)}</Badge>;
       default:
         return null;
     }
@@ -89,7 +91,7 @@ export function CourseRow({ course, onEdit, onDelete }: CourseRowProps) {
           )}
         </div>
         <div className="flex items-center text-sm text-muted-foreground">
-          <span>{course.credits} credit hours</span>
+          <span>{course.credits} {tr(t.academicPlanning.courseRowCredits)}</span>
         </div>
       </div>
       

@@ -10,6 +10,7 @@ import { generatePlanId } from "@/lib/self-learning/utils";
 import { ReminderFields } from "@/components/shared/reminder-fields";
 import { ReminderConfig } from "@/types/reminders";
 import { getDefaultReminderConfig } from "@/lib/reminders/utils";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface MilestoneFormDialogProps {
   open: boolean;
@@ -20,6 +21,7 @@ interface MilestoneFormDialogProps {
 }
 
 export function MilestoneFormDialog({ open, onOpenChange, onSave, initialData, planId }: MilestoneFormDialogProps) {
+  const { tr, t } = useTranslation();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [targetDate, setTargetDate] = useState("");
@@ -62,31 +64,31 @@ export function MilestoneFormDialog({ open, onOpenChange, onSave, initialData, p
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[480px] rounded-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{initialData ? "Edit Milestone" : "Add Milestone"}</DialogTitle>
-          <DialogDescription>Set a meaningful checkpoint in your learning journey.</DialogDescription>
+          <DialogTitle>{initialData ? tr(t.selfLearning.editMilestoneTitle) : tr(t.selfLearning.addMilestoneTitle)}</DialogTitle>
+          <DialogDescription>{tr(t.selfLearning.milestoneFormDesc)}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <Label>Title <span className="text-red-500">*</span></Label>
-            <Input placeholder="e.g. Complete first mini-project" value={title} onChange={e => setTitle(e.target.value)} autoFocus className="h-10" />
+            <Label>{tr(t.selfLearning.milestoneTitleLabel)} <span className="text-red-500">*</span></Label>
+            <Input placeholder={tr(t.selfLearning.milestoneTitlePh)} value={title} onChange={e => setTitle(e.target.value)} autoFocus className="h-10" />
           </div>
           <div className="space-y-2">
-            <Label className="text-muted-foreground">Description</Label>
-            <Textarea placeholder="What does reaching this milestone mean?" value={description} onChange={e => setDescription(e.target.value)} className="resize-none min-h-[60px]" />
+            <Label className="text-muted-foreground">{tr(t.selfLearning.milestoneDescLabel)}</Label>
+            <Textarea placeholder={tr(t.selfLearning.milestoneDescPh)} value={description} onChange={e => setDescription(e.target.value)} className="resize-none min-h-[60px]" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label className="text-muted-foreground">Target Date (optional)</Label>
+              <Label className="text-muted-foreground">{tr(t.selfLearning.milestoneDate)}</Label>
               <Input type="date" value={targetDate} onChange={e => setTargetDate(e.target.value)} className="h-10" />
             </div>
             <div className="space-y-2">
-              <Label className="text-muted-foreground">Notes</Label>
-              <Input placeholder="Optional..." value={notes} onChange={e => setNotes(e.target.value)} className="h-10" />
+              <Label className="text-muted-foreground">{tr(t.selfLearning.milestoneNotesLabel)}</Label>
+              <Input placeholder={tr(t.selfLearning.milestoneNotesPh)} value={notes} onChange={e => setNotes(e.target.value)} className="h-10" />
             </div>
           </div>
 
           <div className="space-y-2 pt-2">
-            <Label className="font-semibold">Reminder</Label>
+            <Label className="font-semibold">{tr(t.selfLearning.milestoneReminderLabel)}</Label>
             <ReminderFields 
               config={reminderConfig} 
               onChange={(updates) => setReminderConfig({ ...reminderConfig, ...updates })}
@@ -94,8 +96,8 @@ export function MilestoneFormDialog({ open, onOpenChange, onSave, initialData, p
           </div>
         </div>
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl">Cancel</Button>
-          <Button onClick={handleSave} disabled={!title.trim()} className="rounded-xl">{initialData ? "Save" : "Add Milestone"}</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl">{tr(t.actions.cancel)}</Button>
+          <Button onClick={handleSave} disabled={!title.trim()} className="rounded-xl">{initialData ? tr(t.selfLearning.saveMilestoneBtn) : tr(t.selfLearning.addMilestoneBtn)}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

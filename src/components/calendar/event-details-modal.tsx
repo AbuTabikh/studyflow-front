@@ -4,6 +4,7 @@ import { CalendarEvent, getEventTypeLabel } from "@/lib/calendar-utils";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import {
   Clock,
   MapPin,
@@ -27,6 +28,7 @@ export function EventDetailsModal({
   onClose,
   onOpenCourse,
 }: EventDetailsModalProps) {
+  const { tr, t } = useTranslation();
   if (!event) return null;
 
   const formatDate = (dateString: string) => {
@@ -105,7 +107,7 @@ export function EventDetailsModal({
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
-                    Course
+                    {tr(t.calendar.courseLabel)}
                   </p>
                   <p className="text-sm font-semibold text-slate-900 dark:text-white mt-1">
                     {event.courseName}
@@ -130,7 +132,7 @@ export function EventDetailsModal({
                     className="gap-1"
                   >
                     <BookOpen className="h-3 w-3" />
-                    Open
+                    {tr(t.calendar.openEvent)}
                   </Button>
                 )}
               </div>
@@ -143,7 +145,7 @@ export function EventDetailsModal({
                 <Calendar className="h-4 w-4 text-slate-600 dark:text-slate-400 mt-1" />
                 <div>
                   <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">
-                    Date
+                    {tr(t.calendar.dateLabel)}
                   </p>
                   <p className="text-sm font-semibold text-slate-900 dark:text-white">
                     {formatDate(event.date)}
@@ -157,7 +159,7 @@ export function EventDetailsModal({
                   <Clock className="h-4 w-4 text-slate-600 dark:text-slate-400 mt-1" />
                   <div>
                     <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">
-                      Time
+                      {tr(t.calendar.timeLabel)}
                     </p>
                     <p className="text-sm font-semibold text-slate-900 dark:text-white">
                       {event.time}
@@ -173,7 +175,7 @@ export function EventDetailsModal({
                   <MapPin className="h-4 w-4 text-slate-600 dark:text-slate-400 mt-1" />
                   <div>
                     <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">
-                      Location
+                      {tr(t.calendar.locationLabel)}
                     </p>
                     <p className="text-sm font-semibold text-slate-900 dark:text-white">
                       {event.location}
@@ -188,10 +190,10 @@ export function EventDetailsModal({
                   <BookOpen className="h-4 w-4 text-slate-600 dark:text-slate-400 mt-1" />
                   <div>
                     <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">
-                      Week
+                      {tr(t.calendar.weekLabel)}
                     </p>
                     <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                      Week {event.weekNumber}
+                      {tr(t.calendar.weekLabel)} {event.weekNumber}
                     </p>
                   </div>
                 </div>
@@ -202,7 +204,7 @@ export function EventDetailsModal({
             {event.description && (
               <div className="mb-6 p-3 bg-slate-50 dark:bg-slate-900/30 rounded-lg border border-slate-200 dark:border-slate-800">
                 <p className="text-xs text-slate-600 dark:text-slate-400 font-medium mb-2">
-                  Details
+                  {tr(t.calendar.detailsLabel)}
                 </p>
                 <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
                   {event.description}
@@ -224,11 +226,11 @@ export function EventDetailsModal({
                   className="flex-1 gap-2"
                 >
                   <BookOpen className="h-4 w-4" />
-                  View Item
+                  {tr(t.calendar.viewItem)}
                 </Button>
               )}
               <Button onClick={onClose} variant="outline" className="flex-1">
-                Close
+                {tr(t.actions.close)}
               </Button>
             </div>
           </div>

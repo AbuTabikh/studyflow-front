@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface TasksTableProps {
   tasks: TaskItem[];
@@ -31,15 +32,16 @@ interface TasksTableProps {
 }
 
 export function TasksTable({ tasks, onEdit, onDelete, onStatusChange }: TasksTableProps) {
-  
+  const { tr, t } = useTranslation();
+
   const getPriorityBadge = (priority: TaskPriority) => {
     switch (priority) {
       case "high":
-        return <Badge variant="destructive" className="bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500/20">High</Badge>;
+        return <Badge variant="destructive" className="bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500/20">{tr(t.tasksPage.high)}</Badge>;
       case "medium":
-        return <Badge variant="secondary" className="bg-orange-500/10 text-orange-500 border-orange-500/20 hover:bg-orange-500/20">Medium</Badge>;
+        return <Badge variant="secondary" className="bg-orange-500/10 text-orange-500 border-orange-500/20 hover:bg-orange-500/20">{tr(t.tasksPage.medium)}</Badge>;
       case "low":
-        return <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-500/20 hover:bg-blue-500/20">Low</Badge>;
+        return <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-500/20 hover:bg-blue-500/20">{tr(t.tasksPage.low)}</Badge>;
     }
   };
 
@@ -57,11 +59,11 @@ export function TasksTable({ tasks, onEdit, onDelete, onStatusChange }: TasksTab
   const getStatusBadge = (status: TaskStatus) => {
     switch (status) {
       case "done":
-        return <Badge className="bg-green-500/10 text-green-500 border-green-500/20">Done</Badge>;
+        return <Badge className="bg-green-500/10 text-green-500 border-green-500/20">{tr(t.tasksPage.done)}</Badge>;
       case "in-progress":
-        return <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20">In Progress</Badge>;
+        return <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20">{tr(t.tasksPage.inProgress)}</Badge>;
       default:
-        return <Badge variant="outline" className="text-muted-foreground border-slate-200 dark:border-slate-800">To Do</Badge>;
+        return <Badge variant="outline" className="text-muted-foreground border-slate-200 dark:border-slate-800">{tr(t.tasksPage.toDo)}</Badge>;
     }
   };
 
@@ -72,11 +74,11 @@ export function TasksTable({ tasks, onEdit, onDelete, onStatusChange }: TasksTab
           <thead className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800">
             <tr>
               <th className="px-4 py-3 font-semibold text-slate-900 dark:text-white w-10"></th>
-              <th className="px-4 py-3 font-semibold text-slate-900 dark:text-white text-left">Task</th>
-              <th className="px-4 py-3 font-semibold text-slate-900 dark:text-white">Status</th>
-              <th className="px-4 py-3 font-semibold text-slate-900 dark:text-white">Priority</th>
-              <th className="px-4 py-3 font-semibold text-slate-900 dark:text-white">Due Date</th>
-              <th className="px-4 py-3 font-semibold text-slate-900 dark:text-white">Source</th>
+              <th className="px-4 py-3 font-semibold text-slate-900 dark:text-white text-left">{tr(t.tasksPage.tableTask)}</th>
+              <th className="px-4 py-3 font-semibold text-slate-900 dark:text-white">{tr(t.tasksPage.tableStatus)}</th>
+              <th className="px-4 py-3 font-semibold text-slate-900 dark:text-white">{tr(t.tasksPage.tablePriority)}</th>
+              <th className="px-4 py-3 font-semibold text-slate-900 dark:text-white">{tr(t.tasksPage.tableDueDate)}</th>
+              <th className="px-4 py-3 font-semibold text-slate-900 dark:text-white">{tr(t.tasksPage.tableSource)}</th>
               <th className="px-4 py-3 font-semibold text-slate-900 dark:text-white w-10 text-center"></th>
             </tr>
           </thead>
@@ -129,7 +131,7 @@ export function TasksTable({ tasks, onEdit, onDelete, onStatusChange }: TasksTab
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <Clock className="h-3.5 w-3.5" />
-                    <span>{task.dueDate ? new Date(task.dueDate).toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' }) : "Soon"}</span>
+                    <span>{task.dueDate ? new Date(task.dueDate).toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' }) : tr(t.tasksPage.tableSoon)}</span>
                   </div>
                 </td>
                 <td className="px-4 py-3">
@@ -150,14 +152,14 @@ export function TasksTable({ tasks, onEdit, onDelete, onStatusChange }: TasksTab
                     <DropdownMenuContent align="end" className="w-40 rounded-xl">
                       <DropdownMenuItem onClick={() => onEdit(task)} className="gap-2 cursor-pointer">
                         <Pencil className="h-4 w-4" />
-                        Edit
+                        {tr(t.actions.edit)}
                       </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        onClick={() => onDelete(task.id)} 
+                      <DropdownMenuItem
+                        onClick={() => onDelete(task.id)}
                         className="gap-2 cursor-pointer text-red-500 focus:text-red-500 focus:bg-red-50 dark:focus:bg-red-500/10"
                       >
                         <Trash2 className="h-4 w-4" />
-                        Delete
+                        {tr(t.actions.delete)}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

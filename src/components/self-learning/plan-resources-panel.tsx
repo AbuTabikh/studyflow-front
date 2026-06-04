@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FileText, Play, Link, Plus, ExternalLink, Trash2, X } from "lucide-react";
 import { generatePlanId } from "@/lib/self-learning/utils";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface PlanResourcesPanelProps {
   resources: LearningResource[];
@@ -15,6 +16,7 @@ interface PlanResourcesPanelProps {
 }
 
 export function PlanResourcesPanel({ resources, onResourcesChange }: PlanResourcesPanelProps) {
+  const { tr, t } = useTranslation();
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
@@ -44,7 +46,7 @@ export function PlanResourcesPanel({ resources, onResourcesChange }: PlanResourc
   return (
     <Card className="border-border/60 shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
-        <CardTitle className="text-base font-semibold">Resources</CardTitle>
+        <CardTitle className="text-base font-semibold">{tr(t.selfLearning.resourcesTitle)}</CardTitle>
         <Button size="sm" variant="ghost" onClick={() => setShowForm(!showForm)} className="h-8 w-8 p-0">
           {showForm ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
         </Button>
@@ -54,11 +56,11 @@ export function PlanResourcesPanel({ resources, onResourcesChange }: PlanResourc
           <div className="mb-4 p-4 rounded-xl border border-dashed border-blue-300 dark:border-blue-700 bg-blue-50/30 dark:bg-blue-900/10 space-y-3">
             <div className="grid grid-cols-2 gap-2">
               <div className="col-span-2 space-y-1">
-                <Label className="text-xs">Title *</Label>
-                <Input placeholder="e.g. Master React in 10 Days" value={title} onChange={e => setTitle(e.target.value)} className="h-9 text-sm" />
+                <Label className="text-xs">{tr(t.selfLearning.resourceTitleLabel)} *</Label>
+                <Input placeholder={tr(t.selfLearning.resourceTitlePh)} value={title} onChange={e => setTitle(e.target.value)} className="h-9 text-sm" />
               </div>
               <div className="col-span-2 space-y-1">
-                <Label className="text-xs">URL or Upload File *</Label>
+                <Label className="text-xs">{tr(t.selfLearning.resourceUrlLabel)} *</Label>
                 <div className="flex gap-2">
                   <Input placeholder="https://..." value={url} onChange={e => setUrl(e.target.value)} className="h-9 text-sm flex-1" />
                   <div className="relative w-28">
@@ -78,39 +80,39 @@ export function PlanResourcesPanel({ resources, onResourcesChange }: PlanResourc
                       }} 
                     />
                     <Button type="button" variant="outline" size="sm" className="w-full h-9">
-                      Upload
+                      {tr(t.selfLearning.resourceUploadBtn)}
                     </Button>
                   </div>
                 </div>
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">Type</Label>
+                <Label className="text-xs">{tr(t.selfLearning.resourceTypeLabel)}</Label>
                 <Select value={type} onValueChange={(v: LearningResource["type"]) => setType(v)}>
                   <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="link">Link</SelectItem>
-                    <SelectItem value="file">File/PDF</SelectItem>
-                    <SelectItem value="note">Note</SelectItem>
+                    <SelectItem value="link">{tr(t.selfLearning.resourceTypeLink)}</SelectItem>
+                    <SelectItem value="file">{tr(t.selfLearning.resourceTypeFile)}</SelectItem>
+                    <SelectItem value="note">{tr(t.selfLearning.resourceTypeNote)}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">Description</Label>
-                <Input placeholder="Optional hints or notes..." value={desc} onChange={e => setDesc(e.target.value)} className="h-9 text-sm" />
+                <Label className="text-xs">{tr(t.selfLearning.resourceDescLabel)}</Label>
+                <Input placeholder={tr(t.selfLearning.resourceDescPh)} value={desc} onChange={e => setDesc(e.target.value)} className="h-9 text-sm" />
               </div>
             </div>
             
             <div className="flex gap-2 justify-end pt-2">
-              <Button size="sm" variant="ghost" onClick={() => setShowForm(false)}>Cancel</Button>
-              <Button size="sm" onClick={handleAdd} disabled={!title.trim() || !url.trim()}>Save Resource</Button>
+              <Button size="sm" variant="ghost" onClick={() => setShowForm(false)}>{tr(t.actions.cancel)}</Button>
+              <Button size="sm" onClick={handleAdd} disabled={!title.trim() || !url.trim()}>{tr(t.selfLearning.saveResourceBtn)}</Button>
             </div>
           </div>
         )}
 
         {resources.length === 0 && !showForm ? (
           <div className="py-6 text-center text-muted-foreground">
-            <p className="text-sm">No resources yet.</p>
-            <Button size="sm" variant="ghost" onClick={() => setShowForm(true)} className="mt-2 gap-1"><Plus className="h-3.5 w-3.5" />Add Resource</Button>
+            <p className="text-sm">{tr(t.selfLearning.noResourcesYet)}</p>
+            <Button size="sm" variant="ghost" onClick={() => setShowForm(true)} className="mt-2 gap-1"><Plus className="h-3.5 w-3.5" />{tr(t.selfLearning.addResourceBtn)}</Button>
           </div>
         ) : (
           <div className="space-y-2">

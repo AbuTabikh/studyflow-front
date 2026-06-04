@@ -3,6 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { PlanStatus } from "@/types/self-learning";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface FiltersProps {
   statusFilter: PlanStatus | "all";
@@ -20,26 +21,27 @@ export function SelfLearningFilters({
   statusFilter, setStatusFilter, categoryFilter, setCategoryFilter,
   search, setSearch, sortBy, setSortBy, categories
 }: FiltersProps) {
+  const { tr, t } = useTranslation();
   return (
     <div className="flex flex-wrap gap-3 items-center">
       <div className="relative flex-1 min-w-[200px]">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           className="pl-9 h-10 rounded-xl"
-          placeholder="Search plans..."
+          placeholder={tr(t.selfLearning.searchPlans)}
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
       </div>
 
       <Select value={statusFilter} onValueChange={(v: PlanStatus | "all") => setStatusFilter(v)}>
-        <SelectTrigger className="h-10 w-[140px] rounded-xl"><SelectValue placeholder="Status" /></SelectTrigger>
+        <SelectTrigger className="h-10 w-[140px] rounded-xl"><SelectValue placeholder={tr(t.tasks.status)} /></SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All Status</SelectItem>
-          <SelectItem value="active">Active</SelectItem>
-          <SelectItem value="planned">Planned</SelectItem>
-          <SelectItem value="paused">Paused</SelectItem>
-          <SelectItem value="completed">Completed</SelectItem>
+          <SelectItem value="all">{tr(t.tasksPage.allStatus)}</SelectItem>
+          <SelectItem value="active">{tr(t.selfLearning.active)}</SelectItem>
+          <SelectItem value="planned">{tr(t.selfLearning.planned)}</SelectItem>
+          <SelectItem value="paused">{tr(t.selfLearning.paused)}</SelectItem>
+          <SelectItem value="completed">{tr(t.selfLearning.completed)}</SelectItem>
         </SelectContent>
       </Select>
 
@@ -47,7 +49,7 @@ export function SelfLearningFilters({
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
           <SelectTrigger className="h-10 w-[150px] rounded-xl"><SelectValue placeholder="Category" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
+            <SelectItem value="all">{tr(t.selfLearning.allCategories)}</SelectItem>
             {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
           </SelectContent>
         </Select>
@@ -56,11 +58,11 @@ export function SelfLearningFilters({
       <Select value={sortBy} onValueChange={(v: typeof sortBy) => setSortBy(v)}>
         <SelectTrigger className="h-10 w-[160px] rounded-xl"><SelectValue /></SelectTrigger>
         <SelectContent>
-          <SelectItem value="newest">Newest First</SelectItem>
-          <SelectItem value="oldest">Oldest First</SelectItem>
-          <SelectItem value="most-progress">Most Progress</SelectItem>
-          <SelectItem value="least-progress">Least Progress</SelectItem>
-          <SelectItem value="nearest-end">Nearest End Date</SelectItem>
+          <SelectItem value="newest">{tr(t.tasksPage.newestFirst)}</SelectItem>
+          <SelectItem value="oldest">{tr(t.tasksPage.oldestFirst)}</SelectItem>
+          <SelectItem value="most-progress">{tr(t.selfLearning.mostProgress)}</SelectItem>
+          <SelectItem value="least-progress">{tr(t.selfLearning.leastProgress)}</SelectItem>
+          <SelectItem value="nearest-end">{tr(t.selfLearning.nearestEnd)}</SelectItem>
         </SelectContent>
       </Select>
     </div>

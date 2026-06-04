@@ -2,6 +2,7 @@
 
 import { CalendarEvent, getEventColor } from "@/lib/calendar-utils";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface WeekViewProps {
   events: CalendarEvent[];
@@ -10,6 +11,7 @@ interface WeekViewProps {
 }
 
 export function WeekView({ events, currentDate, onEventClick }: WeekViewProps) {
+  const { tr, t } = useTranslation();
   // Get the start of the week (Saturday)
   const startOfWeek = new Date(currentDate);
   const daysToSubtract = (currentDate.getDay() + 1) % 7;
@@ -47,7 +49,7 @@ export function WeekView({ events, currentDate, onEventClick }: WeekViewProps) {
       {/* Weekday headers */}
       <div className="grid grid-cols-8 sticky  z-10 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800">
         <div className="col-span-1 px-2 py-3 text-xs font-semibold text-slate-600 dark:text-slate-400">
-          Time
+          {tr(t.calendar.timeLabel)}
         </div>
         {weekDays.map((date, index) => (
           <div

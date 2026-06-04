@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { UserProfile } from "@/types/settings";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,7 @@ interface ProfileSectionProps {
 }
 
 export function ProfileSection({ profile, onUpdate }: ProfileSectionProps) {
+  const { tr, t } = useTranslation();
   const [avatarPreview, setAvatarPreview] = useState<string | null>(profile.avatarUrl || null);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,9 +33,9 @@ export function ProfileSection({ profile, onUpdate }: ProfileSectionProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Profile Information</CardTitle>
+        <CardTitle>{tr(t.settingsPage.profileTitle)}</CardTitle>
         <CardDescription>
-          Update your personal details and how others see you.
+          {tr(t.settingsPage.profileSubtitle)}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -59,11 +61,11 @@ export function ProfileSection({ profile, onUpdate }: ProfileSectionProps) {
             />
           </div>
           <div className="flex-1 space-y-1 text-center sm:text-left">
-            <h3 className="text-xl font-semibold">{profile.name || "Your Name"}</h3>
-            <p className="text-sm text-muted-foreground">{profile.major || "No major set"}</p>
+            <h3 className="text-xl font-semibold">{profile.name || tr(t.settingsPage.yourName)}</h3>
+            <p className="text-sm text-muted-foreground">{profile.major || tr(t.settingsPage.noMajor)}</p>
             <div className="pt-2">
               <Button variant="outline" size="sm" onClick={() => document.getElementById('avatar-upload')?.click()}>
-                Change Avatar
+                {tr(t.settingsPage.changeAvatar)}
               </Button>
             </div>
           </div>
@@ -71,7 +73,7 @@ export function ProfileSection({ profile, onUpdate }: ProfileSectionProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
+            <Label htmlFor="name">{tr(t.settingsPage.fullName)}</Label>
             <div className="relative">
               <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -79,13 +81,13 @@ export function ProfileSection({ profile, onUpdate }: ProfileSectionProps) {
                 value={profile.name}
                 onChange={(e) => onUpdate({ name: e.target.value })}
                 className="pl-9"
-                placeholder="Enter your name"
+                placeholder={tr(t.settingsPage.enterName)}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="university">University</Label>
+            <Label htmlFor="university">{tr(t.settingsPage.university)}</Label>
             <div className="relative">
               <School className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -93,13 +95,13 @@ export function ProfileSection({ profile, onUpdate }: ProfileSectionProps) {
                 value={profile.university}
                 onChange={(e) => onUpdate({ university: e.target.value })}
                 className="pl-9"
-                placeholder="Enter your university"
+                placeholder={tr(t.settingsPage.enterUniversity)}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="major">Major / Field of Study</Label>
+            <Label htmlFor="major">{tr(t.settingsPage.majorField)}</Label>
             <div className="relative">
               <BookOpen className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -107,7 +109,7 @@ export function ProfileSection({ profile, onUpdate }: ProfileSectionProps) {
                 value={profile.major}
                 onChange={(e) => onUpdate({ major: e.target.value })}
                 className="pl-9"
-                placeholder="Enter your major"
+                placeholder={tr(t.settingsPage.enterMajor)}
               />
             </div>
           </div>

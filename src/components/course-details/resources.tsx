@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FileText, Play, Link, Plus, ExternalLink, Trash2, X } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface ResourcesProps {
   resources?: Resource[];
@@ -21,6 +22,7 @@ function genId(): string {
 }
 
 export function Resources({ resources = [], onResourcesChange }: ResourcesProps) {
+  const { tr, t } = useTranslation();
   const [showAddForm, setShowAddForm] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newUrl, setNewUrl] = useState("");
@@ -65,7 +67,7 @@ export function Resources({ resources = [], onResourcesChange }: ResourcesProps)
   return (
     <Card className="p-6 border-slate-200 dark:border-slate-800">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-slate-900 dark:text-white">Course Resources</h3>
+        <h3 className="font-semibold text-slate-900 dark:text-white">{tr(t.courseDetails.courseResources)}</h3>
         <Button
           size="sm" variant="ghost"
           onClick={() => setShowAddForm(!showAddForm)}
@@ -80,7 +82,7 @@ export function Resources({ resources = [], onResourcesChange }: ResourcesProps)
         <div className="mb-4 p-4 rounded-xl border border-dashed border-blue-300 dark:border-blue-700 bg-blue-50/30 dark:bg-blue-900/10 space-y-3">
           <div className="grid grid-cols-2 gap-2">
             <div className="col-span-2 space-y-1">
-              <Label className="text-xs">Title *</Label>
+              <Label className="text-xs">{tr(t.tasks.title_field)} *</Label>
               <Input placeholder="e.g. Lecture Slides Week 3" value={newTitle} onChange={e => setNewTitle(e.target.value)} className="h-9 text-sm" />
             </div>
             <div className="col-span-2 space-y-1">
@@ -108,41 +110,41 @@ export function Resources({ resources = [], onResourcesChange }: ResourcesProps)
                     }} 
                   />
                   <Button type="button" variant="outline" size="sm" className="w-full h-9">
-                    Upload
+                    {tr(t.courseDetails.uploadBtn)}
                   </Button>
                 </div>
               </div>
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Type</Label>
+              <Label className="text-xs">{tr(t.tasks.type)}</Label>
               <Select value={newType} onValueChange={(v: Resource["type"]) => setNewType(v)}>
                 <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="link">Link</SelectItem>
-                  <SelectItem value="pdf">PDF</SelectItem>
-                  <SelectItem value="video">Video</SelectItem>
-                  <SelectItem value="document">Document</SelectItem>
-                  <SelectItem value="image">Image</SelectItem>
+                  <SelectItem value="link">{tr(t.courseDetails.typeLink)}</SelectItem>
+                  <SelectItem value="pdf">{tr(t.courseDetails.typePdf)}</SelectItem>
+                  <SelectItem value="video">{tr(t.courseDetails.typeVideo)}</SelectItem>
+                  <SelectItem value="document">{tr(t.courseDetails.typeDocument)}</SelectItem>
+                  <SelectItem value="image">{tr(t.courseDetails.typeImage)}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Description</Label>
-              <Input placeholder="Optional" value={newDesc} onChange={e => setNewDesc(e.target.value)} className="h-9 text-sm" />
+              <Label className="text-xs">{tr(t.tasks.description)}</Label>
+              <Input placeholder={tr(t.courseDetails.optional)} value={newDesc} onChange={e => setNewDesc(e.target.value)} className="h-9 text-sm" />
             </div>
           </div>
           <div className="flex gap-2 justify-end">
-            <Button size="sm" variant="ghost" onClick={() => setShowAddForm(false)}>Cancel</Button>
-            <Button size="sm" onClick={handleAdd} disabled={!newTitle.trim() || !newUrl.trim()}>Add Resource</Button>
+            <Button size="sm" variant="ghost" onClick={() => setShowAddForm(false)}>{tr(t.actions.cancel)}</Button>
+            <Button size="sm" onClick={handleAdd} disabled={!newTitle.trim() || !newUrl.trim()}>{tr(t.courseDetails.addResource)}</Button>
           </div>
         </div>
       )}
 
       {resources.length === 0 ? (
         <div className="py-8 text-center">
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">No resources added yet</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">{tr(t.courseDetails.noResources)}</p>
           <Button size="sm" onClick={() => setShowAddForm(true)} className="gap-2">
-            <Plus className="h-4 w-4" />Add Resource
+            <Plus className="h-4 w-4" />{tr(t.courseDetails.addResource)}
           </Button>
         </div>
       ) : (
@@ -176,7 +178,7 @@ export function Resources({ resources = [], onResourcesChange }: ResourcesProps)
             </div>
           ))}
           <Button size="sm" variant="outline" onClick={() => setShowAddForm(true)} className="w-full gap-2">
-            <Plus className="h-4 w-4" />Add Another Resource
+            <Plus className="h-4 w-4" />{tr(t.courseDetails.addAnotherResource)}
           </Button>
         </div>
       )}

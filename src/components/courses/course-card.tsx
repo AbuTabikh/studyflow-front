@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { Eye, Edit2, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface CourseCardProps {
   course: Course;
@@ -17,6 +18,7 @@ interface CourseCardProps {
 }
 
 export function CourseCard({ course, onEdit, onDelete, semesterName }: CourseCardProps) {
+  const { tr, t } = useTranslation();
   const statusColors = {
     current: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
     completed:
@@ -26,9 +28,9 @@ export function CourseCard({ course, onEdit, onDelete, semesterName }: CourseCar
   };
 
   const statusLabel = {
-    current: "CURRENT",
-    completed: "COMPLETED",
-    planned: "PLANNED",
+    current: tr(t.academicPlanning.statusCurrent),
+    completed: tr(t.academicPlanning.statusCompleted),
+    planned: tr(t.academicPlanning.statusPlanned),
   };
 
   return (
@@ -79,7 +81,7 @@ export function CourseCard({ course, onEdit, onDelete, semesterName }: CourseCar
           {course.status === "current" && course.progress !== undefined && (
             <div className="space-y-2 mt-auto">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Progress</span>
+                <span className="text-muted-foreground">{tr(t.courses.progress)}</span>
                 <span className="font-medium">{course.progress}%</span>
               </div>
               <Progress value={course.progress} className="h-2" />
@@ -88,7 +90,7 @@ export function CourseCard({ course, onEdit, onDelete, semesterName }: CourseCar
 
           {course.status === "completed" && course.finalGrade && (
             <div className="bg-green-50 dark:bg-green-950 p-1.5 rounded-md text-sm mt-auto">
-              <p className="text-muted-foreground text-xs">Final Grade</p>
+              <p className="text-muted-foreground text-xs">{tr(t.academicPlanning.finalGrade)}</p>
               <p className="font-semibold text-green-700 dark:text-green-300">
                 {course.finalGrade}
               </p>
@@ -98,7 +100,7 @@ export function CourseCard({ course, onEdit, onDelete, semesterName }: CourseCar
           {course.status === "planned" && (
             <div className="bg-muted p-1.5 rounded-md text-sm mt-auto">
               <p className="text-muted-foreground text-xs">
-                Scheduled for next term
+                {tr(t.academicPlanning.scheduledNext)}
               </p>
             </div>
           )}
@@ -110,7 +112,7 @@ export function CourseCard({ course, onEdit, onDelete, semesterName }: CourseCar
         <Link href={`/courses/${course.id}`} className="flex-1">
           <Button variant="ghost" size="sm" className="w-full h-7 text-xs">
             <Eye className="h-3.5 w-3.5 mr-1" />
-            View
+            {tr(t.actions.view)}
           </Button>
         </Link>
         <Button
@@ -120,7 +122,7 @@ export function CourseCard({ course, onEdit, onDelete, semesterName }: CourseCar
           className="flex-1 h-7 text-xs"
         >
           <Edit2 className="h-3.5 w-3.5 mr-1" />
-          Edit
+          {tr(t.actions.edit)}
         </Button>
         <Button
           variant="ghost"
@@ -129,7 +131,7 @@ export function CourseCard({ course, onEdit, onDelete, semesterName }: CourseCar
           className="flex-1 h-7 text-xs text-destructive hover:text-destructive"
         >
           <Trash2 className="h-3.5 w-3.5 mr-1" />
-          Delete
+          {tr(t.actions.delete)}
         </Button>
       </div>
     </Card>

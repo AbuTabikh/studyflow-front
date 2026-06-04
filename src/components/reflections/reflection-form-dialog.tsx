@@ -8,6 +8,7 @@ import { ReflectionEntry, MoodType } from "@/types/reflections";
 import { MOODS, generateId } from "@/lib/reflections/utils";
 import { Coffee, CloudRain, Frown, Meh, Smile, SmilePlus } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface ReflectionFormDialogProps {
   open: boolean;
@@ -17,6 +18,7 @@ interface ReflectionFormDialogProps {
 }
 
 export function ReflectionFormDialog({ open, onOpenChange, onSave, initialData }: ReflectionFormDialogProps) {
+  const { tr, t } = useTranslation();
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [mood, setMood] = useState<MoodType>("good");
@@ -64,7 +66,7 @@ export function ReflectionFormDialog({ open, onOpenChange, onSave, initialData }
     
     // Require at least one content field
     if (!achieved.trim() && !difficult.trim() && !learned.trim() && !improveNext.trim()) {
-        toast.error("Please write at least one reflection note (Achieved, Difficult, Learned, or Improve).");
+        toast.error(tr(t.reflectionsPage.validationError));
         return;
     }
 
@@ -112,8 +114,8 @@ export function ReflectionFormDialog({ open, onOpenChange, onSave, initialData }
       <DialogContent className="sm:max-w-[700px] h-[90vh] sm:h-[85vh] flex flex-col p-0 overflow-hidden rounded-2xl">
         
         <DialogHeader className="px-6 py-4 border-b bg-muted/20 shrink-0">
-          <DialogTitle className="text-xl">{initialData ? "Edit Reflection" : "New Reflection"}</DialogTitle>
-          <DialogDescription>Record your thoughts, challenges, and wins.</DialogDescription>
+          <DialogTitle className="text-xl">{initialData ? tr(t.reflectionsPage.formEdit) : tr(t.reflectionsPage.newReflection)}</DialogTitle>
+          <DialogDescription>{tr(t.reflectionsPage.formDesc)}</DialogDescription>
         </DialogHeader>
         
         <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
@@ -122,18 +124,18 @@ export function ReflectionFormDialog({ open, onOpenChange, onSave, initialData }
              {/* Title & Date */}
              <div className="space-y-4">
                  <div className="space-y-2">
-                    <Label htmlFor="title" className="font-semibold text-foreground">Entry Title <span className="text-red-500">*</span></Label>
-                    <Input id="title" placeholder="e.g. End of Midterms" value={title} onChange={e => setTitle(e.target.value)} className="h-11" />
+                    <Label htmlFor="title" className="font-semibold text-foreground">{tr(t.reflectionsPage.entryTitle)} <span className="text-red-500">*</span></Label>
+                    <Input id="title" placeholder={tr(t.reflectionsPage.entryTitlePh)} value={title} onChange={e => setTitle(e.target.value)} className="h-11" />
                  </div>
                  <div className="space-y-2">
-                    <Label htmlFor="date" className="font-semibold text-foreground">Date <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="date" className="font-semibold text-foreground">{tr(t.reflectionsPage.dateLabel)} <span className="text-red-500">*</span></Label>
                     <Input id="date" type="date" value={date} onChange={e => setDate(e.target.value)} className="h-11" />
                  </div>
              </div>
 
              {/* Mood Selector Grid */}
              <div className="space-y-3">
-                 <Label className="font-semibold text-foreground">How are you feeling?</Label>
+                 <Label className="font-semibold text-foreground">{tr(t.reflectionsPage.moodLabel)}</Label>
                  <div className="grid grid-cols-3 gap-2">
                     {MOODS.map(m => {
                         const isSelected = mood === m.value;
@@ -157,43 +159,43 @@ export function ReflectionFormDialog({ open, onOpenChange, onSave, initialData }
 
           <div className="space-y-6">
              <div className="space-y-2">
-                <Label htmlFor="achieved" className="font-semibold text-foreground">What did you achieve?</Label>
-                <Textarea id="achieved" placeholder="Wins, small or large..." value={achieved} onChange={e => setAchieved(e.target.value)} className="resize-none min-h-[90px]" />
+                <Label htmlFor="achieved" className="font-semibold text-foreground">{tr(t.reflectionsPage.achievedLabel)}</Label>
+                <Textarea id="achieved" placeholder={tr(t.reflectionsPage.achievedPh)} value={achieved} onChange={e => setAchieved(e.target.value)} className="resize-none min-h-[90px]" />
              </div>
              
              <div className="space-y-2">
-                <Label htmlFor="difficult" className="font-semibold text-foreground">What was difficult?</Label>
-                <Textarea id="difficult" placeholder="Struggles or roadblocks faced..." value={difficult} onChange={e => setDifficult(e.target.value)} className="resize-none min-h-[90px]" />
+                <Label htmlFor="difficult" className="font-semibold text-foreground">{tr(t.reflectionsPage.difficultLabel)}</Label>
+                <Textarea id="difficult" placeholder={tr(t.reflectionsPage.difficultPh)} value={difficult} onChange={e => setDifficult(e.target.value)} className="resize-none min-h-[90px]" />
              </div>
              
              <div className="space-y-2">
-                <Label htmlFor="learned" className="font-semibold text-foreground">What did you learn?</Label>
-                <Textarea id="learned" placeholder="Key takeaways from the experience..." value={learned} onChange={e => setLearned(e.target.value)} className="resize-none min-h-[90px]" />
+                <Label htmlFor="learned" className="font-semibold text-foreground">{tr(t.reflectionsPage.learnedLabel)}</Label>
+                <Textarea id="learned" placeholder={tr(t.reflectionsPage.learnedPh)} value={learned} onChange={e => setLearned(e.target.value)} className="resize-none min-h-[90px]" />
              </div>
              
              <div className="space-y-2">
-                <Label htmlFor="improveNext" className="font-semibold text-foreground">What do you want to improve next?</Label>
-                <Textarea id="improveNext" placeholder="Steps for future growth..." value={improveNext} onChange={e => setImproveNext(e.target.value)} className="resize-none min-h-[90px]" />
+                <Label htmlFor="improveNext" className="font-semibold text-foreground">{tr(t.reflectionsPage.improveLabel)}</Label>
+                <Textarea id="improveNext" placeholder={tr(t.reflectionsPage.improvePh)} value={improveNext} onChange={e => setImproveNext(e.target.value)} className="resize-none min-h-[90px]" />
              </div>
           </div>
 
           <div className="space-y-6 pt-4 border-t border-border/60">
              <div className="space-y-2">
-                <Label htmlFor="gratitude" className="font-semibold text-foreground">Gratitude Note (Optional)</Label>
-                <Input id="gratitude" placeholder="I am grateful for..." value={gratitude} onChange={e => setGratitude(e.target.value)} className="h-11" />
+                <Label htmlFor="gratitude" className="font-semibold text-foreground">{tr(t.reflectionsPage.gratitudeLabel)}</Label>
+                <Input id="gratitude" placeholder={tr(t.reflectionsPage.gratitudePh)} value={gratitude} onChange={e => setGratitude(e.target.value)} className="h-11" />
              </div>
              <div className="space-y-2">
-                <Label htmlFor="tags" className="font-semibold text-foreground">Tags (Optional)</Label>
-                <Input id="tags" placeholder="exam, personal, stress (comma separated)" value={tagsInput} onChange={e => setTagsInput(e.target.value)} className="h-11" />
+                <Label htmlFor="tags" className="font-semibold text-foreground">{tr(t.reflectionsPage.tagsInputLabel)}</Label>
+                <Input id="tags" placeholder={tr(t.reflectionsPage.tagsPh)} value={tagsInput} onChange={e => setTagsInput(e.target.value)} className="h-11" />
              </div>
           </div>
           
         </div>
         
         <DialogFooter className="px-6 py-4 border-t bg-muted/10 shrink-0 gap-2 sm:gap-0">
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl w-full sm:w-auto">Cancel</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl w-full sm:w-auto">{tr(t.actions.cancel)}</Button>
           <Button onClick={handleSave} disabled={isSaveDisabled} className="rounded-xl w-full sm:w-auto">
-             {initialData ? "Save Changes" : "Save Reflection"}
+             {initialData ? tr(t.actions.saveChanges) : tr(t.reflectionsPage.saveReflection)}
           </Button>
         </DialogFooter>
         

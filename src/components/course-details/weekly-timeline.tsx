@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { WeeklyPlan, StudyTask, Assignment, Exam } from "@/types/course";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
@@ -77,12 +78,14 @@ export function WeeklyTimeline({
     }
   };
 
+  const { tr, t } = useTranslation();
+
   const assignmentStatusOptions = [
-    { value: "pending", label: "Not Submitted", colorClass: "text-slate-600 bg-slate-100" },
-    { value: "submitted_early", label: "Submitted Early", colorClass: "text-blue-700 bg-blue-100" },
-    { value: "submitted_on_time", label: "Submitted On Time", colorClass: "text-green-700 bg-green-100" },
-    { value: "submitted_late", label: "Submitted Late", colorClass: "text-orange-700 bg-orange-100" },
-    { value: "graded", label: "Graded", colorClass: "text-purple-700 bg-purple-100" },
+    { value: "pending", label: tr(t.courseDetails.notSubmitted), colorClass: "text-slate-600 bg-slate-100" },
+    { value: "submitted_early", label: tr(t.courseDetails.submittedEarly), colorClass: "text-blue-700 bg-blue-100" },
+    { value: "submitted_on_time", label: tr(t.courseDetails.submittedOnTime), colorClass: "text-green-700 bg-green-100" },
+    { value: "submitted_late", label: tr(t.courseDetails.submittedLate), colorClass: "text-orange-700 bg-orange-100" },
+    { value: "graded", label: tr(t.courseDetails.graded), colorClass: "text-purple-700 bg-purple-100" },
   ];
 
   const handleAddItem = (type: ItemType, item: StudyTask | Assignment | Exam) => {
@@ -160,7 +163,7 @@ export function WeeklyTimeline({
                     </h3>
                     {isCurrent && (
                       <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800 text-[10px] px-1.5 py-0">
-                        Current
+                        {tr(t.courseDetails.current)}
                       </Badge>
                     )}
                   </div>
@@ -175,7 +178,7 @@ export function WeeklyTimeline({
                 <div className="flex items-center gap-3 shrink-0">
                   {isCompleted && (
                     <Badge className="bg-green-100/80 text-green-700 dark:bg-green-900/20 dark:text-green-400 border-0 text-xs hidden sm:flex items-center">
-                      <CheckCircle2 className="w-3.5 h-3.5 mr-1" />Done
+                      <CheckCircle2 className="w-3.5 h-3.5 mr-1" />{tr(t.courseDetails.done)}
                     </Badge>
                   )}
                   {isCompleted && (
@@ -184,7 +187,7 @@ export function WeeklyTimeline({
                   
                   {!isCompleted && (
                     <span className="text-xs font-medium px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-md ring-1 ring-slate-200 dark:ring-slate-700">
-                      {week.studyTasks.filter(t => !t.completed).length} tasks left
+                      {week.studyTasks.filter(task => !task.completed).length} {tr(t.courseDetails.tasksLeft)}
                     </span>
                   )}
                 </div>
@@ -220,7 +223,7 @@ export function WeeklyTimeline({
                     <div>
                       <h4 className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-white mb-3">
                         <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                        Study Tasks
+                        {tr(t.courseDetails.studyTasks)}
                       </h4>
                       <div className="space-y-2 ml-6">
                         {week.studyTasks.map((task) => (
@@ -261,7 +264,7 @@ export function WeeklyTimeline({
                     <div>
                       <h4 className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-white mb-3">
                         <FileText className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                        Assignments
+                        {tr(t.courseDetails.assignments)}
                       </h4>
                       <div className="space-y-2 ml-6">
                         {week.assignments.map((assignment) => (
@@ -278,7 +281,7 @@ export function WeeklyTimeline({
                                   <p className="text-xs text-slate-600 dark:text-slate-400 mt-1.5">{assignment.description}</p>
                                 )}
                                 <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-2.5 flex items-center gap-1.5">
-                                  <Clock className="w-3 h-3" /> Due: {formatDate(assignment.dueDate)}
+                                  <Clock className="w-3 h-3" /> {tr(t.courseDetails.duePrefix)} {formatDate(assignment.dueDate)}
                                 </p>
                               </div>
                               <div className="flex flex-col items-end gap-2.5 shrink-0">
@@ -314,7 +317,7 @@ export function WeeklyTimeline({
                     <div>
                       <h4 className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-white mb-3">
                         <Clock className="h-4 w-4 text-red-600 dark:text-red-400" />
-                        Exams & Quizzes
+                        {tr(t.courseDetails.examsQuizzes)}
                       </h4>
                       <div className="space-y-2 ml-6">
                         {week.exams.map((exam) => {
@@ -376,7 +379,7 @@ export function WeeklyTimeline({
                                       onClick={() => openExamMode(exam.id)}
                                     >
                                       <GraduationCap className="w-3.5 h-3.5" />
-                                      Prepare
+                                      {tr(t.courseDetails.prepare)}
                                     </Button>
                                   )}
                                   <ReminderBadge config={exam.reminderConfig} variant="outline" />
@@ -392,14 +395,14 @@ export function WeeklyTimeline({
                   {/* Empty State for the week */}
                   {week.studyTasks.length === 0 && week.assignments.length === 0 && week.exams.length === 0 && (
                     <div className="py-8 text-center bg-slate-50/50 dark:bg-slate-800/20 rounded-xl border border-dashed border-slate-200 dark:border-slate-700">
-                      <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">No items planned for this week yet.</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{tr(t.courseDetails.noItemsWeek)}</p>
                       <Button
                         size="sm"
                         variant="link"
                         className="mt-2 text-blue-600 dark:text-blue-400 h-auto p-0"
                         onClick={() => setAddDialogWeek(week.weekNumber)}
                       >
-                        Add your first item
+                        {tr(t.courseDetails.addFirstItem)}
                       </Button>
                     </div>
                   )}
@@ -413,7 +416,7 @@ export function WeeklyTimeline({
                       onClick={() => setAddDialogWeek(week.weekNumber)}
                     >
                       <Plus className="h-4 w-4" />
-                      Add Item
+                      {tr(t.courseDetails.addItem)}
                     </Button>
 
                     {onWeekComplete && (
@@ -429,9 +432,9 @@ export function WeeklyTimeline({
                         onClick={() => onWeekComplete(week.weekNumber)}
                       >
                         {isCompleted ? (
-                          <>Mark as Uncompleted</>
+                          <>{tr(t.courseDetails.markUncompleted)}</>
                         ) : (
-                          <><CheckCircle2 className="h-4 w-4" /> Mark Week Done</>
+                          <><CheckCircle2 className="h-4 w-4" /> {tr(t.courseDetails.markWeekDone)}</>
                         )}
                       </Button>
                     )}

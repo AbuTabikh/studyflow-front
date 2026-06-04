@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,13 +22,6 @@ interface AddWeekItemDialogProps {
   onAdd: (type: ItemType, item: StudyTask | Assignment | Exam) => void;
 }
 
-const TYPE_LABELS: Record<ItemType, string> = {
-  "study-task": "Study Task",
-  "assignment": "Assignment",
-  "quiz": "Quiz",
-  "exam": "Exam",
-};
-
 function genId(): string {
   return typeof crypto !== "undefined" && crypto.randomUUID
     ? crypto.randomUUID()
@@ -35,6 +29,13 @@ function genId(): string {
 }
 
 export function AddWeekItemDialog({ open, onOpenChange, weekNumber, onAdd }: AddWeekItemDialogProps) {
+  const { tr, t } = useTranslation();
+  const TYPE_LABELS: Record<ItemType, string> = {
+    "study-task": tr(t.courseDetails.studyTask),
+    "assignment": tr(t.courseDetails.assignment),
+    "quiz": tr(t.courseDetails.quiz),
+    "exam": tr(t.courseDetails.exam),
+  };
   const [type, setType] = useState<ItemType>("study-task");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -96,15 +97,15 @@ export function AddWeekItemDialog({ open, onOpenChange, weekNumber, onAdd }: Add
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[480px] rounded-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="pb-4 border-b border-slate-100 dark:border-slate-800">
-          <DialogTitle className="text-xl">Add Task to Week {weekNumber}</DialogTitle>
+          <DialogTitle className="text-xl">{tr(t.courseDetails.addWeekItemTitle)} {weekNumber}</DialogTitle>
           <DialogDescription>
-            Add a new study task, assignment, or exam to your weekly plan.
+            {tr(t.courseDetails.addWeekItemDesc)}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-5 py-4">
           <div className="space-y-2.5">
-            <Label className="text-sm font-medium">Task Type</Label>
+            <Label className="text-sm font-medium">{tr(t.courseDetails.taskTypeLabel)}</Label>
             <Select value={type} onValueChange={(v: ItemType) => setType(v)}>
               <SelectTrigger className="h-11 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800">
                 <SelectValue />
@@ -130,7 +131,7 @@ export function AddWeekItemDialog({ open, onOpenChange, weekNumber, onAdd }: Add
 
           {(type === "assignment" || type === "quiz") && (
             <div className="space-y-2.5">
-              <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Description</Label>
+              <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">{tr(t.tasks.description)}</Label>
               <Textarea
                 placeholder="Add some details about this task..."
                 value={description}
@@ -143,13 +144,13 @@ export function AddWeekItemDialog({ open, onOpenChange, weekNumber, onAdd }: Add
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
               <Label className={needsDueDate ? "" : "text-muted-foreground"}>
-                {isExam ? "Exam Date" : "Due Date"}
+                {isExam ? tr(t.courseDetails.examDateLabel) : tr(t.courseDetails.dueDateLabel)}
               </Label>
               <Input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="h-10" />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-muted-foreground">{isExam ? "Time" : "Due Time"}</Label>
+              <Label className="text-muted-foreground">{isExam ? tr(t.courseDetails.timeLabel) : tr(t.courseDetails.dueTimeLabel)}</Label>
               <Input type="time" value={dueTime} onChange={e => setDueTime(e.target.value)} className="h-10" disabled={!dueDate} />
             </div>
           </div>
@@ -157,12 +158,12 @@ export function AddWeekItemDialog({ open, onOpenChange, weekNumber, onAdd }: Add
           {isExam && (
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label className="text-muted-foreground">Duration (min)</Label>
+                <Label className="text-muted-foreground">{tr(t.courseDetails.durationLabel)}</Label>
                 <Input type="number" value={duration} onChange={e => setDuration(e.target.value)} className="h-10" min={15} />
               </div>
               <div className="space-y-2">
-                <Label className="text-muted-foreground">Location</Label>
-                <Input placeholder="e.g. Room 201" value={location} onChange={e => setLocation(e.target.value)} className="h-10" />
+                <Label className="text-muted-foreground">{tr(t.courseDetails.locationLabel)}</Label>
+                <Input placeholder={tr(t.courseDetails.locationPh)} value={location} onChange={e => setLocation(e.target.value)} className="h-10" />
               </div>
             </div>
           )}
@@ -177,8 +178,8 @@ export function AddWeekItemDialog({ open, onOpenChange, weekNumber, onAdd }: Add
         </div>
 
         <DialogFooter className="gap-2 pt-4 border-t border-slate-100 dark:border-slate-800">
-          <Button variant="ghost" onClick={() => onOpenChange(false)} className="rounded-xl font-medium">Cancel</Button>
-          <Button onClick={handleSave} disabled={!canSave} className="rounded-xl font-medium bg-blue-600 hover:bg-blue-700 text-white shadow-sm disabled:opacity-50">Add Task</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)} className="rounded-xl font-medium">{tr(t.actions.cancel)}</Button>
+          <Button onClick={handleSave} disabled={!canSave} className="rounded-xl font-medium bg-blue-600 hover:bg-blue-700 text-white shadow-sm disabled:opacity-50">{tr(t.tasksPage.addTask)}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

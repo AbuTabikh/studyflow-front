@@ -1,29 +1,31 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 export function ColorLegend() {
+  const { tr, t } = useTranslation();
   const legend = [
-    { type: "Task", color: "bg-blue-500", description: "Study tasks" },
-    { type: "Assignment", color: "bg-orange-500", description: "Assignments" },
-    { type: "Quiz", color: "bg-yellow-500", description: "Quizzes" },
+    { type: tr(t.calendar.legendTask), color: "bg-blue-500", description: tr(t.calendar.legendStudyTasks) },
+    { type: tr(t.calendar.legendAssignment), color: "bg-orange-500", description: tr(t.calendar.legendAssignments) },
+    { type: tr(t.calendar.legendQuiz), color: "bg-yellow-500", description: tr(t.calendar.legendQuizzes) },
     {
-      type: "Exam/Final",
+      type: tr(t.calendar.legendExam),
       color: "bg-red-600",
-      description: "Important exams",
+      description: tr(t.calendar.legendImportant),
     },
     {
-      type: "Completed",
+      type: tr(t.calendar.legendCompleted),
       color: "bg-green-500",
-      description: "Completed items",
+      description: tr(t.calendar.legendCompletedItems),
     },
-    { type: "Overdue", color: "bg-red-700", description: "Overdue items" },
+    { type: tr(t.calendar.legendOverdue), color: "bg-red-700", description: tr(t.calendar.legendOverdueItems) },
   ];
 
   return (
     <Card className="p-4 border-slate-200 dark:border-slate-800">
       <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">
-        Legend
+        {tr(t.calendar.legend)}
       </h3>
       <div className="space-y-2">
         {legend.map((item) => (

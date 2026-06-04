@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PlannerSemester, PlannerSemesterStatus } from "@/types/academic-planning";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface AddSemesterDialogProps {
   open: boolean;
@@ -22,6 +23,7 @@ function generateId() {
 }
 
 export function AddSemesterDialog({ open, onOpenChange, onSave, initialData }: AddSemesterDialogProps) {
+  const { tr, t } = useTranslation();
   const [name, setName] = useState("");
   const [status, setStatus] = useState<PlannerSemesterStatus>("planned");
   const [weeksCount, setWeeksCount] = useState<number>(16);
@@ -60,14 +62,14 @@ export function AddSemesterDialog({ open, onOpenChange, onSave, initialData }: A
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px] rounded-2xl">
         <DialogHeader>
-          <DialogTitle className="text-xl">{initialData ? "Edit Semester" : "Add Semester"}</DialogTitle>
+          <DialogTitle className="text-xl">{initialData ? tr(t.academicPlanning.editSemester) : tr(t.academicPlanning.addSemester)}</DialogTitle>
         </DialogHeader>
         <div className="grid gap-5 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="semester-name" className="text-muted-foreground font-semibold">Semester Name <span className="text-red-500">*</span></Label>
+            <Label htmlFor="semester-name" className="text-muted-foreground font-semibold">{tr(t.academicPlanning.semesterName)} <span className="text-red-500">*</span></Label>
             <Input
               id="semester-name"
-              placeholder="e.g. Fall 2024"
+              placeholder={tr(t.academicPlanning.semesterNamePh)}
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="h-11 placeholder:text-muted-foreground/50"
@@ -76,17 +78,17 @@ export function AddSemesterDialog({ open, onOpenChange, onSave, initialData }: A
 
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="academic-year" className="text-muted-foreground font-semibold">Academic Year</Label>
+              <Label htmlFor="academic-year" className="text-muted-foreground font-semibold">{tr(t.academicPlanning.academicYear)}</Label>
               <Input
                 id="academic-year"
-                placeholder="e.g. 2024/2025"
+                placeholder={tr(t.academicPlanning.academicYearPh)}
                 value={academicYear}
                 onChange={(e) => setAcademicYear(e.target.value)}
                 className="h-11 placeholder:text-muted-foreground/50"
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="weeks-count" className="text-muted-foreground font-semibold">Num. of Weeks <span className="text-red-500">*</span></Label>
+              <Label htmlFor="weeks-count" className="text-muted-foreground font-semibold">{tr(t.academicPlanning.numWeeks)} <span className="text-red-500">*</span></Label>
               <Input
                 id="weeks-count"
                 type="number"
@@ -100,22 +102,22 @@ export function AddSemesterDialog({ open, onOpenChange, onSave, initialData }: A
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="semester-status" className="text-muted-foreground font-semibold">Timeline Status</Label>
+            <Label htmlFor="semester-status" className="text-muted-foreground font-semibold">{tr(t.academicPlanning.timelineStatus)}</Label>
             <Select value={status} onValueChange={(val: PlannerSemesterStatus) => setStatus(val)}>
               <SelectTrigger id="semester-status" className="h-11">
-                <SelectValue placeholder="Select status" />
+                <SelectValue placeholder={tr(t.academicPlanning.selectStatus)} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="planned">Planned for Future</SelectItem>
-                <SelectItem value="current">Currently In Progress</SelectItem>
-                <SelectItem value="completed">Completed / Graded</SelectItem>
+                <SelectItem value="planned">{tr(t.academicPlanning.planned)}</SelectItem>
+                <SelectItem value="current">{tr(t.academicPlanning.inProgress)}</SelectItem>
+                <SelectItem value="completed">{tr(t.academicPlanning.completed)}</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
         <DialogFooter className="gap-2 sm:gap-0">
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl w-full sm:w-auto h-11">Cancel</Button>
-          <Button onClick={handleSave} disabled={!name.trim()} className="rounded-xl w-full sm:w-auto h-11">Save Semester</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl w-full sm:w-auto h-11">{tr(t.actions.cancel)}</Button>
+          <Button onClick={handleSave} disabled={!name.trim()} className="rounded-xl w-full sm:w-auto h-11">{tr(t.academicPlanning.saveSemester)}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

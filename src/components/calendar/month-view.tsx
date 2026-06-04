@@ -2,6 +2,7 @@
 
 import { CalendarEvent, getEventColor } from "@/lib/calendar-utils";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface MonthViewProps {
   events: CalendarEvent[];
@@ -18,6 +19,7 @@ export function MonthView({
   onDateClick,
   activeDays = [],
 }: MonthViewProps) {
+  const { tr, t } = useTranslation();
   const firstDay = new Date(
     currentDate.getFullYear(),
     currentDate.getMonth(),

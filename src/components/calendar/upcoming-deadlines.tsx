@@ -3,6 +3,7 @@
 import { Card } from "@/components/ui/card";
 import { CalendarEvent, getEventDot } from "@/lib/calendar-utils";
 import { Clock, AlertCircle } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface UpcomingDeadlinesProps {
   events: CalendarEvent[];
@@ -13,6 +14,7 @@ export function UpcomingDeadlines({
   events,
   onEventClick,
 }: UpcomingDeadlinesProps) {
+  const { tr, t } = useTranslation();
   const now = new Date();
   const next7Days = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
@@ -51,12 +53,12 @@ export function UpcomingDeadlines({
   return (
     <Card className="p-4 border-slate-200 dark:border-slate-800">
       <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">
-        Upcoming (7 days)
+        {tr(t.calendar.upcomingDays)}
       </h3>
 
       {upcomingEvents.length === 0 ? (
         <p className="text-xs text-slate-500 dark:text-slate-400 py-4 text-center">
-          No upcoming events
+          {tr(t.calendar.noUpcomingDeadlines)}
         </p>
       ) : (
         <div className="space-y-2 max-h-64 overflow-y-auto">

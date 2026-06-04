@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { GraduationCap, Percent, CheckCircle2 } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface AcademicPlannerStatsProps {
   cumulativeAverage: number | null;
@@ -19,7 +20,7 @@ export function AcademicPlannerStats({
   plannedCredits,
   estimatedSemestersLeft
 }: AcademicPlannerStatsProps) {
-  
+  const { tr, t } = useTranslation();
   const remainingCredits = Math.max(0, totalRequiredCredits - passedCredits);
   const progressPercentage = Math.min(100, Math.round((passedCredits / totalRequiredCredits) * 100));
 
@@ -29,7 +30,7 @@ export function AcademicPlannerStats({
       {/* Average Card */}
       <Card className="border shadow-sm bg-card hover:shadow-md transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Cumulative Average</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">{tr(t.academicPlanning.statsAverage)}</CardTitle>
           <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
             <Percent className="h-4 w-4 text-blue-600" />
           </div>
@@ -37,10 +38,10 @@ export function AcademicPlannerStats({
         <CardContent>
           <div className="text-4xl font-bold tracking-tight text-foreground">
             {cumulativeAverage !== null ? cumulativeAverage.toFixed(1) : "--"}
-            <span className="text-base font-normal text-muted-foreground ml-1">/ 100</span>
+            <span className="text-base font-normal text-muted-foreground ml-1">{tr(t.academicPlanning.statsAverageSuffix)}</span>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            {cumulativeAverage !== null ? "Based on weighted numeric grades" : "Complete courses to calculate average"}
+            {cumulativeAverage !== null ? tr(t.academicPlanning.statsAverageDesc) : tr(t.academicPlanning.statsAverageEmpty)}
           </p>
         </CardContent>
       </Card>
@@ -48,7 +49,7 @@ export function AcademicPlannerStats({
       {/* Degree Progress Card */}
       <Card className="border shadow-sm bg-card hover:shadow-md transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Passed Credit Hours</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">{tr(t.academicPlanning.statsCredits)}</CardTitle>
           <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
             <CheckCircle2 className="h-4 w-4 text-emerald-600" />
           </div>
@@ -64,7 +65,7 @@ export function AcademicPlannerStats({
           </div>
           <Progress value={progressPercentage} className="h-2.5 bg-muted"  />
           <p className="text-xs text-muted-foreground mt-3">
-             {remainingCredits} hours remaining out of {totalRequiredCredits}
+             {remainingCredits} {tr(t.academicPlanning.statsHoursRemainingOf)} {totalRequiredCredits}
           </p>
         </CardContent>
       </Card>
@@ -72,7 +73,7 @@ export function AcademicPlannerStats({
       {/* Remaining Estimate Card & Credits Info */}
       <Card className="border shadow-sm bg-card hover:shadow-md transition-shadow flex flex-col justify-between">
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Estimated Timeline</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">{tr(t.academicPlanning.statsTimeline)}</CardTitle>
           <div className="w-8 h-8 rounded-full bg-orange-500/10 flex items-center justify-center">
             <GraduationCap className="h-4 w-4 text-orange-600" />
           </div>
@@ -81,18 +82,18 @@ export function AcademicPlannerStats({
           <div>
             <div className="text-3xl font-bold text-foreground flex items-baseline gap-1">
               {estimatedSemestersLeft > 0 ? "~" + Math.ceil(estimatedSemestersLeft * 10) / 10 : "0"}
-              <span className="text-sm font-medium text-muted-foreground">semesters left</span>
+              <span className="text-sm font-medium text-muted-foreground">{tr(t.academicPlanning.statsSemestersLeft)}</span>
             </div>
           </div>
           
           <div className="grid grid-cols-2 gap-2 mt-auto pt-3 border-t border-border/50">
              <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                <div className="text-xs text-muted-foreground font-medium">{inProgressCredits} hr in progress</div>
+                <div className="text-xs text-muted-foreground font-medium">{inProgressCredits} {tr(t.academicPlanning.statsHrsInProgress)}</div>
              </div>
              <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground"></div>
-                <div className="text-xs text-muted-foreground font-medium">{plannedCredits} hr planned</div>
+                <div className="text-xs text-muted-foreground font-medium">{plannedCredits} {tr(t.academicPlanning.statsHrsPlanned)}</div>
              </div>
           </div>
         </CardContent>

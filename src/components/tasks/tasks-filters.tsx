@@ -2,6 +2,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Filter, ArrowDownUp } from "lucide-react";
 import { TaskStatus, TaskPriority, TaskType } from "@/types/tasks";
 import { TASK_TYPE_LABELS } from "@/lib/tasks/utils";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface TasksFiltersProps {
   statusFilter: TaskStatus | "overdue" | "all";
@@ -22,12 +23,12 @@ export function TasksFilters({
   sortBy, setSortBy,
   availableTypes = ["general", "study-task", "assignment", "quiz", "exam", "self-learning-milestone"] // Default to all if none passed
 }: TasksFiltersProps) {
-  
+  const { tr, t } = useTranslation();
   return (
     <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-muted/20 p-4 rounded-2xl border border-border/50">
        <div className="flex items-center gap-2 px-1 text-sm font-medium text-muted-foreground w-full xl:w-auto shrink-0">
           <Filter className="w-4 h-4" />
-          <span>Filters & Sort</span>
+          <span>{tr(t.tasksPage.filtersSort)}</span>
        </div>
        
        <div className="flex flex-wrap items-center gap-3 w-full xl:justify-end">
@@ -37,11 +38,11 @@ export function TasksFilters({
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="todo">To Do</SelectItem>
-              <SelectItem value="in-progress">In Progress</SelectItem>
-              <SelectItem value="overdue">Overdue</SelectItem>
-              <SelectItem value="done">Done</SelectItem>
+              <SelectItem value="all">{tr(t.tasksPage.allStatus)}</SelectItem>
+              <SelectItem value="todo">{tr(t.tasksPage.toDo)}</SelectItem>
+              <SelectItem value="in-progress">{tr(t.tasksPage.inProgress)}</SelectItem>
+              <SelectItem value="overdue">{tr(t.tasksPage.overdueTasks)}</SelectItem>
+              <SelectItem value="done">{tr(t.tasksPage.done)}</SelectItem>
             </SelectContent>
           </Select>
 
@@ -51,10 +52,10 @@ export function TasksFilters({
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Priorities</SelectItem>
-              <SelectItem value="high">High</SelectItem>
-              <SelectItem value="medium">Medium</SelectItem>
-              <SelectItem value="low">Low</SelectItem>
+              <SelectItem value="all">{tr(t.tasksPage.allPriorities)}</SelectItem>
+              <SelectItem value="high">{tr(t.tasksPage.high)}</SelectItem>
+              <SelectItem value="medium">{tr(t.tasksPage.medium)}</SelectItem>
+              <SelectItem value="low">{tr(t.tasksPage.low)}</SelectItem>
             </SelectContent>
           </Select>
 
@@ -64,7 +65,7 @@ export function TasksFilters({
               <SelectValue placeholder="Task Type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value="all">{tr(t.tasksPage.allTypes)}</SelectItem>
               {availableTypes.map((t) => (
                   <SelectItem key={t} value={t}>{TASK_TYPE_LABELS[t]}</SelectItem>
               ))}
@@ -83,10 +84,10 @@ export function TasksFilters({
               </div>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="nearest-date">Nearest Deadline</SelectItem>
-              <SelectItem value="priority">Highest Priority</SelectItem>
-              <SelectItem value="newest">Newest First</SelectItem>
-              <SelectItem value="oldest">Oldest First</SelectItem>
+              <SelectItem value="nearest-date">{tr(t.tasksPage.nearestDeadline)}</SelectItem>
+              <SelectItem value="priority">{tr(t.tasksPage.highestPriority)}</SelectItem>
+              <SelectItem value="newest">{tr(t.tasksPage.newestFirst)}</SelectItem>
+              <SelectItem value="oldest">{tr(t.tasksPage.oldestFirst)}</SelectItem>
             </SelectContent>
           </Select>
 

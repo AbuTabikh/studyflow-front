@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Clock, MapPin, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface AgendaViewProps {
   events: CalendarEvent[];
@@ -22,6 +23,7 @@ export function AgendaView({
   currentDate,
   onEventClick,
 }: AgendaViewProps) {
+  const { tr, t } = useTranslation();
   const now = new Date();
   const next30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
@@ -81,7 +83,7 @@ export function AgendaView({
       {Object.entries(groupedEvents).length === 0 ? (
         <Card className="p-8 text-center">
           <p className="text-slate-500 dark:text-slate-400">
-            No upcoming events in the next 30 days
+            {tr(t.calendar.noEventsNext30)}
           </p>
         </Card>
       ) : (
@@ -94,12 +96,12 @@ export function AgendaView({
               </div>
               {isDueToday(dateKey) && (
                 <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border-0 text-xs">
-                  Today
+                  {tr(t.calendar.today)}
                 </Badge>
               )}
               {isDueSoon(dateKey) && !isDueToday(dateKey) && (
                 <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300 border-0 text-xs">
-                  Soon
+                  {tr(t.calendar.soon)}
                 </Badge>
               )}
             </div>
@@ -159,7 +161,7 @@ export function AgendaView({
                             event.status !== "completed" && (
                               <span className="flex items-center gap-1 text-red-600 dark:text-red-400">
                                 <AlertCircle className="h-3 w-3" />
-                                Overdue
+                                {tr(t.calendar.legendOverdue)}
                               </span>
                             )}
                         </div>

@@ -2,15 +2,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type SelfLearningStats as StatsType } from "@/types/self-learning";
 import { BookOpen, Zap, CheckCircle2, CalendarCheck } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface StatsProps { stats: StatsType; }
 
 export function SelfLearningStats({ stats }: StatsProps) {
+  const { tr, t } = useTranslation();
   const cards = [
-    { key: "total", title: "Total Plans", subtitle: "All learning plans created", icon: BookOpen, color: "text-violet-600", bg: "bg-violet-500/10" },
-    { key: "active", title: "Active", subtitle: "Currently in progress", icon: Zap, color: "text-blue-600", bg: "bg-blue-500/10" },
-    { key: "completed", title: "Completed", subtitle: "Fully finished plans", icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-500/10" },
-    { key: "upcomingMilestones", title: "Upcoming Milestones", subtitle: "Pending goals to achieve", icon: CalendarCheck, color: "text-orange-600", bg: "bg-orange-500/10" },
+    { key: "total", title: tr(t.selfLearning.statsTotal), subtitle: tr(t.selfLearning.statsTotalDesc), icon: BookOpen, color: "text-violet-600", bg: "bg-violet-500/10" },
+    { key: "active", title: tr(t.selfLearning.active), subtitle: tr(t.selfLearning.statsActiveDesc), icon: Zap, color: "text-blue-600", bg: "bg-blue-500/10" },
+    { key: "completed", title: tr(t.selfLearning.completed), subtitle: tr(t.selfLearning.statsCompletedDesc), icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-500/10" },
+    { key: "upcomingMilestones", title: tr(t.selfLearning.statsMilestones), subtitle: tr(t.selfLearning.statsMilestonesDesc), icon: CalendarCheck, color: "text-orange-600", bg: "bg-orange-500/10" },
   ] as const;
 
   return (

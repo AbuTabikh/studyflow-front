@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { SelfLearningTask } from "@/types/self-learning";
 import { generatePlanId } from "@/lib/self-learning/utils";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface StageTasksListProps {
   tasks: SelfLearningTask[];
@@ -16,6 +17,7 @@ interface StageTasksListProps {
 }
 
 export function StageTasksList({ tasks, onTasksChange }: StageTasksListProps) {
+  const { tr, t } = useTranslation();
   const [showAddForm, setShowAddForm] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newDate, setNewDate] = useState("");
@@ -54,7 +56,7 @@ export function StageTasksList({ tasks, onTasksChange }: StageTasksListProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-semibold flex items-center gap-2">
-          Tasks & Assignments
+          {tr(t.selfLearning.stageTasksTitle)}
           <span className="text-xs font-normal text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">
             {tasks.filter(t => t.completed).length}/{tasks.length}
           </span>
@@ -65,16 +67,16 @@ export function StageTasksList({ tasks, onTasksChange }: StageTasksListProps) {
           onClick={() => setShowAddForm(!showAddForm)}
           className="h-7 px-2 text-xs gap-1"
         >
-          {showAddForm ? "Cancel" : <><Plus className="h-3 w-3" /> Add Task</>}
+          {showAddForm ? tr(t.actions.cancel) : <><Plus className="h-3 w-3" /> {tr(t.selfLearning.stageTasksAdd)}</>}
         </Button>
       </div>
 
       {showAddForm && (
         <div className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 space-y-3 animate-in fade-in slide-in-from-top-1">
           <div className="space-y-2">
-            <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">Task Title</Label>
-            <Input 
-              placeholder="What needs to be done?" 
+            <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">{tr(t.selfLearning.stageTasksTitleLabel)}</Label>
+            <Input
+              placeholder={tr(t.selfLearning.stageTasksTitlePh)}
               value={newTitle} 
               onChange={(e) => setNewTitle(e.target.value)}
               className="h-8 text-sm"
@@ -83,7 +85,7 @@ export function StageTasksList({ tasks, onTasksChange }: StageTasksListProps) {
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div className="space-y-2">
-              <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">Due Date</Label>
+              <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">{tr(t.selfLearning.stageTasksDueDate)}</Label>
               <Input 
                 type="date" 
                 value={newDate} 
@@ -92,7 +94,7 @@ export function StageTasksList({ tasks, onTasksChange }: StageTasksListProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">Time</Label>
+              <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">{tr(t.selfLearning.stageTasksTime)}</Label>
               <Input 
                 type="time" 
                 value={newTime} 
@@ -102,8 +104,8 @@ export function StageTasksList({ tasks, onTasksChange }: StageTasksListProps) {
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-1">
-            <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setShowAddForm(false)}>Cancel</Button>
-            <Button size="sm" className="h-7 text-xs" onClick={handleAddTask} disabled={!newTitle.trim()}>Save Task</Button>
+            <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setShowAddForm(false)}>{tr(t.actions.cancel)}</Button>
+            <Button size="sm" className="h-7 text-xs" onClick={handleAddTask} disabled={!newTitle.trim()}>{tr(t.selfLearning.saveTask)}</Button>
           </div>
         </div>
       )}
@@ -111,7 +113,7 @@ export function StageTasksList({ tasks, onTasksChange }: StageTasksListProps) {
       <div className="space-y-2">
         {tasks.length === 0 && !showAddForm ? (
           <p className="text-xs text-center py-4 text-muted-foreground italic bg-muted/20 rounded-lg border border-dashed">
-            No tasks added to this stage yet.
+            {tr(t.selfLearning.noStageTasks)}
           </p>
         ) : (
           tasks.map((task) => (

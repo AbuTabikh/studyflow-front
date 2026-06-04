@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { SmilePlus, Smile, Meh, Frown, Coffee, CloudRain, CalendarDays, MoreVertical, Edit2, Trash2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface ReflectionCardProps {
   reflection: ReflectionEntry;
@@ -14,6 +15,7 @@ interface ReflectionCardProps {
 }
 
 export function ReflectionCard({ reflection, onView, onEdit, onDelete }: ReflectionCardProps) {
+  const { tr, t } = useTranslation();
   const moodInfo = getMoodInfo(reflection.mood);
   
   const renderMoodIcon = (iconName: string, className: string) => {
@@ -75,10 +77,10 @@ export function ReflectionCard({ reflection, onView, onEdit, onDelete }: Reflect
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-40">
                     <DropdownMenuItem onClick={() => onEdit(reflection)} className="cursor-pointer">
-                      <Edit2 className="w-4 h-4 mr-2" /> Edit
+                      <Edit2 className="w-4 h-4 mr-2" /> {tr(t.actions.edit)}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => onDelete(reflection.id)} className="text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer">
-                      <Trash2 className="w-4 h-4 mr-2" /> Delete
+                      <Trash2 className="w-4 h-4 mr-2" /> {tr(t.actions.delete)}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
