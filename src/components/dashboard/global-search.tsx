@@ -7,9 +7,11 @@ import { useAppState } from "@/hooks/use-app-state";
 import { selectSearchItems, SearchItem } from "@/lib/store/app-selectors";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 export function GlobalSearch() {
   const { state } = useAppState();
+  const { tr, t } = useTranslation();
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -63,7 +65,7 @@ export function GlobalSearch() {
         )} />
         <Input
           type="search"
-          placeholder="Search courses, tasks, exams..."
+          placeholder={tr(t.search.placeholder)}
           className="pl-10 pr-10 bg-muted/50 border-0 focus-visible:ring-1 focus-visible:ring-primary/30 transition-all rounded-xl h-10 w-full"
           value={query}
           onChange={(e) => {
@@ -86,7 +88,7 @@ export function GlobalSearch() {
         <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
           <div className="p-2">
             <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">
-              Quick Results
+              {tr(t.search.quickResults)}
             </div>
             {filteredResults.map((item: SearchItem) => (
               <button
@@ -116,7 +118,7 @@ export function GlobalSearch() {
           </div>
           <div className="p-2 bg-muted/20 border-t border-border/50 text-center">
              <div className="text-[10px] text-muted-foreground">
-               Press <kbd className="font-sans px-1 rounded border bg-background">ESC</kbd> to close
+               Press <kbd className="font-sans px-1 rounded border bg-background">ESC</kbd> {tr(t.search.escClose)}
              </div>
           </div>
         </div>
@@ -127,8 +129,8 @@ export function GlobalSearch() {
           <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto mb-3">
              <Search className="h-6 w-6 text-muted-foreground/40" />
           </div>
-          <h3 className="text-sm font-semibold mb-1">No results found</h3>
-          <p className="text-xs text-muted-foreground">We couldn't find anything matching "{query}"</p>
+          <h3 className="text-sm font-semibold mb-1">{tr(t.search.noResults)}</h3>
+          <p className="text-xs text-muted-foreground">{tr(t.search.noResultsFor)} &quot;{query}&quot;</p>
         </div>
       )}
     </div>

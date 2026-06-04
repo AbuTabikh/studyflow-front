@@ -14,9 +14,11 @@ import { TasksEmptyState } from "@/components/tasks/tasks-empty-state";
 import { HeaderSkeleton, ListSkeleton } from "@/components/shared/skeletons";
 import { ConfirmActionDialog } from "@/components/shared/confirm-action-dialog";
 import { TaskService } from "@/services/task.service";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 export default function TasksClient() {
   const { state, isLoaded, saveUnifiedTask, deleteUnifiedTask } = useAppState();
+  const { tr, t } = useTranslation();
   const tasks = useMemo(() => selectUnifiedTasks(state), [state]);
 
   // Dialog state
@@ -114,12 +116,12 @@ export default function TasksClient() {
           <TasksEmptyState onAddTask={handleAddClick} />
         ) : displayedTasks.length === 0 ? (
           <div className="text-center py-16 border border-dashed rounded-2xl border-border/60 text-muted-foreground bg-muted/20">
-            <p>No tasks match your current filters.</p>
+            <p>{tr(t.tasksPage.noMatch)}</p>
             <button
               onClick={() => { setStatusFilter("all"); setPriorityFilter("all"); setTypeFilter("all"); }}
               className="mt-2 text-primary font-medium hover:underline text-sm"
             >
-              Clear Filters
+              {tr(t.tasksPage.clearFilters)}
             </button>
           </div>
         ) : (
@@ -144,9 +146,9 @@ export default function TasksClient() {
 
       <ConfirmActionDialog
         isOpen={!!taskToDelete}
-        title="Delete Task"
-        description="Are you sure you want to delete this task? This action cannot be undone."
-        confirmText="Delete"
+        title={tr(t.tasksPage.deleteTask)}
+        description={tr(t.tasksPage.deleteTaskMsg)}
+        confirmText={tr(t.actions.delete)}
         onConfirm={confirmDelete}
         onCancel={() => setTaskToDelete(null)}
       />

@@ -39,38 +39,8 @@ import { PlanResourcesPanel } from "@/components/self-learning/plan-resources-pa
 import { ReminderBadge } from "@/components/shared/reminder-badge";
 import { ConfirmActionDialog } from "@/components/shared/confirm-action-dialog";
 import { useAppState } from "@/hooks/use-app-state";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
-const STATUS_BADGE: Record<
-  LearningPlan["status"],
-  { label: string; className: string; icon: React.ReactNode }
-> = {
-  active: {
-    label: "Active",
-    className: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border-0",
-    icon: <Zap className="w-3 h-3" />,
-  },
-  planned: {
-    label: "Planned",
-    className: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border-0",
-    icon: <BookOpen className="w-3 h-3" />,
-  },
-  completed: {
-    label: "Completed",
-    className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-0",
-    icon: <CheckCircle2 className="w-3 h-3" />,
-  },
-  paused: {
-    label: "Paused",
-    className: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 border-0",
-    icon: <PauseCircle className="w-3 h-3" />,
-  },
-};
-
-const STAGE_STATUS: Record<LearningStage["status"], { label: string; color: string }> = {
-  "not-started": { label: "Not Started", color: "text-muted-foreground" },
-  active: { label: "Active", color: "text-blue-600 dark:text-blue-400" },
-  completed: { label: "Completed", color: "text-emerald-600 dark:text-emerald-400" },
-};
 
 export function SelfLearningDetailClient() {
   const params = useParams();
@@ -78,6 +48,39 @@ export function SelfLearningDetailClient() {
   const planId = params.id as string;
 
   const { state, isLoaded, updateState } = useAppState();
+  const { tr, t } = useTranslation();
+
+  const STATUS_BADGE: Record<
+    LearningPlan["status"],
+    { label: string; className: string; icon: React.ReactNode }
+  > = {
+    active: {
+      label: tr(t.selfLearning.active),
+      className: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border-0",
+      icon: <Zap className="w-3 h-3" />,
+    },
+    planned: {
+      label: tr(t.selfLearning.planned),
+      className: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border-0",
+      icon: <BookOpen className="w-3 h-3" />,
+    },
+    completed: {
+      label: tr(t.selfLearning.completed),
+      className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-0",
+      icon: <CheckCircle2 className="w-3 h-3" />,
+    },
+    paused: {
+      label: tr(t.selfLearning.paused),
+      className: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 border-0",
+      icon: <PauseCircle className="w-3 h-3" />,
+    },
+  };
+
+  const STAGE_STATUS: Record<LearningStage["status"], { label: string; color: string }> = {
+    "not-started": { label: tr(t.selfLearning.notStarted), color: "text-muted-foreground" },
+    active: { label: tr(t.selfLearning.active), color: "text-blue-600 dark:text-blue-400" },
+    completed: { label: tr(t.selfLearning.completed), color: "text-emerald-600 dark:text-emerald-400" },
+  };
 
   const plan = useMemo(() => {
     return state.selfLearningPlans.find((p) => p.id === planId) || null;
@@ -232,18 +235,18 @@ export function SelfLearningDetailClient() {
                   )}
                   <span className="flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
-                    Started {formatDate(plan.startDate)}
+                    {tr(t.selfLearning.started)} {formatDate(plan.startDate)}
                   </span>
                   {plan.endDate && (
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
-                      Ends {formatDate(plan.endDate)}
+                      {tr(t.selfLearning.ends)} {formatDate(plan.endDate)}
                     </span>
                   )}
                 </div>
               </div>
               <Button size="sm" variant="outline" onClick={() => setEditPlanOpen(true)} className="gap-2 rounded-xl shrink-0">
-                <Pencil className="h-4 w-4" /> Edit Plan
+                <Pencil className="h-4 w-4" /> {tr(t.selfLearning.editPlan)}
               </Button>
             </div>
           </CardContent>
@@ -252,10 +255,10 @@ export function SelfLearningDetailClient() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Overall Progress", value: `${progress}%`, sub: "stages completed" },
-          { label: "Stages", value: `${completedStages}/${plan.stages.length}`, sub: "completed" },
-          { label: "Milestones", value: `${completedMilestones}/${plan.milestones.length}`, sub: "achieved" },
-          { label: "Resources", value: `${plan.resources.length}`, sub: "attached" },
+          { label: tr(t.selfLearning.overallProgress), value: `${progress}%`, sub: tr(t.selfLearning.stagesCompleted) },
+          { label: tr(t.selfLearning.stages), value: `${completedStages}/${plan.stages.length}`, sub: tr(t.selfLearning.completed) },
+          { label: tr(t.selfLearning.milestones), value: `${completedMilestones}/${plan.milestones.length}`, sub: tr(t.selfLearning.achieved) },
+          { label: tr(t.selfLearning.resources), value: `${plan.resources.length}`, sub: tr(t.selfLearning.attached) },
         ].map(({ label, value, sub }) => (
           <Card key={label} className="border-border/60 shadow-sm">
             <CardContent className="pt-4 pb-4 text-center">
@@ -270,13 +273,13 @@ export function SelfLearningDetailClient() {
       <Card className="border-border/60 shadow-sm">
         <CardContent className="pt-5 space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="font-medium text-foreground">Learning Progress</span>
+            <span className="font-medium text-foreground">{tr(t.selfLearning.learningProgress)}</span>
             <span className="font-bold text-foreground tabular-nums">{progress}%</span>
           </div>
           <Progress value={progress} className="h-3 rounded-full" />
           {progress === 100 && (
             <p className="text-sm text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
-              <CheckCircle2 className="w-4 h-4" /> All stages completed! Amazing work.
+              <CheckCircle2 className="w-4 h-4" /> {tr(t.selfLearning.allStagesDone)}
             </p>
           )}
         </CardContent>
@@ -285,17 +288,17 @@ export function SelfLearningDetailClient() {
       <div className="grid lg:grid-cols-3 gap-6 items-start">
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-foreground">Stages</h2>
+            <h2 className="text-xl font-bold text-foreground">{tr(t.selfLearning.stages)}</h2>
             <Button size="sm" onClick={() => { setEditingStage(null); setStageDialogOpen(true); }} className="gap-1.5 rounded-xl">
-              <Plus className="h-4 w-4" /> Add Stage
+              <Plus className="h-4 w-4" /> {tr(t.selfLearning.addStage)}
             </Button>
           </div>
 
           {plan.stages.length === 0 ? (
             <div className="py-12 text-center border-2 border-dashed border-border/50 rounded-2xl text-muted-foreground bg-muted/10">
-              <p className="text-sm">No stages yet. Break your plan into learning stages.</p>
+              <p className="text-sm">{tr(t.selfLearning.noStagesYet)}</p>
               <Button size="sm" variant="ghost" onClick={() => setStageDialogOpen(true)} className="mt-2 gap-1">
-                <Plus className="h-3.5 w-3.5" /> Add First Stage
+                <Plus className="h-3.5 w-3.5" /> {tr(t.selfLearning.addFirstStage)}
               </Button>
             </div>
           ) : (
@@ -320,13 +323,13 @@ export function SelfLearningDetailClient() {
                             <span className="font-semibold text-foreground text-sm">{stage.title}</span>
                             <span className={cn("text-xs font-medium", ss.color)}>{ss.label}</span>
                           </div>
-                          {stage.targetDuration && <p className="text-xs text-muted-foreground mt-0.5">Duration: {stage.targetDuration}</p>}
+                          {stage.targetDuration && <p className="text-xs text-muted-foreground mt-0.5">{tr(t.selfLearning.durationLabel)} {stage.targetDuration}</p>}
                         </div>
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0">
                         {stage.status !== "completed" && (
                           <Button size="sm" variant="ghost" className="text-xs gap-1 h-7 px-2 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20" onClick={() => handleCompleteStage(stage.id)}>
-                            <CheckCircle2 className="h-3.5 w-3.5" /> Done
+                            <CheckCircle2 className="h-3.5 w-3.5" /> {tr(t.selfLearning.done)}
                           </Button>
                         )}
                         <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => { setEditingStage(stage); setStageDialogOpen(true); }}>
@@ -344,18 +347,18 @@ export function SelfLearningDetailClient() {
                         </div>
                         {stage.description && (
                           <div className="space-y-1">
-                            <p className="text-xs font-semibold text-foreground">Overview</p>
+                            <p className="text-xs font-semibold text-foreground">{tr(t.selfLearning.overview)}</p>
                             <p className="text-sm text-muted-foreground">{stage.description}</p>
                           </div>
                         )}
                         {stage.goals && (
                           <div>
-                            <p className="text-xs font-semibold text-foreground mb-1">Goals</p>
+                            <p className="text-xs font-semibold text-foreground mb-1">{tr(t.selfLearning.goals)}</p>
                             <div className="text-sm text-muted-foreground whitespace-pre-line bg-background/50 p-3 rounded-lg border border-border/40 font-medium leading-relaxed">{stage.goals}</div>
                           </div>
                         )}
                         {!stage.description && !stage.goals && !stage.tasks?.length && (
-                          <p className="text-sm text-muted-foreground italic">No details or tasks added yet.</p>
+                          <p className="text-sm text-muted-foreground italic">{tr(t.selfLearning.noDetailsYet)}</p>
                         )}
                       </div>
                     )}
@@ -367,18 +370,18 @@ export function SelfLearningDetailClient() {
 
           <div className="flex items-center justify-between mt-6">
             <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-              <Flag className="h-5 w-5 text-amber-500" /> Milestones
+              <Flag className="h-5 w-5 text-amber-500" /> {tr(t.selfLearning.milestones)}
             </h2>
             <Button size="sm" onClick={() => { setEditingMilestone(null); setMilestoneDialogOpen(true); }} className="gap-1.5 rounded-xl">
-              <Plus className="h-4 w-4" /> Add Milestone
+              <Plus className="h-4 w-4" /> {tr(t.selfLearning.addMilestone)}
             </Button>
           </div>
 
           {plan.milestones.length === 0 ? (
             <div className="py-10 text-center border-2 border-dashed border-border/50 rounded-2xl text-muted-foreground bg-muted/10">
-              <p className="text-sm">No milestones yet. Add checkpoints to celebrate progress.</p>
+              <p className="text-sm">{tr(t.selfLearning.noMilestonesYet)}</p>
               <Button size="sm" variant="ghost" onClick={() => setMilestoneDialogOpen(true)} className="mt-2 gap-1">
-                <Plus className="h-3.5 w-3.5" /> Add Milestone
+                <Plus className="h-3.5 w-3.5" /> {tr(t.selfLearning.addMilestone)}
               </Button>
             </div>
           ) : (
@@ -417,45 +420,45 @@ export function SelfLearningDetailClient() {
           <PlanResourcesPanel resources={plan.resources} onResourcesChange={handleResourcesChange} />
           <Card className="border-border/60 shadow-sm bg-gradient-to-br from-violet-50/50 to-purple-50/50 dark:from-violet-900/10 dark:to-purple-900/10">
             <CardHeader className="pb-2 flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-bold text-violet-700 dark:text-violet-400">Journey Summary</CardTitle>
+              <CardTitle className="text-sm font-bold text-violet-700 dark:text-violet-400">{tr(t.selfLearning.journeySummary)}</CardTitle>
               <Target className="w-4 h-4 text-violet-500" />
             </CardHeader>
             <CardContent className="space-y-4 text-sm mt-1">
               <div className="relative pl-4 border-l-2 border-violet-200 dark:border-violet-800 space-y-5">
                 <div className="relative">
                   <div className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-950" />
-                  <p className="text-xs font-semibold text-foreground">Started On</p>
+                  <p className="text-xs font-semibold text-foreground">{tr(t.selfLearning.startedOn)}</p>
                   <p className="text-xs text-muted-foreground">{formatDate(plan.startDate)}</p>
                 </div>
                 <div className="relative">
                   <div className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-blue-500 border-2 border-white dark:border-slate-950 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
-                  <p className="text-xs font-semibold text-foreground">Currently At</p>
+                  <p className="text-xs font-semibold text-foreground">{tr(t.selfLearning.currentlyAt)}</p>
                   {plan.stages.find((s) => s.status === "active") ? (
                     <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">{plan.stages.find((s) => s.status === "active")!.title}</p>
                   ) : progress === 100 && plan.stages.length > 0 ? (
-                    <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Completed All Stages!</p>
+                    <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">{tr(t.selfLearning.completedAllStages)}</p>
                   ) : (
-                    <p className="text-xs text-muted-foreground">Planning / Idle</p>
+                    <p className="text-xs text-muted-foreground">{tr(t.selfLearning.planningIdle)}</p>
                   )}
                 </div>
                 <div className="relative">
                   <div className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-violet-400 border-2 border-white dark:border-slate-950" />
-                  <p className="text-xs font-semibold text-foreground">Looking Ahead</p>
+                  <p className="text-xs font-semibold text-foreground">{tr(t.selfLearning.lookingAhead)}</p>
                   {plan.stages.length > 0 ? (
-                    <p className="text-xs text-muted-foreground">{plan.stages.filter((s) => s.status !== "completed").length} stage(s) remaining</p>
+                    <p className="text-xs text-muted-foreground">{plan.stages.filter((s) => s.status !== "completed").length} {tr(t.selfLearning.stagesRemaining)}</p>
                   ) : (
-                    <p className="text-xs text-muted-foreground">Add stages to map out your journey.</p>
+                    <p className="text-xs text-muted-foreground">{tr(t.selfLearning.addStagesToMap)}</p>
                   )}
                   {plan.milestones.filter((m) => !m.completed && m.targetDate).sort((a, b) => new Date(a.targetDate!).getTime() - new Date(b.targetDate!).getTime())[0] && (
                     <p className="text-xs text-amber-600 dark:text-amber-500 font-medium mt-1 flex items-center gap-1">
-                      <Flag className="w-3 h-3" /> Next: {plan.milestones.filter((m) => !m.completed && m.targetDate)[0].title}
+                      <Flag className="w-3 h-3" /> {tr(t.selfLearning.nextLabel)} {plan.milestones.filter((m) => !m.completed && m.targetDate)[0].title}
                     </p>
                   )}
                 </div>
               </div>
               {plan.description && (
                 <div className="pt-3 flex flex-col gap-2 border-t border-violet-100 dark:border-violet-800/50">
-                  <p className="text-xs text-muted-foreground font-semibold">Goal:</p>
+                  <p className="text-xs text-muted-foreground font-semibold">{tr(t.selfLearning.goalLabel)}</p>
                   <p className="text-xs italic text-muted-foreground leading-relaxed">&quot;{plan.description}&quot;</p>
                 </div>
               )}
@@ -467,8 +470,8 @@ export function SelfLearningDetailClient() {
       <LearningPlanFormDialog open={editPlanOpen} onOpenChange={setEditPlanOpen} onSave={handleEditPlan} initialData={plan} />
       <StageFormDialog open={stageDialogOpen} onOpenChange={setStageDialogOpen} onSave={handleSaveStage} initialData={editingStage} planId={planId} nextOrder={plan.stages.length + 1} />
       <MilestoneFormDialog open={milestoneDialogOpen} onOpenChange={setMilestoneDialogOpen} onSave={handleSaveMilestone} initialData={editingMilestone} planId={planId} />
-      <ConfirmActionDialog isOpen={!!stageToDelete} title="Delete Stage" description="Are you sure you want to delete this stage? This cannot be undone." confirmText="Delete" onConfirm={confirmDeleteStage} onCancel={() => setStageToDelete(null)} />
-      <ConfirmActionDialog isOpen={!!milestoneToDelete} title="Delete Milestone" description="Are you sure you want to delete this milestone? This cannot be undone." confirmText="Delete" onConfirm={confirmDeleteMilestone} onCancel={() => setMilestoneToDelete(null)} />
+      <ConfirmActionDialog isOpen={!!stageToDelete} title={tr(t.selfLearning.deleteStage)} description={tr(t.selfLearning.deleteStageMsg)} confirmText={tr(t.actions.delete)} onConfirm={confirmDeleteStage} onCancel={() => setStageToDelete(null)} />
+      <ConfirmActionDialog isOpen={!!milestoneToDelete} title={tr(t.selfLearning.deleteMilestone)} description={tr(t.selfLearning.deleteMilestoneMsg)} confirmText={tr(t.actions.delete)} onConfirm={confirmDeleteMilestone} onCancel={() => setMilestoneToDelete(null)} />
     </div>
   );
 }

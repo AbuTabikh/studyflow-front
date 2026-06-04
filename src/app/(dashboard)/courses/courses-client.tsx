@@ -12,9 +12,11 @@ import { CourseService } from "@/services/course.service";
 
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 export default function CoursesClient() {
   const { state, isLoaded, addCourse, updateCourse, deleteCourse } = useAppState();
+  const { tr, t } = useTranslation();
   const courses = state.courses;
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -104,15 +106,15 @@ export default function CoursesClient() {
     <div className="space-y-6 pb-8 animate-in fade-in zoom-in-95 duration-500">      
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-card p-6 md:p-8 rounded-2xl border shadow-sm w-full">
         <div className="space-y-1 max-w-2xl">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">My Courses</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{tr(t.academicPlanning.myCourses)}</h1>
           <p className="mt-1 text-muted-foreground">
-            Manage and track all your academic courses.
+            {tr(t.academicPlanning.myCoursesDesc)}
           </p>
         </div>
         <div className="flex w-full md:w-auto shrink-0">
           <Button onClick={handleAddCourse} className="w-full sm:w-auto shadow-sm" size="lg">
             <Plus className="mr-2 h-5 w-5" />
-            Add Course
+            {tr(t.academicPlanning.addCourse)}
           </Button>
         </div>
       </div>
@@ -138,12 +140,12 @@ export default function CoursesClient() {
       ) : (
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <p className="text-lg font-medium text-muted-foreground">
-            No courses found
+            {tr(t.academicPlanning.noCoursesFound)}
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
             {searchQuery
-              ? "Try adjusting your search query"
-              : "Add your first course to get started"}
+              ? tr(t.academicPlanning.adjustSearch)
+              : tr(t.academicPlanning.addFirstCourse)}
           </p>
 
           {!searchQuery && (
@@ -152,7 +154,7 @@ export default function CoursesClient() {
               className="mt-4 bg-primary hover:bg-secondary"
             >
               <Plus className="mr-2 h-4 w-4" />
-              Add Course
+              {tr(t.academicPlanning.addCourse)}
             </Button>
           )}
         </div>
