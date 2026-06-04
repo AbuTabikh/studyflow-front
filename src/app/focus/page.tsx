@@ -12,6 +12,7 @@ import { TasksPanel } from "@/components/focus/tasks-panel";
 import { ChallengeBar } from "@/components/focus/challenge-bar";
 import { useTimer } from "@/hooks/use-timer";
 import { FocusSkeleton } from "@/components/shared/skeletons";
+import { apiClient } from "@/lib/api-client";
 
 const STORAGE_KEY = "pomodoro-settings";
 const CHALLENGE_STORAGE_KEY = "daily-challenge";
@@ -172,6 +173,16 @@ export default function FocusPage() {
     if (activeSession === "pomodoro") {
       const durations = getCurrentDurations();
       setTotalFocusMinutes((prev) => prev + durations.pomodoro);
+      // Save to DB
+      const token = localStorage.getItem("studyflow_auth_token");
+      if (token) {
+        apiClient.post("/focus-sessions", {
+          session_duration: durations.pomodoro,
+          break_duration: durations.rest,
+          completed: true,
+          session_date: new Date().toISOString().slice(0, 10),
+        }).catch(() => {});
+      }
     }
 
     if (activeSession === "pomodoro") {

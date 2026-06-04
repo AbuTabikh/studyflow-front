@@ -62,18 +62,18 @@ export function SettingsPanel({
   return (
     <div
       className={cn(
-        "absolute right-0 top-0 z-50 h-full w-80 border-l bg-background p-6 shadow-lg",
+        "absolute right-0 top-0 z-50 h-full w-80 border-l bg-background shadow-lg overflow-y-auto",
         className,
       )}
     >
-      <div className="flex items-center gap-3 mb-6">
+      <div className="sticky top-0 bg-background flex items-center gap-3 mb-6 pb-4 border-b p-6">
         <Button variant="ghost" size="icon" onClick={onClose}>
           <ArrowLeft className="size-4" />
         </Button>
         <h2 className="text-lg font-semibold">Customize focus level</h2>
       </div>
 
-      <div className="space-y-4">
+      <div className="px-6 space-y-4">
         {FOCUS_LEVELS.map((level) => (
           <button
             key={level.id}

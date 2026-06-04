@@ -20,10 +20,13 @@ import { DayView } from "@/components/calendar/day-view";
 import { AgendaView } from "@/components/calendar/agenda-view";
 import { EventDetailsModal } from "@/components/calendar/event-details-modal";
 import { CalendarSkeleton } from "@/components/shared/skeletons";
+import { TaskFormDialog } from "@/components/tasks/task-form-dialog";
+import { TaskItem } from "@/types/tasks";
+import { TaskService } from "@/services/task.service";
 
 export default function CalendarClient() {
   const router = useRouter();
-  const { state, isLoaded } = useAppState();
+  const { state, isLoaded, saveUnifiedTask } = useAppState();
 
   const courses = state.courses;
   
@@ -33,10 +36,9 @@ export default function CalendarClient() {
   const [viewMode, setViewMode] = useState<"month" | "week" | "day" | "agenda">(
     "month",
   );
-  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
-    null,
-  );
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [showEventDetails, setShowEventDetails] = useState(false);
+  const [addEventOpen, setAddEventOpen] = useState(false);
 
   const [filters, setFilters] = useState<CalendarFilters>({
     tasks: true,
@@ -85,6 +87,19 @@ export default function CalendarClient() {
     router.push(`/courses/${courseId}`);
   };
 
+  const handleSaveEvent = async (task: TaskItem) => {
+    const isNew = !state.tasks.find(t => t.id === task.id);
+    if (isNew) {
+      const mysqlId = await TaskService.create(task);
+      const finalTask = mysqlId ? { ...task, id: String(mysqlId) } : task;
+      saveUnifiedTask(finalTask);
+    } else {
+      saveUnifiedTask(task);
+      TaskService.update(task);
+    }
+    setAddEventOpen(false);
+  };
+
   if (!isLoaded) {
     return <CalendarSkeleton />;
   }
@@ -98,6 +113,7 @@ export default function CalendarClient() {
         onToday={handleToday}
         viewMode={viewMode}
         onViewChange={setViewMode}
+        onAddEvent={() => setAddEventOpen(true)}
       />
 
       {/* Main Layout */}
@@ -172,6 +188,14 @@ export default function CalendarClient() {
         isOpen={showEventDetails}
         onClose={handleEventDetailsClose}
         onOpenCourse={handleOpenCourse}
+      />
+
+      {/* Add Event Dialog (reuses Task form) */}
+      <TaskFormDialog
+        open={addEventOpen}
+        onOpenChange={setAddEventOpen}
+        onSave={handleSaveEvent}
+        initialData={null}
       />
     </div>
   );

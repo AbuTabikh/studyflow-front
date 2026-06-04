@@ -105,7 +105,7 @@ export function LearningPlanCard({ plan, onEdit, onDelete }: PlanCardProps) {
           <div className="flex items-center gap-1 shrink-0">
             <Button
               size="sm" variant="ghost"
-              className="gap-1.5 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+              className="gap-1.5 text-xs"
               onClick={() => router.push(`/self-learning/${plan.id}`)}
             >
               Open <ArrowRight className="w-3.5 h-3.5" />

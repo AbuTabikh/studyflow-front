@@ -7,8 +7,10 @@ import { TaskService } from "@/services/task.service";
 import { SemesterService } from "@/services/semester.service";
 import { LearningPlanService } from "@/services/learning-plan.service";
 import { ReflectionService } from "@/services/reflection.service";
+import { apiClient } from "@/lib/api-client";
 import { Course } from "@/types/course";
 import { TaskItem } from "@/types/tasks";
+import { Notification } from "@/types/notifications";
 
 /**
  * Loads all user data from MySQL on dashboard mount.
@@ -25,13 +27,14 @@ export function useApiSync() {
     synced.current = true;
 
     (async () => {
-      const [apiCourses, apiTasks, apiSemesters, apiPlans, apiReflections] =
+      const [apiCourses, apiTasks, apiSemesters, apiPlans, apiReflections, apiNotifications] =
         await Promise.all([
           CourseService.list(),
           TaskService.list(),
           SemesterService.list(),
           LearningPlanService.list(),
           ReflectionService.list(),
+          apiClient.get<any[]>("/notifications").catch(() => []),
         ]);
 
       updateState((prev) => {
@@ -85,6 +88,20 @@ export function useApiSync() {
           (r) => !apiRefIds.has(r.id)
         );
 
+        // ── Notifications ──
+        const apiNotifs: Notification[] = Array.isArray(apiNotifications)
+          ? apiNotifications.map((n: any) => ({
+              id:          String(n.id),
+              title:       n.title ?? "",
+              message:     n.message ?? "",
+              type:        (n.type ?? "system") as any,
+              read:        !!n.read_at,
+              createdAt:   n.created_at ?? new Date().toISOString(),
+              targetRoute: n.target_route ?? "/dashboard",
+              targetId:    n.target_id ? String(n.target_id) : undefined,
+            }))
+          : [];
+
         return {
           ...prev,
           courses: [...mergedCourses, ...localOnlyCourses],
@@ -95,6 +112,7 @@ export function useApiSync() {
           },
           selfLearningPlans: [...apiPlans, ...localOnlyPlans],
           reflections: [...apiReflections, ...localOnlyRefs],
+          notifications: apiNotifs,
         };
       });
     })();
