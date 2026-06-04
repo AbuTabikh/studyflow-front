@@ -14,9 +14,11 @@ import { NotificationItem } from "./notification-item";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 export function NotificationCenter() {
   const { state, updateState } = useAppState();
+  const { tr, t } = useTranslation();
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   
@@ -64,9 +66,9 @@ export function NotificationCenter() {
       <PopoverContent className="w-[380px] p-0 shadow-2xl border-primary/10" align="end">
         <div className="flex items-center justify-between p-4 bg-muted/30">
           <div className="space-y-0.5">
-            <h4 className="text-sm font-semibold">Notifications</h4>
+            <h4 className="text-sm font-semibold">{tr(t.notifications.title)}</h4>
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
-              {unreadCount} unread messages
+              {unreadCount} {tr(t.notifications.noNotifications)}
             </p>
           </div>
           <div className="flex gap-1">
@@ -77,7 +79,7 @@ export function NotificationCenter() {
                   size="icon" 
                   className="h-8 w-8 hover:bg-primary/10 hover:text-primary" 
                   onClick={handleMarkAllRead}
-                  title="Mark all as read"
+                  title={tr(t.notifications.markAllRead)}
                 >
                   <CheckCheck className="h-4 w-4" />
                 </Button>
@@ -86,7 +88,7 @@ export function NotificationCenter() {
                   size="icon" 
                   className="h-8 w-8 hover:bg-red-500/10 hover:text-red-500" 
                   onClick={handleClearAll}
-                  title="Clear all"
+                  title={tr(t.notifications.clearAll)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -103,9 +105,9 @@ export function NotificationCenter() {
                 <Bell className="h-6 w-6 text-muted-foreground" />
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-medium">All caught up!</p>
+                <p className="text-sm font-medium">{tr(t.notifications.allCaughtUp)}</p>
                 <p className="text-xs text-muted-foreground max-w-[200px]">
-                  When you have notifications, they'll appear here.
+                  {tr(t.notifications.noNotifications)}
                 </p>
               </div>
             </div>

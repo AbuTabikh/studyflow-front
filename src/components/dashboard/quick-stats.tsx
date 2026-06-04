@@ -1,6 +1,9 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ListTodo, BookOpen, CheckCircle2 } from "lucide-react";
 import { StreakCard } from "./streak-card";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface QuickStatsProps {
   activeCourses: number;
@@ -11,40 +14,34 @@ interface QuickStatsProps {
   longestStreak?: number;
 }
 
-export function QuickStats({ 
-  activeCourses, 
-  pendingTasks, 
-  completedCredits, 
-  milestones,
-  streakCount,
-  longestStreak
-}: QuickStatsProps) {
+export function QuickStats({ activeCourses, pendingTasks, completedCredits, milestones, streakCount, longestStreak }: QuickStatsProps) {
+  const { tr, t } = useTranslation();
+
   const stats = [
     {
-      title: "Active Tasks",
-      subtitle: "Pending to do",
+      title: tr(t.dashboard.stats.pendingTasks),
+      subtitle: tr(t.dashboard.stats.pendingTodo),
       value: pendingTasks,
       icon: ListTodo,
       color: "text-blue-600",
       bg: "bg-blue-500/10",
     },
     {
-      title: "Current Courses",
-      subtitle: "Enrolled this term",
+      title: tr(t.dashboard.stats.activeCourses),
+      subtitle: tr(t.dashboard.stats.enrolledTerm),
       value: activeCourses,
       icon: BookOpen,
       color: "text-violet-600",
       bg: "bg-violet-500/10",
     },
     {
-      title: "Completed Credits",
-      subtitle: "Academic progress",
+      title: tr(t.dashboard.stats.completedCredits),
+      subtitle: tr(t.dashboard.stats.academicProgress),
       value: completedCredits,
       icon: CheckCircle2,
       color: "text-emerald-600",
       bg: "bg-emerald-500/10",
     },
-
   ];
 
   return (
@@ -52,12 +49,8 @@ export function QuickStats({
       <div className="sm:col-span-2 lg:col-span-1">
         <StreakCard count={streakCount} longestCount={longestStreak} />
       </div>
-      
       {stats.map((stat) => (
-        <Card
-          key={stat.title}
-          className="border shadow-sm bg-card hover:shadow-md transition-shadow"
-        >
+        <Card key={stat.title} className="border shadow-sm bg-card hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium text-muted-foreground">{stat.title}</CardTitle>
             <div className={`w-8 h-8 rounded-full ${stat.bg} flex items-center justify-center`}>
@@ -65,8 +58,8 @@ export function QuickStats({
             </div>
           </CardHeader>
           <CardContent>
-             <div className="text-3xl font-bold tracking-tight text-foreground">{stat.value}</div>
-             <p className="text-xs text-muted-foreground mt-1">{stat.subtitle}</p>
+            <div className="text-3xl font-bold tracking-tight text-foreground">{stat.value}</div>
+            <p className="text-xs text-muted-foreground mt-1">{stat.subtitle}</p>
           </CardContent>
         </Card>
       ))}

@@ -5,21 +5,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Sun, Moon, Monitor, Languages } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/hooks/use-app-state";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 export function AppearanceSection() {
   const { theme, setTheme } = useTheme();
   const { state, updateState } = useAppState();
+  const { tr, t } = useTranslation();
   const currentLang = state.userProfile?.language ?? "en";
 
   const themes = [
-    { value: "light", label: "Light", icon: Sun },
-    { value: "dark", label: "Dark", icon: Moon },
-    { value: "system", label: "System", icon: Monitor },
+    { value: "light",  label: tr(t.settings.appearance.light),  icon: Sun },
+    { value: "dark",   label: tr(t.settings.appearance.dark),   icon: Moon },
+    { value: "system", label: tr(t.settings.appearance.system), icon: Monitor },
   ];
 
   const languages = [
-    { value: "en", label: "English", native: "English" },
-    { value: "ar", label: "Arabic", native: "العربية" },
+    { value: "en", native: "English" },
+    { value: "ar", native: "العربية" },
   ];
 
   const setLanguage = (lang: "en" | "ar") => {
@@ -32,30 +34,28 @@ export function AppearanceSection() {
   return (
     <Card className="border-border/40 shadow-sm bg-card/30 backdrop-blur-md overflow-hidden">
       <CardHeader>
-        <CardTitle className="text-lg">Appearance</CardTitle>
-        <CardDescription>
-          Choose a theme and language that feel right for you.
-        </CardDescription>
+        <CardTitle className="text-lg">{tr(t.settings.appearance.title)}</CardTitle>
+        <CardDescription>{tr(t.settings.appearance.subtitle)}</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-6">
         {/* Theme */}
         <div className="space-y-2">
-          <p className="text-sm font-medium text-foreground">Theme</p>
+          <p className="text-sm font-medium text-foreground">{tr(t.settings.appearance.theme)}</p>
           <div className="flex p-1 bg-muted/30 rounded-xl border border-border/50 max-w-sm">
-            {themes.map((t) => (
+            {themes.map((thm) => (
               <button
-                key={t.value}
-                onClick={() => setTheme(t.value)}
+                key={thm.value}
+                onClick={() => setTheme(thm.value)}
                 className={cn(
                   "flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-medium transition-all duration-200",
-                  theme === t.value
+                  theme === thm.value
                     ? "bg-white dark:bg-slate-800 text-primary shadow-sm border border-border/20"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                 )}
               >
-                <t.icon className={cn("h-4 w-4", theme === t.value ? "text-primary" : "text-muted-foreground/70")} />
-                {t.label}
+                <thm.icon className={cn("h-4 w-4", theme === thm.value ? "text-primary" : "text-muted-foreground/70")} />
+                {thm.label}
               </button>
             ))}
           </div>

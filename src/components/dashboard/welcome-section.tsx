@@ -1,27 +1,28 @@
+"use client";
+
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface WelcomeSectionProps {
   userName?: string;
 }
 
 export function WelcomeSection({ userName }: WelcomeSectionProps) {
-  const displayName = userName || "Student";
+  const { tr, t, lang } = useTranslation();
+  const displayName = userName || tr(t.dashboard.student);
+
   const now = new Date();
-  const dateOptions: Intl.DateTimeFormatOptions = {
+  const today = now.toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
-  };
-  const today = now.toLocaleDateString("en-US", dateOptions);
+  });
 
   const hour = now.getHours();
-  let greeting = "Good evening";
-  if (hour < 12) {
-    greeting = "Good morning";
-  } else if (hour < 18) {
-    greeting = "Good afternoon";
-  }
+  let greeting = tr(t.dashboard.greeting.evening);
+  if (hour < 12) greeting = tr(t.dashboard.greeting.morning);
+  else if (hour < 18) greeting = tr(t.dashboard.greeting.afternoon);
 
   return (
     <div className="flex flex-col gap-1 mb-8 mt-2">
@@ -29,12 +30,7 @@ export function WelcomeSection({ userName }: WelcomeSectionProps) {
         <span className="capitalize">{greeting}</span>, {displayName}{" "}
         <span className="text-2xl inline-block wave-animation">👋</span>
       </h1>
-      <span
-        className={cn(
-          "text-sm font-medium text-muted-foreground mt-1",
-          "before:content-['Today_is_'] before:mr-1 before:text-muted-foreground/70 before:font-normal",
-        )}
-      >
+      <span className={cn("text-sm font-medium text-muted-foreground mt-1")}>
         {today}
       </span>
     </div>

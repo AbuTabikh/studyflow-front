@@ -5,10 +5,12 @@ import { usePathname } from "next/navigation";
 import { ChevronRight, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/hooks/use-app-state";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 export function Breadcrumbs() {
   const pathname = usePathname();
   const { isLoaded, courses, selfLearningPlans } = useAppState();
+  const { tr, t } = useTranslation();
   
   if (pathname === "/" || pathname === "/dashboard") return null;
   if (!isLoaded) return <div className="h-5 mb-4" />; // Placeholder while loading
@@ -32,10 +34,11 @@ export function Breadcrumbs() {
         const isLast = index === pathSegments.length - 1;
         const parentSegment = index > 0 ? pathSegments[index - 1] : null;
         
-        // Default formatting: Capitalize and remove dashes
-        let label = segment
-          .replace(/-/g, " ")
-          .replace(/^\w/, (c) => c.toUpperCase());
+        // Translate known segments, fall back to formatted string
+        const segmentKey = segment as keyof typeof t.breadcrumbs;
+        let label = t.breadcrumbs[segmentKey]
+          ? tr(t.breadcrumbs[segmentKey])
+          : segment.replace(/-/g, " ").replace(/^\w/, (c) => c.toUpperCase());
 
         // Resolve dynamic titles for IDs
         const parentAsCourse = courses.find(c => c.id === parentSegment);
