@@ -13,6 +13,7 @@ import { TaskFormDialog } from "@/components/tasks/task-form-dialog";
 import { TasksEmptyState } from "@/components/tasks/tasks-empty-state";
 import { HeaderSkeleton, ListSkeleton } from "@/components/shared/skeletons";
 import { ConfirmActionDialog } from "@/components/shared/confirm-action-dialog";
+import { TaskService } from "@/services/task.service";
 
 export default function TasksClient() {
   const { state, isLoaded, saveUnifiedTask, deleteUnifiedTask } = useAppState();
@@ -55,6 +56,7 @@ export default function TasksClient() {
   const confirmDelete = () => {
     if (taskToDelete) {
       deleteUnifiedTask(taskToDelete);
+      TaskService.delete(taskToDelete.id); // sync to MySQL
       setTaskToDelete(null);
     }
   };
@@ -62,12 +64,23 @@ export default function TasksClient() {
   const handleStatusChange = (id: string, newStatus: TaskStatus) => {
     const task = tasks.find(t => t.id === id);
     if (task) {
-      saveUnifiedTask({ ...task, status: newStatus, updatedAt: new Date().toISOString() });
+      const updated = { ...task, status: newStatus, updatedAt: new Date().toISOString() };
+      saveUnifiedTask(updated);
+      TaskService.update(updated); // sync to MySQL
     }
   };
 
-  const handleSaveTask = (task: TaskItem) => {
-    saveUnifiedTask(task);
+  const handleSaveTask = async (task: TaskItem) => {
+    const isNew = !tasks.find(t => t.id === task.id);
+    if (isNew) {
+      // Get MySQL ID as local ID so updates/deletes work later
+      const mysqlId = await TaskService.create(task);
+      const finalTask = mysqlId ? { ...task, id: String(mysqlId) } : task;
+      saveUnifiedTask(finalTask);
+    } else {
+      saveUnifiedTask(task);
+      TaskService.update(task); // sync update to MySQL
+    }
   };
 
   if (!isLoaded) {

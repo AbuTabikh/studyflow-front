@@ -8,6 +8,7 @@ import { AddCourseDialog } from "@/components/courses/add-course-dialog";
 import { DeleteCourseAlertDialog } from "@/components/courses/delete-course-alert-dialog";
 import { HeaderSkeleton, CardGridSkeleton } from "@/components/shared/skeletons";
 import { useAppState } from "@/hooks/use-app-state";
+import { CourseService } from "@/services/course.service";
 
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -68,19 +69,22 @@ export default function CoursesClient() {
   const handleDeleteConfirm = () => {
     if (courseToDelete) {
       deleteCourse(courseToDelete.id);
+      CourseService.delete(courseToDelete.id); // sync to MySQL
       setIsDeleteDialogOpen(false);
       setCourseToDelete(null);
     }
   };
 
-  const handleSaveCourse = (courseData: Omit<Course, "id">) => {
+  const handleSaveCourse = async (courseData: Omit<Course, "id">) => {
     if (isEditing && selectedCourse) {
-      updateCourse({ ...courseData, id: selectedCourse.id } as Course);
+      const updated = { ...courseData, id: selectedCourse.id } as Course;
+      updateCourse(updated);
+      CourseService.update(selectedCourse.id, updated); // sync to MySQL
     } else {
-      addCourse({ 
-        ...courseData, 
-        id: crypto.randomUUID(),
-      } as Course);
+      // Call API first to get MySQL integer ID; fall back to UUID if not logged in
+      const mysqlId = await CourseService.create(courseData);
+      const id = mysqlId ? String(mysqlId) : crypto.randomUUID();
+      addCourse({ ...courseData, id } as Course);
     }
 
     setIsDialogOpen(false);
