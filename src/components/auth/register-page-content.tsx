@@ -17,8 +17,18 @@ export function RegisterPageContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-primary-foreground mb-4">{tr(t.auth.trackProgress)}</h3>
-            <p className="text-primary-foreground/80">{tr(t.auth.trackSubtitle)}</p>
+            <h3 className="text-2xl font-bold text-primary-foreground mb-4">{tr(t.auth.startJourney)}</h3>
+            <p className="text-primary-foreground/80 mb-6">{tr(t.auth.joinStudents)}</p>
+            <div className="space-y-3 text-left">
+              {[t.auth.feature1, t.auth.feature2, t.auth.feature3, t.auth.feature4].map((f) => (
+                <div key={f.en} className="flex items-center gap-3 bg-primary-foreground/10 rounded-lg p-3">
+                  <svg className="w-5 h-5 text-primary-foreground shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-primary-foreground text-sm">{tr(f)}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -27,8 +37,8 @@ export function RegisterPageContent() {
         <div className="mx-auto w-full max-w-sm">
           <div className="mb-8">
             <Link href="/"><Image src="/logo.png" alt="StudyFlow Logo" width={140} height={50} className="h-16 w-auto mx-auto dark:brightness-0 dark:invert" /></Link>
-            <h2 className="mt-6 text-2xl font-bold text-foreground">{tr(t.auth.createAccountBtn)}</h2>
-            <p className="mt-2 text-muted-foreground">{tr(t.auth.signInSubtitle)}</p>
+            <h2 className="mt-6 text-2xl font-bold text-foreground">{tr(t.auth.createYourAccount)}</h2>
+            <p className="mt-2 text-muted-foreground">{tr(t.auth.startOrganizing)}</p>
           </div>
 
           <RegisterForm />

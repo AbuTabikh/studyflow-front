@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import { AuthService } from "@/services/auth.service"
+import { useTranslation } from "@/lib/i18n/use-translation"
 
 export function ResetPasswordForm() {
   const router = useRouter()
@@ -16,6 +17,7 @@ export function ResetPasswordForm() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
   
+  const { tr, t } = useTranslation()
   const token = searchParams.get("token")
   const email = searchParams.get("email")
 
@@ -26,14 +28,14 @@ export function ResetPasswordForm() {
 
   useEffect(() => {
     if (!token || !email) {
-      setError("Invalid or missing reset token. Please try the forgot password process again.")
+      setError(tr(t.auth.invalidToken))
     }
   }, [token, email])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (formData.password !== formData.password_confirmation) {
-      setError("Passwords do not match")
+      setError(tr(t.auth.passwordMatch))
       return
     }
 
@@ -63,15 +65,11 @@ export function ResetPasswordForm() {
           <CheckCircle2 className="h-16 w-16 text-primary animate-in zoom-in duration-300" />
         </div>
         <div className="space-y-2">
-          <h3 className="text-xl font-bold text-foreground">Password reset successful</h3>
-          <p className="text-muted-foreground">
-            Your password has been successfully updated. You can now log in with your new password.
-          </p>
+          <h3 className="text-xl font-bold text-foreground">{tr(t.auth.resetSuccess)}</h3>
+          <p className="text-muted-foreground">{tr(t.auth.resetSuccessMsg)}</p>
         </div>
         <Button asChild className="w-full h-11">
-          <Link href="/login">
-            Login Now
-          </Link>
+          <Link href="/login">{tr(t.auth.loginNow)}</Link>
         </Button>
       </div>
     )
@@ -88,7 +86,7 @@ export function ResetPasswordForm() {
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="password">New Password</Label>
+          <Label htmlFor="password">{tr(t.auth.newPassword)}</Label>
           <Input
             id="password"
             type="password"
@@ -102,7 +100,7 @@ export function ResetPasswordForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password_confirmation">Confirm New Password</Label>
+          <Label htmlFor="password_confirmation">{tr(t.auth.confirmNewPassword)}</Label>
           <Input
             id="password_confirmation"
             type="password"
@@ -120,17 +118,17 @@ export function ResetPasswordForm() {
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Resetting password...
+            {tr(t.auth.resettingPassword)}
           </>
         ) : (
-          "Reset password"
+          tr(t.auth.resetBtn)
         )}
       </Button>
 
       <div className="text-center">
         <Button asChild variant="link" className="text-muted-foreground hover:text-primary p-0 h-auto">
           <Link href="/login" className="text-sm">
-            Back to login
+            {tr(t.auth.backToLogin)}
           </Link>
         </Button>
       </div>

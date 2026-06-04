@@ -9,9 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { AuthService } from "@/services/auth.service";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 export function RegisterForm() {
   const router = useRouter();
+  const { tr, t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -28,12 +30,12 @@ export function RegisterForm() {
     const newErrors: Record<string, string> = {};
 
     if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
+      newErrors.password = tr(t.auth.passwordMin);
     }
     if (!/[!@#$%^&*]/.test(formData.password))
-      newErrors.password = "Password must contain a special character";
+      newErrors.password = tr(t.auth.passwordSpecial);
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+      newErrors.confirmPassword = tr(t.auth.passwordMatch);
     }
 
     setErrors(newErrors);
@@ -78,11 +80,11 @@ export function RegisterForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="name">Full Name</Label>
+        <Label htmlFor="name">{tr(t.auth.fullName)}</Label>
         <Input
           id="name"
           type="text"
-          placeholder="John Doe"
+          placeholder={tr(t.auth.namePlaceholder)}
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           required
@@ -91,11 +93,11 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">{tr(t.auth.email)}</Label>
         <Input
           id="email"
           type="email"
-          placeholder="you@university.edu"
+          placeholder={tr(t.auth.emailPlaceholder)}
           value={formData.email}
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           required
@@ -104,12 +106,12 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password">{tr(t.auth.password)}</Label>
         <div className="relative">
           <Input
             id="password"
             type={showPassword ? "text" : "password"}
-            placeholder="Create a password"
+            placeholder={tr(t.auth.passwordPlaceholder)}
             value={formData.password}
             onChange={(e) =>
               setFormData({ ...formData, password: e.target.value })
@@ -135,12 +137,12 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Confirm Password</Label>
+        <Label htmlFor="confirmPassword">{tr(t.auth.confirmPassword)}</Label>
         <div className="relative">
           <Input
             id="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
-            placeholder="Confirm your password"
+            placeholder={tr(t.auth.confirmPlaceholder)}
             value={formData.confirmPassword}
             onChange={(e) =>
               setFormData({ ...formData, confirmPassword: e.target.value })
@@ -171,10 +173,10 @@ export function RegisterForm() {
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Creating account...
+            {tr(t.auth.creatingAccount)}
           </>
         ) : (
-          "Create account"
+          tr(t.auth.createAccountBtn)
         )}
       </Button>
     </form>
