@@ -53,6 +53,7 @@ export const EMPTY_APP_STATE: AppState = {
       inAppNotificationsEnabled: true,
     },
     themePreference: "system",
+    language: "en",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },

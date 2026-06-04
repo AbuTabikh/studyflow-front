@@ -26,6 +26,7 @@ export const getDefaultProfile = (): UserProfile => ({
     inAppNotificationsEnabled: true,
   },
   themePreference: "system",
+  language: "en",
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
 });

@@ -30,7 +30,8 @@ export interface UserProfile {
   focusPreferences: FocusPreferences;
   reminderPreferences: ReminderPreferences;
   themePreference: "light" | "dark" | "system";
-  
+  language: "en" | "ar";
+
   createdAt: string;
   updatedAt: string;
 }
