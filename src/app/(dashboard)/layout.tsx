@@ -3,6 +3,7 @@ import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { DashboardHeader } from "@/components/dashboard/header";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { ThemeProvider } from "next-themes";
+import { ApiSyncProvider } from "@/components/dashboard/api-sync-provider";
 
 export default function DashboardLayout({
   children,
@@ -11,16 +12,18 @@ export default function DashboardLayout({
 }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <div className="min-h-screen bg-background">
-        <DashboardSidebar />
-        <div className="ltr:lg:pl-64 rtl:lg:pr-64">
-          <DashboardHeader />
-          <main className="p-4 lg:p-6">
-            <Breadcrumbs />
-            {children}
-          </main>
+      <ApiSyncProvider>
+        <div className="min-h-screen bg-background">
+          <DashboardSidebar />
+          <div className="ltr:lg:pl-64 rtl:lg:pr-64">
+            <DashboardHeader />
+            <main className="p-4 lg:p-6">
+              <Breadcrumbs />
+              {children}
+            </main>
+          </div>
         </div>
-      </div>
+      </ApiSyncProvider>
     </ThemeProvider>
   );
 }

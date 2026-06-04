@@ -1,0 +1,167 @@
+import { Course } from "@/types/course";
+import { TaskItem } from "@/types/tasks";
+import { PlannerSemester } from "@/types/academic-planning";
+import { LearningPlan } from "@/types/self-learning";
+import { ReflectionEntry } from "@/types/reflections";
+
+// ── Courses ─────────────────────────────────────────────────────────────────
+
+export function courseFromApi(a: any): Partial<Course> {
+  return {
+    id:            String(a.id),
+    title:         a.title ?? "",
+    instructor:    a.instructor ?? "",
+    credits:       a.credits ?? 3,
+    durationWeeks: a.duration_weeks ?? 16,
+    code:          a.code ?? "",
+    description:   a.description ?? "",
+    imageUrl:      a.image_url ?? "",
+    status:        a.status ?? "planned",
+    semesterId:    a.semester_id ? String(a.semester_id) : "",
+    numericGrade:  a.numeric_grade ?? undefined,
+  };
+}
+
+export function courseToApi(c: Course) {
+  return {
+    title:          c.title,
+    code:           c.code || null,
+    instructor:     c.instructor || null,
+    credits:        c.credits || 3,
+    duration_weeks: c.durationWeeks || 16,
+    description:    c.description || null,
+    image_url:      c.imageUrl || null,
+    status:         c.status || "planned",
+    semester_id:    null,
+  };
+}
+
+// ── Tasks ────────────────────────────────────────────────────────────────────
+
+export function taskFromApi(a: any): Partial<TaskItem> {
+  const statusMap: Record<string, string> = {
+    pending: "todo", "in-progress": "in-progress", completed: "done",
+  };
+  return {
+    id:           String(a.id),
+    title:        a.title ?? "",
+    description:  a.description ?? "",
+    type:         a.type ?? "study-task",
+    priority:     a.priority ?? "medium",
+    status:       (statusMap[a.status] ?? "todo") as any,
+    dueDate:      a.due_date ?? undefined,
+    dueTime:      a.due_time ?? undefined,
+    sourceModule: "general" as const,
+    linkedCourseId: a.course_id ? String(a.course_id) : undefined,
+    createdAt:    a.created_at ?? new Date().toISOString(),
+    updatedAt:    a.updated_at ?? new Date().toISOString(),
+  };
+}
+
+export function taskToApi(t: TaskItem) {
+  const statusMap: Record<string, string> = {
+    todo: "pending", "in-progress": "in-progress", done: "completed",
+  };
+  return {
+    title:       t.title,
+    description: t.description || null,
+    type:        t.type || "study-task",
+    priority:    t.priority || "medium",
+    status:      statusMap[t.status] ?? "pending",
+    dueDate:     t.dueDate || null,
+    dueTime:     t.dueTime || null,
+    course_id:   null,
+    week_number: null,
+  };
+}
+
+// ── Semesters ────────────────────────────────────────────────────────────────
+
+export function semesterFromApi(a: any): PlannerSemester {
+  return {
+    id:           String(a.id),
+    name:         a.name ?? "",
+    academicYear: a.academic_year ?? "",
+    weeksCount:   a.num_of_weeks ?? 16,
+    status:       (a.status ?? "planned") as any,
+  };
+}
+
+export function semesterToApi(s: PlannerSemester) {
+  return {
+    name:         s.name,
+    academic_year: s.academicYear || new Date().getFullYear().toString(),
+    num_of_weeks:  s.weeksCount || 16,
+    status:       s.status || "planned",
+  };
+}
+
+// ── Learning Plans ────────────────────────────────────────────────────────────
+
+export function learningPlanFromApi(a: any): LearningPlan {
+  return {
+    id:          String(a.id),
+    title:       a.title ?? "",
+    description: a.description ?? "",
+    goal:        a.goal ?? "",
+    category:    a.category ?? "",
+    targetSkill: a.target_skill ?? "",
+    startDate:   a.start_date ?? new Date().toISOString().slice(0, 10),
+    endDate:     a.end_date ?? undefined,
+    status:      (a.status ?? "planned") as any,
+    stages:      Array.isArray(a.stages) ? a.stages : (a.stages ? JSON.parse(a.stages) : []),
+    milestones:  Array.isArray(a.milestones) ? a.milestones : (a.milestones ? JSON.parse(a.milestones) : []),
+    resources:   Array.isArray(a.resources) ? a.resources : (a.resources ? JSON.parse(a.resources) : []),
+    createdAt:   a.created_at ?? new Date().toISOString(),
+    updatedAt:   a.updated_at ?? new Date().toISOString(),
+  };
+}
+
+export function learningPlanToApi(p: LearningPlan) {
+  return {
+    title:        p.title,
+    goal:         p.goal || "",
+    description:  p.description || null,
+    category:     p.category || null,
+    target_skill: p.targetSkill || null,
+    start_date:   p.startDate || new Date().toISOString().slice(0, 10),
+    end_date:     p.endDate || null,
+    status:       p.status || "planned",
+    stages:       p.stages || [],
+    milestones:   p.milestones || [],
+    resources:    p.resources || [],
+  };
+}
+
+// ── Reflections ────────────────────────────────────────────────────────────
+
+export function reflectionFromApi(a: any): ReflectionEntry {
+  return {
+    id:          String(a.id),
+    title:       a.title ?? "",
+    date:        a.date ?? new Date().toISOString().slice(0, 10),
+    mood:        (a.mood ?? "neutral") as any,
+    achieved:    a.achievements ?? "",
+    difficult:   a.difficulties ?? "",
+    learned:     a.learnings ?? "",
+    improveNext: a.improvements ?? "",
+    gratitude:   a.gratitude ?? "",
+    tags:        Array.isArray(a.tags) ? a.tags : (a.tags ? JSON.parse(a.tags) : []),
+    createdAt:   a.created_at ?? new Date().toISOString(),
+    updatedAt:   a.updated_at ?? new Date().toISOString(),
+  };
+}
+
+export function reflectionToApi(r: ReflectionEntry) {
+  return {
+    title:        r.title,
+    date:         r.date || new Date().toISOString().slice(0, 10),
+    mood:         r.mood || "neutral",
+    achievements: r.achieved || null,
+    difficulties: r.difficult || null,
+    learnings:    r.learned || null,
+    improvements: r.improveNext || null,
+    gratitude:    r.gratitude || null,
+    tags:         r.tags || [],
+  };
+}

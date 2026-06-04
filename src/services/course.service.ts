@@ -1,48 +1,37 @@
 import { apiClient } from "@/lib/api-client";
 import { Course } from "@/types/course";
+import { courseFromApi, courseToApi } from "@/lib/api/mappers";
 
-function toBackend(c: Omit<Course, "id"> & { id?: string }) {
-  return {
-    title:          c.title,
-    code:           c.code || null,
-    instructor:     c.instructor || null,
-    credits:        c.credits || 3,
-    duration_weeks: c.durationWeeks || 16,
-    description:    c.description || null,
-    image_url:      c.imageUrl || null,
-    status:         c.status || "planned",
-    semester_id:    null, // semesters are localStorage-only for now
-  };
-}
-
-const isLoggedIn = () =>
-  typeof window !== "undefined" && !!localStorage.getItem("studyflow_auth_token");
+const ok = () => typeof window !== "undefined" && !!localStorage.getItem("studyflow_auth_token");
 
 export const CourseService = {
-  async create(course: Omit<Course, "id">): Promise<number | null> {
-    if (!isLoggedIn()) return null;
+  async list(): Promise<Partial<Course>[]> {
+    if (!ok()) return [];
     try {
-      const res = await apiClient.post<{ id: number }>("/courses", toBackend(course));
-      return res.id ?? null;
+      const data = await apiClient.get<any[]>("/courses");
+      return Array.isArray(data) ? data.map(courseFromApi) : [];
+    } catch { return []; }
+  },
+
+  async create(course: Omit<Course, "id">): Promise<number | null> {
+    if (!ok()) return null;
+    try {
+      const res = await apiClient.post<any>("/courses", courseToApi(course as Course));
+      return res?.id ?? null;
     } catch { return null; }
   },
 
   async update(id: string, course: Course): Promise<void> {
-    if (!isLoggedIn()) return;
-    // id might be a MySQL int stored as string or a localStorage UUID
+    if (!ok()) return;
     const numId = parseInt(id, 10);
-    if (isNaN(numId)) return; // localStorage UUID — not in DB yet
-    try {
-      await apiClient.put(`/courses/${numId}`, toBackend(course));
-    } catch { /* silent */ }
+    if (isNaN(numId)) return;
+    try { await apiClient.put(`/courses/${numId}`, courseToApi(course)); } catch { /* silent */ }
   },
 
   async delete(id: string): Promise<void> {
-    if (!isLoggedIn()) return;
+    if (!ok()) return;
     const numId = parseInt(id, 10);
     if (isNaN(numId)) return;
-    try {
-      await apiClient.delete(`/courses/${numId}`);
-    } catch { /* silent */ }
+    try { await apiClient.delete(`/courses/${numId}`); } catch { /* silent */ }
   },
 };

@@ -8,6 +8,8 @@ import { AcademicPlannerStats } from "@/components/academic-planning/planner-sta
 import { EmptyState } from "@/components/academic-planning/empty-state";
 import { AddSemesterDialog } from "@/components/academic-planning/add-semester-dialog";
 import { AddCourseDialog } from "@/components/courses/add-course-dialog"; // Changed import path
+import { SemesterService } from "@/services/semester.service";
+import { CourseService } from "@/services/course.service";
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/hooks/use-app-state";
 import { HeaderSkeleton, ListSkeleton } from "@/components/shared/skeletons";
@@ -116,11 +118,14 @@ export default function AcademicPlanningPage() {
     setIsSemesterDialogOpen(true); // Changed state variable name
   };
 
-  const handleSaveSemester = (semester: PlannerSemester) => {
+  const handleSaveSemester = async (semester: PlannerSemester) => {
     if (editingSemester) {
       updateSemester(semester);
+      SemesterService.update(semester.id, semester);
     } else {
-      addSemester(semester);
+      const mysqlId = await SemesterService.create(semester);
+      const id = mysqlId ? String(mysqlId) : semester.id;
+      addSemester({ ...semester, id });
     }
     setEditingSemester(null);
   };
@@ -132,10 +137,10 @@ export default function AcademicPlanningPage() {
   const confirmDeleteSemester = () => {
     if (semesterToDelete) {
       deleteSemester(semesterToDelete);
-      // Also delete linked courses
+      SemesterService.delete(semesterToDelete);
       courses
         .filter((c) => c.semesterId === semesterToDelete)
-        .forEach((c) => deleteCourse(c.id));
+        .forEach((c) => { deleteCourse(c.id); CourseService.delete(c.id); });
       setSemesterToDelete(null);
     }
   };
@@ -154,8 +159,7 @@ export default function AcademicPlanningPage() {
     setIsCourseDialogOpen(true); // Changed state variable name
   };
 
-  const handleSaveCourse = (courseData: Omit<Course, "id">) => {
-    // Changed parameter type
+  const handleSaveCourse = async (courseData: Omit<Course, "id">) => {
     // Validation for prior courses
     if (activeSemesterId === "prior-completed") {
       const currentCredits = priorCourses.reduce(
@@ -176,13 +180,14 @@ export default function AcademicPlanningPage() {
     }
 
     if (editingCourse) {
-      updateCourse({ ...courseData, id: editingCourse.id } as Course);
+      const updated = { ...courseData, id: editingCourse.id } as Course;
+      updateCourse(updated);
+      CourseService.update(editingCourse.id, updated);
     } else {
-      addCourse({
-        ...courseData,
-        id: crypto.randomUUID(),
-        semesterId: activeSemesterId || "",
-      } as Course);
+      const draft = { ...courseData, semesterId: activeSemesterId || "" } as Omit<Course, "id">;
+      const mysqlId = await CourseService.create(draft);
+      const id = mysqlId ? String(mysqlId) : crypto.randomUUID();
+      addCourse({ ...draft, id } as Course);
     }
     setEditingCourse(null);
     setActiveSemesterId(null);
@@ -195,6 +200,7 @@ export default function AcademicPlanningPage() {
   const confirmDeleteCourse = () => {
     if (courseToDelete) {
       deleteCourse(courseToDelete);
+      CourseService.delete(courseToDelete);
       setCourseToDelete(null);
     }
   };

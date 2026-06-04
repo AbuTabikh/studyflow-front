@@ -13,6 +13,7 @@ import { SelfLearningEmptyState } from "@/components/self-learning/self-learning
 import { HeaderSkeleton, CardGridSkeleton } from "@/components/shared/skeletons";
 
 import { ConfirmActionDialog } from "@/components/shared/confirm-action-dialog";
+import { LearningPlanService } from "@/services/learning-plan.service";
 
 export default function SelfLearningPage() {
   const { state, isLoaded, updateState } = useAppState();
@@ -50,19 +51,30 @@ export default function SelfLearningPage() {
         ...prev,
         selfLearningPlans: prev.selfLearningPlans.filter(p => p.id !== planToDelete)
       }));
+      LearningPlanService.delete(planToDelete);
       setPlanToDelete(null);
     }
   };
 
-  const handleSave = (plan: LearningPlan) => {
+  const handleSave = async (plan: LearningPlan) => {
+    const isNew = !plans.find(p => p.id === plan.id);
+    let finalPlan = plan;
+
+    if (isNew) {
+      const mysqlId = await LearningPlanService.create(plan);
+      if (mysqlId) finalPlan = { ...plan, id: String(mysqlId) };
+    } else {
+      LearningPlanService.update(plan.id, plan);
+    }
+
     updateState(prev => {
-      const idx = prev.selfLearningPlans.findIndex(p => p.id === plan.id);
+      const idx = prev.selfLearningPlans.findIndex(p => p.id === finalPlan.id);
       let updatedPlans = [];
-      if (idx >= 0) { 
-        updatedPlans = [...prev.selfLearningPlans]; 
-        updatedPlans[idx] = plan; 
+      if (idx >= 0) {
+        updatedPlans = [...prev.selfLearningPlans];
+        updatedPlans[idx] = finalPlan;
       } else {
-        updatedPlans = [plan, ...prev.selfLearningPlans];
+        updatedPlans = [finalPlan, ...prev.selfLearningPlans];
       }
       return { ...prev, selfLearningPlans: updatedPlans };
     });

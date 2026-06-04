@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Filter } from "lucide-react";
 import { HeaderSkeleton, ListSkeleton } from "@/components/shared/skeletons";
 import { ConfirmActionDialog } from "@/components/shared/confirm-action-dialog";
+import { ReflectionService } from "@/services/reflection.service";
 
 export default function ReflectionsPage() {
   const { state, isLoaded, updateState } = useAppState();
@@ -63,21 +64,32 @@ export default function ReflectionsPage() {
         ...prev,
         reflections: prev.reflections.filter(r => r.id !== reflectionToDelete)
       }));
+      ReflectionService.delete(reflectionToDelete);
       setDetailOpen(false);
       setReflectionToDelete(null);
     }
   };
 
-  const handleSaveEntry = (entry: ReflectionEntry) => {
+  const handleSaveEntry = async (entry: ReflectionEntry) => {
+    const isNew = !reflections.find(r => r.id === entry.id);
+    let finalEntry = entry;
+
+    if (isNew) {
+      const mysqlId = await ReflectionService.create(entry);
+      if (mysqlId) finalEntry = { ...entry, id: String(mysqlId) };
+    } else {
+      ReflectionService.update(entry.id, entry);
+    }
+
     updateState(prev => {
       const existingReflections = prev.reflections;
-      const idx = existingReflections.findIndex(r => r.id === entry.id);
+      const idx = existingReflections.findIndex(r => r.id === finalEntry.id);
       let nextReflections = [];
       if (idx >= 0) {
         nextReflections = [...existingReflections];
-        nextReflections[idx] = entry;
+        nextReflections[idx] = finalEntry;
       } else {
-        nextReflections = [entry, ...existingReflections];
+        nextReflections = [finalEntry, ...existingReflections];
       }
       return {
         ...prev,
