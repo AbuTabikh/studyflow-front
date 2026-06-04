@@ -2,11 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import {
-  filterEvents,
-  CalendarEvent,
-  CalendarFilters,
-} from "@/lib/calendar-utils";
+import { filterEvents, CalendarEvent, CalendarFilters } from "@/lib/calendar-utils";
 import { useAppState } from "@/hooks/use-app-state";
 import { selectCalendarEvents } from "@/lib/store/app-selectors";
 import { CalendarHeader } from "@/components/calendar/calendar-header";
@@ -20,77 +16,62 @@ import { DayView } from "@/components/calendar/day-view";
 import { AgendaView } from "@/components/calendar/agenda-view";
 import { EventDetailsModal } from "@/components/calendar/event-details-modal";
 import { CalendarSkeleton } from "@/components/shared/skeletons";
+import { TaskFormDialog } from "@/components/tasks/task-form-dialog";
+import { TaskItem } from "@/types/tasks";
+import { TaskService } from "@/services/task.service";
 
 export default function CalendarPage() {
   const router = useRouter();
-  const { state, isLoaded } = useAppState();
-
+  const { state, isLoaded, saveUnifiedTask } = useAppState();
   const courses = state.courses;
-  
-  // State
+
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState<"month" | "week" | "day" | "agenda">(
-    "month",
-  );
-  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
-    null,
-  );
+  const [viewMode, setViewMode] = useState<"month" | "week" | "day" | "agenda">("month");
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [showEventDetails, setShowEventDetails] = useState(false);
+  const [addEventOpen, setAddEventOpen] = useState(false);
 
   const [filters, setFilters] = useState<CalendarFilters>({
-    tasks: true,
-    assignments: true,
-    quizzes: true,
-    exams: true,
-    completed: true,
-    courses: [],
+    tasks: true, assignments: true, quizzes: true, exams: true, completed: true, courses: [],
   });
 
-  // Get all events using selector
   const allEvents = useMemo(() => selectCalendarEvents(state), [state]);
   const filteredEvents = useMemo(() => filterEvents(allEvents, filters), [allEvents, filters]);
 
-  // Navigation handlers
-  const handlePreviousMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1),
-    );
-  };
-
-  const handleNextMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1),
-    );
-  };
-
+  const handlePreviousMonth = () =>
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
+  const handleNextMonth = () =>
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
   const handleToday = () => {
-    const today = new Date();
-    setCurrentDate(today);
-    setSelectedDate(today);
+    const t = new Date(); setCurrentDate(t); setSelectedDate(t);
   };
-
   const handleEventClick = (event: CalendarEvent) => {
-    setSelectedEvent(event);
-    setShowEventDetails(true);
+    setSelectedEvent(event); setShowEventDetails(true);
   };
-
   const handleEventDetailsClose = () => {
-    setShowEventDetails(false);
-    setTimeout(() => setSelectedEvent(null), 300);
+    setShowEventDetails(false); setTimeout(() => setSelectedEvent(null), 300);
   };
-
   const handleOpenCourse = (courseId: string) => {
-    handleEventDetailsClose();
-    router.push(`/courses/${courseId}`);
+    handleEventDetailsClose(); router.push(`/courses/${courseId}`);
   };
 
-  if (!isLoaded) {
-    return <CalendarSkeleton />;
-  }
+  const handleSaveEvent = async (task: TaskItem) => {
+    const isNew = !state.tasks.find(t => t.id === task.id);
+    if (isNew) {
+      const mysqlId = await TaskService.create(task);
+      saveUnifiedTask(mysqlId ? { ...task, id: String(mysqlId) } : task);
+    } else {
+      saveUnifiedTask(task);
+      TaskService.update(task);
+    }
+    setAddEventOpen(false);
+  };
+
+  if (!isLoaded) return <CalendarSkeleton />;
 
   return (
-    <div className="space-y-6 pb-8 animate-in fade-in zoom-in-95 duration-500">       {/* Header */}
+    <div className="space-y-6 pb-8 animate-in fade-in zoom-in-95 duration-500">
       <CalendarHeader
         currentDate={currentDate}
         onPreviousMonth={handlePreviousMonth}
@@ -98,80 +79,55 @@ export default function CalendarPage() {
         onToday={handleToday}
         viewMode={viewMode}
         onViewChange={setViewMode}
+        onAddEvent={() => setAddEventOpen(true)}
       />
 
-      {/* Main Layout */}
       <div className="flex flex-col lg:flex-row">
-        {/* Left Sidebar */}
         <div className="w-full lg:w-64 border-r border-slate-200 dark:border-slate-800 p-4 space-y-4 overflow-y-auto max-h-[calc(100vh-140px)] lg:sticky lg:top-20">
           <MiniCalendar
             selectedDate={selectedDate}
             onDateSelect={setSelectedDate}
             activeDays={state.streak?.activeDays || []}
           />
-
           <FilterComponent
             filters={filters}
             onFiltersChange={setFilters}
-            courses={courses.map((c) => ({
-              id: c.id,
-              title: c.title,
-              code: c.code,
-            }))}
+            courses={courses.map(c => ({ id: c.id, title: c.title, code: c.code }))}
           />
-
-          <UpcomingDeadlines
-            events={filteredEvents}
-            onEventClick={handleEventClick}
-          />
-
+          <UpcomingDeadlines events={filteredEvents} onEventClick={handleEventClick} />
           <ColorLegend />
         </div>
 
-        {/* Main Content */}
         <div className="flex-1 p-4 lg:p-6 overflow-y-auto">
           {viewMode === "month" && (
-            <MonthView
-              events={filteredEvents}
-              currentDate={currentDate}
-              onEventClick={handleEventClick}
-              onDateClick={setSelectedDate}
-              activeDays={state.streak?.activeDays || []}
-            />
+            <MonthView events={filteredEvents} currentDate={currentDate}
+              onEventClick={handleEventClick} onDateClick={setSelectedDate}
+              activeDays={state.streak?.activeDays || []} />
           )}
-
           {viewMode === "week" && (
-            <WeekView
-              events={filteredEvents}
-              currentDate={selectedDate}
-              onEventClick={handleEventClick}
-            />
+            <WeekView events={filteredEvents} currentDate={selectedDate} onEventClick={handleEventClick} />
           )}
-
           {viewMode === "day" && (
-            <DayView
-              events={filteredEvents}
-              currentDate={selectedDate}
-              onEventClick={handleEventClick}
-            />
+            <DayView events={filteredEvents} currentDate={selectedDate} onEventClick={handleEventClick} />
           )}
-
           {viewMode === "agenda" && (
-            <AgendaView
-              events={filteredEvents}
-              currentDate={currentDate}
-              onEventClick={handleEventClick}
-            />
+            <AgendaView events={filteredEvents} currentDate={currentDate} onEventClick={handleEventClick} />
           )}
         </div>
       </div>
 
-      {/* Event Details Modal */}
       <EventDetailsModal
         event={selectedEvent}
         isOpen={showEventDetails}
         onClose={handleEventDetailsClose}
         onOpenCourse={handleOpenCourse}
+      />
+
+      <TaskFormDialog
+        open={addEventOpen}
+        onOpenChange={setAddEventOpen}
+        onSave={handleSaveEvent}
+        initialData={null}
       />
     </div>
   );
