@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Flame } from "lucide-react";
 import { useMemo } from "react";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 interface StreakCardProps {
   count: number;
@@ -10,15 +11,16 @@ interface StreakCardProps {
 }
 
 export function StreakCard({ count, longestCount }: StreakCardProps) {
+  const { tr, t } = useTranslation();
   const isHighStreak = count >= 3;
   const isEpicStreak = count >= 7;
 
   const motivationalMessage = useMemo(() => {
-    if (count === 0) return "Start your journey today! 🔥";
-    if (count <= 2) return "Great start! Keep building your streak 🔥";
-    if (count <= 6) return "You're on a roll! Don't break the chain 💪";
-    return "Amazing consistency! You're doing great 🚀";
-  }, [count]);
+    if (count === 0) return tr(t.streak.msg0);
+    if (count <= 2) return tr(t.streak.msg2);
+    if (count <= 6) return tr(t.streak.msg6);
+    return tr(t.streak.msg7);
+  }, [count, tr, t]);
 
   const gradientClass = useMemo(() => {
     if (isEpicStreak) return "bg-gradient-to-br from-orange-500 via-red-500 to-purple-600 border-none text-white shadow-[0_0_20px_rgba(234,88,12,0.3)]";
@@ -40,7 +42,7 @@ export function StreakCard({ count, longestCount }: StreakCardProps) {
     <Card className={`${gradientClass} transition-all duration-500`}>
       <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
         <CardTitle className={`text-sm font-medium ${isHighStreak ? "text-white/90" : "text-muted-foreground"}`}>
-          Daily Streak
+          {tr(t.streak.title)}
         </CardTitle>
         <div className={`w-10 h-10 rounded-full ${iconBgClass} flex items-center justify-center animate-pulse`}>
           <Flame className={`h-6 w-6 ${iconColorClass} fill-current`} />
@@ -50,11 +52,11 @@ export function StreakCard({ count, longestCount }: StreakCardProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-baseline gap-2">
             <div className="text-4xl font-black tracking-tight">{count}</div>
-            <div className={`text-sm font-bold ${isHighStreak ? "text-white/80" : "text-muted-foreground"}`}>Days</div>
+            <div className={`text-sm font-bold ${isHighStreak ? "text-white/80" : "text-muted-foreground"}`}>{tr(t.streak.days)}</div>
           </div>
           {longestCount !== undefined && longestCount > 0 && (
             <div className={`text-[10px] font-bold px-2 py-1 rounded-full ${isHighStreak ? "bg-white/20 text-white" : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"}`}>
-              BEST: {longestCount}
+              {tr(t.streak.best)}: {longestCount}
             </div>
           )}
         </div>

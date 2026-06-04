@@ -14,11 +14,12 @@ import { UserAvatar } from "@/components/ui/user-avatar";
 import { useAppState } from "@/hooks/use-app-state";
 import { ConfirmActionDialog } from "@/components/shared/confirm-action-dialog";
 import { useTranslation } from "@/lib/i18n/use-translation";
+import { LangSwitcher } from "@/components/ui/lang-switcher";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
   const { state } = useAppState();
-  const { tr, t } = useTranslation();
+  const { tr, t, isRtl } = useTranslation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const user = state.userProfile;
@@ -42,7 +43,7 @@ export function DashboardSidebar() {
   return (
     <>
       <button
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-card rounded-lg border border-border shadow-sm"
+        className={`lg:hidden fixed top-4 z-50 p-2 bg-card rounded-lg border border-border shadow-sm ${isRtl ? "right-4" : "left-4"}`}
         onClick={() => setMobileOpen(!mobileOpen)}
         aria-label="Toggle menu"
       >
@@ -54,8 +55,9 @@ export function DashboardSidebar() {
       )}
 
       <aside className={cn(
-        "fixed top-0 left-0 z-40 h-screen w-64 bg-card border-r border-border transition-transform duration-300",
-        mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+        "fixed top-0 z-40 h-screen w-64 bg-card transition-transform duration-300",
+        isRtl ? "right-0 border-l border-border" : "left-0 border-r border-border",
+        mobileOpen ? "translate-x-0" : isRtl ? "translate-x-full lg:translate-x-0" : "-translate-x-full lg:translate-x-0",
       )}>
         <div className="flex flex-col h-full">
           <div className="p-4 border-border">
@@ -85,6 +87,9 @@ export function DashboardSidebar() {
           </nav>
 
           <div className="p-4 border-t border-border space-y-2">
+            <div className="flex justify-center pb-1">
+              <LangSwitcher />
+            </div>
             <Link href="/settings" className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors group">
               <UserAvatar profile={user} className="h-8 w-8 group-hover:ring-2 group-hover:ring-primary/20 transition-all" />
               <div className="flex flex-col flex-1 overflow-hidden">

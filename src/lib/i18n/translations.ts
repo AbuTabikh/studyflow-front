@@ -237,6 +237,123 @@ export const t = {
     milestones: { en: "Milestones",     ar: "الإنجازات" },
     resources:  { en: "Resources",      ar: "المصادر" },
   },
+
+  // ── Streak ───────────────────────────────────────────────────────────────────
+  streak: {
+    title:       { en: "Daily Streak",    ar: "الأيام المتتالية" },
+    days:        { en: "Days",            ar: "يوم" },
+    best:        { en: "BEST",            ar: "الأفضل" },
+    msg0:        { en: "Start your journey today! 🔥",            ar: "ابدأ رحلتك اليوم! 🔥" },
+    msg2:        { en: "Great start! Keep building your streak 🔥", ar: "بداية رائعة! واصل! 🔥" },
+    msg6:        { en: "You're on a roll! Don't break the chain 💪", ar: "أنت في قمة التركيز! لا تتوقف 💪" },
+    msg7:        { en: "Amazing consistency! You're doing great 🚀", ar: "ثبات رائع! أنت تبلي بلاءً حسناً 🚀" },
+  },
+
+  // ── Focus ────────────────────────────────────────────────────────────────────
+  focus: {
+    title:       { en: "Focus Mode",              ar: "وضع التركيز" },
+    subtitle:    { en: "Stay productive with Pomodoro", ar: "حافظ على إنتاجيتك مع بومودورو" },
+    start:       { en: "Start Focus Session",     ar: "بدء جلسة التركيز" },
+  },
+
+  // ── High Priority Tasks ───────────────────────────────────────────────────────
+  highPriorityTasks: {
+    title:       { en: "High Priority Tasks",         ar: "المهام ذات الأولوية العالية" },
+    viewAll:     { en: "View All",                    ar: "عرض الكل" },
+    viewAllTasks:{ en: "View all tasks",               ar: "عرض كل المهام" },
+    addTask:     { en: "Add Task",                    ar: "إضافة مهمة" },
+    noUrgent:    { en: "No urgent tasks right now. Nice work!", ar: "لا توجد مهام عاجلة الآن. أحسنت!" },
+    overdue:     { en: "Overdue",                     ar: "متأخرة" },
+    due:         { en: "Due",                         ar: "موعد" },
+    markDone:    { en: "Mark as done",                ar: "وضع علامة كمنجز" },
+  },
+
+  // ── Academic Progress ─────────────────────────────────────────────────────────
+  academicProgress: {
+    title:       { en: "Academic Progress",    ar: "التقدم الأكاديمي" },
+    openPlanner: { en: "Open Planner",         ar: "فتح المخطط" },
+    progress:    { en: "Progress",             ar: "التقدم" },
+    passedHours: { en: "Passed Hours",         ar: "الساعات المجتازة" },
+    keepItUp:    { en: "Keep it up!",          ar: "واصل!" },
+    hoursLeft:   { en: "hours left",           ar: "ساعة متبقية" },
+  },
+
+  // ── Self Learning Progress ────────────────────────────────────────────────────
+  selfLearningProgress: {
+    title:        { en: "Self Learning",          ar: "التعلم الذاتي" },
+    currentPlan:  { en: "Current Plan",           ar: "الخطة الحالية" },
+    courseProgress:{ en: "Course Progress",       ar: "تقدم الخطة" },
+    noActivePlan: { en: "Start a self-learning plan to track your progress.", ar: "ابدأ خطة تعلم لمتابعة تقدمك." },
+    continueLearning:{ en: "Continue Learning",   ar: "متابعة التعلم" },
+    explorePlans: { en: "Explore Plans",          ar: "استكشاف الخطط" },
+  },
+
+  // ── Landing page ──────────────────────────────────────────────────────────────
+  landing: {
+    nav: {
+      home:         { en: "Home",          ar: "الرئيسية" },
+      features:     { en: "Features",      ar: "المميزات" },
+      howItWorks:   { en: "How It Works",  ar: "كيف يعمل" },
+      testimonials: { en: "Testimonials",  ar: "آراء المستخدمين" },
+      login:        { en: "Login",         ar: "تسجيل الدخول" },
+      signUp:       { en: "Sign Up",       ar: "إنشاء حساب" },
+    },
+    hero: {
+      badge:       { en: "Smart Academic Management", ar: "إدارة أكاديمية ذكية" },
+      title1:      { en: "Organize Your Academic Life,", ar: "نظّم حياتك الأكاديمية،" },
+      title2:      { en: "Achieve Your Goals",           ar: "وحقق أهدافك" },
+      subtitle:    { en: "Track your courses, manage tasks, monitor progress, and stay motivated throughout your university journey. StudyFlow helps you succeed academically while reducing stress.", ar: "تتبّع مقرراتك، أدِر مهامك، راقب تقدمك، وابقَ متحفزاً طوال رحلتك الجامعية. StudyFlow يساعدك على النجاح أكاديمياً مع تقليل التوتر." },
+      startNow:    { en: "Start Now",                    ar: "ابدأ الآن" },
+      yourProgress:{ en: "Your Progress",               ar: "تقدمك" },
+      thisSemester:{ en: "This Semester",               ar: "هذا الفصل" },
+      gpa:         { en: "GPA",                         ar: "المعدل" },
+      credits:     { en: "Credits",                     ar: "الساعات" },
+      complete:    { en: "complete",                    ar: "مكتمل" },
+    },
+    features: {
+      sectionTitle: { en: "Everything You Need to Succeed", ar: "كل ما تحتاجه للنجاح" },
+      sectionSub:   { en: "Powerful features designed specifically for students to organize, track, and achieve academic excellence.", ar: "ميزات قوية مصممة خصيصاً للطلاب لتنظيم وتتبع وتحقيق التميز الأكاديمي." },
+      f1title:      { en: "Smart Course Management",     ar: "إدارة المقررات الذكية" },
+      f1desc:       { en: "Organize courses by semester, track weekly progress, and manage study materials all in one place.", ar: "رتّب مقرراتك حسب الفصل، تتبّع تقدمك الأسبوعي، وأدِر مواد الدراسة في مكان واحد." },
+      f2title:      { en: "Automatic Task Generation",   ar: "توليد المهام التلقائي" },
+      f2desc:       { en: "Tasks are auto-generated from your course schedule. Never miss an assignment or deadline again.", ar: "تُولَّد المهام تلقائياً من جدولك الدراسي. لن تفوتك واجبات أو مواعيد نهائية بعد الآن." },
+      f3title:      { en: "Progress Tracking",           ar: "تتبع التقدم" },
+      f3desc:       { en: "Visualize your academic progress with intuitive charts showing GPA, credits, and completion rates.", ar: "تصوّر تقدمك الأكاديمي بمخططات بيانية تُظهر المعدل والساعات ونسب الإتمام." },
+      f4title:      { en: "Self-Learning Paths",         ar: "مسارات التعلم الذاتي" },
+      f4desc:       { en: "Create and track personal learning goals beyond your coursework with structured learning paths.", ar: "أنشئ وتتبّع أهدافاً تعليمية شخصية خارج المنهج بمسارات تعلم منظمة." },
+    },
+    howItWorks: {
+      sectionTitle: { en: "How It Works",               ar: "كيف يعمل" },
+      sectionSub:   { en: "Get started in minutes and take control of your academic journey", ar: "ابدأ في دقائق وتحكم في مسيرتك الأكاديمية" },
+      step1title:   { en: "Create Your Academic Profile", ar: "أنشئ ملفك الأكاديمي" },
+      step1desc:    { en: "Set up your university, major, and academic goals in minutes.", ar: "أعدّ جامعتك وتخصصك وأهدافك الأكاديمية في دقائق." },
+      step2title:   { en: "Add Your Courses",           ar: "أضف مقرراتك" },
+      step2desc:    { en: "Import or manually add your current semester courses.", ar: "استورد أو أضف يدوياً مقررات فصلك الحالي." },
+      step3title:   { en: "Track & Achieve",            ar: "تتبع وأنجز" },
+      step3desc:    { en: "Monitor your progress, complete tasks, and achieve academic excellence.", ar: "راقب تقدمك، أنجز مهامك، وحقق التميز الأكاديمي." },
+    },
+    cta: {
+      title:       { en: "Ready to Transform Your Academic Journey?", ar: "هل أنت مستعد لتحويل مسيرتك الأكاديمية؟" },
+      subtitle:    { en: "Join thousands of students already using StudyFlow to achieve their academic goals.", ar: "انضم إلى آلاف الطلاب الذين يستخدمون StudyFlow بالفعل لتحقيق أهدافهم." },
+      startFree:   { en: "Start For Free",              ar: "ابدأ مجاناً" },
+    },
+    footer: {
+      tagline:     { en: "Smart academic management for students.", ar: "إدارة أكاديمية ذكية للطلاب." },
+      platform:    { en: "Platform",                    ar: "المنصة" },
+      company:     { en: "Company",                     ar: "الشركة" },
+      legal:       { en: "Legal",                       ar: "قانوني" },
+      about:       { en: "About Us",                    ar: "من نحن" },
+      blog:        { en: "Blog",                        ar: "المدونة" },
+      careers:     { en: "Careers",                     ar: "وظائف" },
+      contact:     { en: "Contact",                     ar: "تواصل معنا" },
+      privacy:     { en: "Privacy Policy",              ar: "سياسة الخصوصية" },
+      terms:       { en: "Terms of Service",            ar: "شروط الاستخدام" },
+      cookies:     { en: "Cookie Policy",               ar: "سياسة الكوكيز" },
+      pricing:     { en: "Pricing",                     ar: "الأسعار" },
+      faq:         { en: "FAQ",                         ar: "الأسئلة الشائعة" },
+      rights:      { en: "All rights reserved.",        ar: "جميع الحقوق محفوظة." },
+    },
+  },
 } as const;
 
 export function translate(key: { en: string; ar: string }, lang: Lang): string {

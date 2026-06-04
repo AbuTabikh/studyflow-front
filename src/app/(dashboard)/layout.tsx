@@ -13,7 +13,7 @@ export default function DashboardLayout({
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <div className="min-h-screen bg-background">
         <DashboardSidebar />
-        <div className="lg:pl-64">
+        <div className="ltr:lg:pl-64 rtl:lg:pr-64">
           <DashboardHeader />
           <main className="p-4 lg:p-6">
             <Breadcrumbs />
