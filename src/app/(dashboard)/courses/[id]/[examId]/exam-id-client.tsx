@@ -129,7 +129,9 @@ export function ExamModeClient() {
     setCourse(updatedCourse);
     setExam(prev => prev ? { ...prev, topics: newTopics } : prev);
     updateCourse(updatedCourse);
-    CourseService.update(updatedCourse.id, updatedCourse);
+    CourseService.update(updatedCourse.id, updatedCourse).then((newId) => {
+      if (newId) updateCourse({ ...updatedCourse, id: newId });
+    });
   }, [course, examId, updateCourse]);
 
   const handleAddTopic = () => {
@@ -158,7 +160,9 @@ export function ExamModeClient() {
     setCourse(updatedCourse);
     setExam(prev => prev ? { ...prev, completed: newCompleted } : prev);
     updateCourse(updatedCourse);
-    CourseService.update(updatedCourse.id, updatedCourse);
+    CourseService.update(updatedCourse.id, updatedCourse).then((newId) => {
+      if (newId) updateCourse({ ...updatedCourse, id: newId });
+    });
   };
 
   const countdown = useCountdown(exam?.date, exam?.time);

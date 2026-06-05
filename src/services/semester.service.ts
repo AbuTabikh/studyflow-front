@@ -21,11 +21,25 @@ export const SemesterService = {
     } catch { return null; }
   },
 
-  async update(id: string, semester: PlannerSemester): Promise<void> {
-    if (!ok()) return;
+  async update(id: string, semester: PlannerSemester): Promise<string | null> {
+    if (!ok()) return null;
     const numId = parseInt(id, 10);
-    if (isNaN(numId)) return;
-    try { await apiClient.put(`/semesters/${numId}`, semesterToApi(semester)); } catch { /* silent */ }
+    if (isNaN(numId)) {
+      // UUID semester — never reached the DB yet, create it now
+      const newId = await SemesterService.create(semester);
+      return newId ? String(newId) : null;
+    }
+    try {
+      await apiClient.put(`/semesters/${numId}`, semesterToApi(semester));
+      return null;
+    } catch (err: any) {
+      if (err?.status === 404) {
+        // Semester doesn't exist for this user — re-create it
+        const newId = await SemesterService.create(semester);
+        return newId ? String(newId) : null;
+      }
+      return null;
+    }
   },
 
   async delete(id: string): Promise<void> {

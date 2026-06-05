@@ -46,7 +46,9 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
       const errorData = await response.json().catch(() => ({}));
       const msg = errorData.message || errorData.error || `HTTP ${response.status}`;
       console.error(`[API] ${method} ${endpoint} → ${response.status}`, errorData);
-      throw new Error(msg);
+      const err = new Error(msg) as Error & { status: number };
+      err.status = response.status;
+      throw err;
     }
 
     if (response.status === 204) return {} as T;

@@ -21,11 +21,25 @@ export const LearningPlanService = {
     } catch { return null; }
   },
 
-  async update(id: string, plan: LearningPlan): Promise<void> {
-    if (!ok()) return;
+  async update(id: string, plan: LearningPlan): Promise<string | null> {
+    if (!ok()) return null;
     const numId = parseInt(id, 10);
-    if (isNaN(numId)) return;
-    try { await apiClient.put(`/learning-plans/${numId}`, learningPlanToApi(plan)); } catch { /* silent */ }
+    if (isNaN(numId)) {
+      // UUID plan — never reached the DB yet, create it now
+      const newId = await LearningPlanService.create(plan);
+      return newId ? String(newId) : null;
+    }
+    try {
+      await apiClient.put(`/learning-plans/${numId}`, learningPlanToApi(plan));
+      return null;
+    } catch (err: any) {
+      if (err?.status === 404) {
+        // Plan doesn't exist for this user — re-create it
+        const newId = await LearningPlanService.create(plan);
+        return newId ? String(newId) : null;
+      }
+      return null;
+    }
   },
 
   async delete(id: string): Promise<void> {

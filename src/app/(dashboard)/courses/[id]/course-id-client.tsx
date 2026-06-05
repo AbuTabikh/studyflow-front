@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAppState } from "@/hooks/use-app-state";
 import { Course, StudyTask, Assignment, Exam, Resource, WeeklyPlan } from "@/types/course";
@@ -18,14 +18,19 @@ type ItemType = "study-task" | "assignment" | "quiz" | "exam";
 
 export function CourseDetailsClient() {
   const params = useParams();
+  const router = useRouter();
   const courseId = params.id as string;
   const { isLoaded, courses, updateCourse } = useAppState();
 
   const course = courses.find(c => c.id === courseId) || null;
 
-  const syncCourse = (updated: Course) => {
+  const syncCourse = async (updated: Course) => {
     updateCourse(updated);
-    CourseService.update(updated.id, updated);
+    const newId = await CourseService.update(updated.id, updated);
+    if (newId && newId !== updated.id) {
+      updateCourse({ ...updated, id: newId });
+      router.replace(`/courses/${newId}`);
+    }
   };
 
   // Persists a newly added week item to MySQL as a Task row

@@ -63,25 +63,26 @@ export default function TasksClient() {
     }
   };
 
-  const handleStatusChange = (id: string, newStatus: TaskStatus) => {
+  const handleStatusChange = async (id: string, newStatus: TaskStatus) => {
     const task = tasks.find(t => t.id === id);
     if (task) {
       const updated = { ...task, status: newStatus, updatedAt: new Date().toISOString() };
       saveUnifiedTask(updated);
-      TaskService.update(updated); // sync to MySQL
+      const newId = await TaskService.update(updated);
+      if (newId) saveUnifiedTask({ ...updated, id: newId });
     }
   };
 
   const handleSaveTask = async (task: TaskItem) => {
     const isNew = !tasks.find(t => t.id === task.id);
     if (isNew) {
-      // Get MySQL ID as local ID so updates/deletes work later
       const mysqlId = await TaskService.create(task);
       const finalTask = mysqlId ? { ...task, id: String(mysqlId) } : task;
       saveUnifiedTask(finalTask);
     } else {
       saveUnifiedTask(task);
-      TaskService.update(task); // sync update to MySQL
+      const newId = await TaskService.update(task);
+      if (newId) saveUnifiedTask({ ...task, id: newId });
     }
   };
 

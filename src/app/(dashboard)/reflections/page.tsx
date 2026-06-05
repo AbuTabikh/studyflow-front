@@ -78,12 +78,13 @@ export default function ReflectionsPage() {
       const mysqlId = await ReflectionService.create(entry);
       if (mysqlId) finalEntry = { ...entry, id: String(mysqlId) };
     } else {
-      ReflectionService.update(entry.id, entry);
+      const newId = await ReflectionService.update(entry.id, entry);
+      if (newId) finalEntry = { ...entry, id: newId };
     }
 
     updateState(prev => {
       const existingReflections = prev.reflections;
-      const idx = existingReflections.findIndex(r => r.id === finalEntry.id);
+      const idx = existingReflections.findIndex(r => r.id === finalEntry.id || r.id === entry.id);
       let nextReflections = [];
       if (idx >= 0) {
         nextReflections = [...existingReflections];

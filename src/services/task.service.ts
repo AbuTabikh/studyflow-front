@@ -17,9 +17,7 @@ export const TaskService = {
     if (!ok()) { console.warn("[TaskService] no auth token"); return null; }
     try {
       const payload = taskToApi(task);
-      console.log("[TaskService] create →", payload);
       const res = await apiClient.post<any>("/tasks", payload);
-      console.log("[TaskService] create ✓ id=", res?.id);
       return res?.id ?? null;
     } catch (err) {
       console.error("[TaskService] create ✗", err);
@@ -27,14 +25,25 @@ export const TaskService = {
     }
   },
 
-  async update(task: TaskItem): Promise<void> {
-    if (!ok()) return;
+  async update(task: TaskItem): Promise<string | null> {
+    if (!ok()) return null;
     const numId = parseInt(task.id, 10);
-    if (isNaN(numId)) { console.warn("[TaskService] update: non-numeric id", task.id); return; }
+    if (isNaN(numId)) {
+      // UUID task — never reached the DB yet, create it now
+      const newId = await TaskService.create(task);
+      return newId ? String(newId) : null;
+    }
     try {
       await apiClient.put(`/tasks/${numId}`, taskToApi(task));
-    } catch (err) {
+      return null;
+    } catch (err: any) {
+      if (err?.status === 404) {
+        // Task doesn't exist for this user — re-create it
+        const newId = await TaskService.create(task);
+        return newId ? String(newId) : null;
+      }
       console.error("[TaskService] update ✗ id=", numId, err);
+      return null;
     }
   },
 

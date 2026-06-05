@@ -64,11 +64,12 @@ export default function SelfLearningPage() {
       const mysqlId = await LearningPlanService.create(plan);
       if (mysqlId) finalPlan = { ...plan, id: String(mysqlId) };
     } else {
-      LearningPlanService.update(plan.id, plan);
+      const newId = await LearningPlanService.update(plan.id, plan);
+      if (newId) finalPlan = { ...plan, id: newId };
     }
 
     updateState(prev => {
-      const idx = prev.selfLearningPlans.findIndex(p => p.id === finalPlan.id);
+      const idx = prev.selfLearningPlans.findIndex(p => p.id === finalPlan.id || p.id === plan.id);
       let updatedPlans = [];
       if (idx >= 0) {
         updatedPlans = [...prev.selfLearningPlans];

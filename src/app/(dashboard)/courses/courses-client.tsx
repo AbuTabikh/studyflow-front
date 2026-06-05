@@ -81,7 +81,9 @@ export default function CoursesClient() {
     if (isEditing && selectedCourse) {
       const updated = { ...courseData, id: selectedCourse.id } as Course;
       updateCourse(updated);
-      CourseService.update(selectedCourse.id, updated); // sync to MySQL
+      CourseService.update(selectedCourse.id, updated).then((newId) => {
+        if (newId) updateCourse({ ...updated, id: newId });
+      });
     } else {
       // Call API first to get MySQL integer ID; fall back to UUID if not logged in
       const mysqlId = await CourseService.create(courseData);

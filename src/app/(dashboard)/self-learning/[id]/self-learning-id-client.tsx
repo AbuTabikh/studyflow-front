@@ -96,7 +96,7 @@ export function SelfLearningDetailClient() {
   const [editingMilestone, setEditingMilestone] = useState<LearningMilestone | null>(null);
   const [milestoneToDelete, setMilestoneToDelete] = useState<string | null>(null);
 
-  const persistPlan = (updated: LearningPlan) => {
+  const persistPlan = async (updated: LearningPlan) => {
     updateState((prev) => {
       const idx = prev.selfLearningPlans.findIndex((p) => p.id === updated.id);
       if (idx === -1) return prev;
@@ -104,7 +104,18 @@ export function SelfLearningDetailClient() {
       newPlans[idx] = updated;
       return { ...prev, selfLearningPlans: newPlans };
     });
-    LearningPlanService.update(updated.id, updated);
+
+    const newId = await LearningPlanService.update(updated.id, updated);
+    if (newId && newId !== updated.id) {
+      // Plan was re-created (404 or UUID) — update state with new DB id and navigate
+      updateState((prev) => ({
+        ...prev,
+        selfLearningPlans: prev.selfLearningPlans.map((p) =>
+          p.id === updated.id ? { ...p, id: newId } : p
+        ),
+      }));
+      router.replace(`/self-learning/${newId}`);
+    }
   };
 
   const progress = useMemo(() => (plan ? calcPlanProgress(plan) : 0), [plan]);

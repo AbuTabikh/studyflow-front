@@ -121,7 +121,9 @@ export default function AcademicPlanningPage() {
   const handleSaveSemester = async (semester: PlannerSemester) => {
     if (editingSemester) {
       updateSemester(semester);
-      SemesterService.update(semester.id, semester);
+      SemesterService.update(semester.id, semester).then((newId) => {
+        if (newId) updateSemester({ ...semester, id: newId });
+      });
     } else {
       const mysqlId = await SemesterService.create(semester);
       const id = mysqlId ? String(mysqlId) : semester.id;
@@ -182,7 +184,9 @@ export default function AcademicPlanningPage() {
     if (editingCourse) {
       const updated = { ...courseData, id: editingCourse.id } as Course;
       updateCourse(updated);
-      CourseService.update(editingCourse.id, updated);
+      CourseService.update(editingCourse.id, updated).then((newId) => {
+        if (newId) updateCourse({ ...updated, id: newId });
+      });
     } else {
       const draft = { ...courseData, semesterId: activeSemesterId || "" } as Omit<Course, "id">;
       const mysqlId = await CourseService.create(draft);

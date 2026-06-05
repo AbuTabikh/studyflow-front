@@ -21,11 +21,25 @@ export const ReflectionService = {
     } catch { return null; }
   },
 
-  async update(id: string, reflection: ReflectionEntry): Promise<void> {
-    if (!ok()) return;
+  async update(id: string, reflection: ReflectionEntry): Promise<string | null> {
+    if (!ok()) return null;
     const numId = parseInt(id, 10);
-    if (isNaN(numId)) return;
-    try { await apiClient.put(`/reflections/${numId}`, reflectionToApi(reflection)); } catch { /* silent */ }
+    if (isNaN(numId)) {
+      // UUID reflection — never reached the DB yet, create it now
+      const newId = await ReflectionService.create(reflection);
+      return newId ? String(newId) : null;
+    }
+    try {
+      await apiClient.put(`/reflections/${numId}`, reflectionToApi(reflection));
+      return null;
+    } catch (err: any) {
+      if (err?.status === 404) {
+        // Reflection doesn't exist for this user — re-create it
+        const newId = await ReflectionService.create(reflection);
+        return newId ? String(newId) : null;
+      }
+      return null;
+    }
   },
 
   async delete(id: string): Promise<void> {

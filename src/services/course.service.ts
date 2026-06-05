@@ -21,14 +21,27 @@ export const CourseService = {
     } catch { return null; }
   },
 
-  async update(id: string, course: Course): Promise<void> {
-    if (!ok()) return;
+  async update(id: string, course: Course): Promise<string | null> {
+    if (!ok()) return null;
     const numId = parseInt(id, 10);
-    if (isNaN(numId)) { console.warn("[CourseService] non-numeric id, skipping update:", id); return; }
+    if (isNaN(numId)) {
+      // UUID course — never reached the DB yet, create it now
+      const { id: _dropped, ...rest } = course;
+      const newId = await CourseService.create(rest);
+      return newId ? String(newId) : null;
+    }
     try {
       await apiClient.put(`/courses/${numId}`, courseToApi(course));
-    } catch (err) {
+      return null;
+    } catch (err: any) {
+      if (err?.status === 404) {
+        // Course doesn't exist for this user — re-create it
+        const { id: _dropped, ...rest } = course;
+        const newId = await CourseService.create(rest);
+        return newId ? String(newId) : null;
+      }
       console.error("[CourseService] update failed for course", numId, err);
+      return null;
     }
   },
 
