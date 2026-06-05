@@ -24,6 +24,16 @@ export function courseFromApi(a: any): Partial<Course> {
   };
 }
 
+// Used when creating a course (includes semester_id)
+export function courseCreateToApi(c: Course | Omit<Course, "id">) {
+  const base = courseToApi(c as Course);
+  const semId = (c as Course).semesterId;
+  return {
+    ...base,
+    semester_id: semId ? (parseInt(semId, 10) || null) : null,
+  };
+}
+
 export function courseToApi(c: Course) {
   return {
     title:          c.title,
@@ -34,7 +44,7 @@ export function courseToApi(c: Course) {
     description:    c.description || null,
     image_url:      c.imageUrl || null,
     status:         c.status || "planned",
-    semester_id:    null,
+    // semester_id intentionally omitted — backend keeps existing value unless explicitly changed
     weekly_plan:    c.weeklyPlan || [],
     resources:      c.resources || [],
   };

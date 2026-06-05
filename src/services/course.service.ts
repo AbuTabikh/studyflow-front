@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api-client";
 import { Course } from "@/types/course";
-import { courseFromApi, courseToApi } from "@/lib/api/mappers";
+import { courseFromApi, courseToApi, courseCreateToApi } from "@/lib/api/mappers";
 
 const ok = () => typeof window !== "undefined" && !!localStorage.getItem("studyflow_auth_token");
 
@@ -16,7 +16,7 @@ export const CourseService = {
   async create(course: Omit<Course, "id">): Promise<number | null> {
     if (!ok()) return null;
     try {
-      const res = await apiClient.post<any>("/courses", courseToApi(course as Course));
+      const res = await apiClient.post<any>("/courses", courseCreateToApi(course));
       return res?.id ?? null;
     } catch { return null; }
   },
@@ -24,8 +24,12 @@ export const CourseService = {
   async update(id: string, course: Course): Promise<void> {
     if (!ok()) return;
     const numId = parseInt(id, 10);
-    if (isNaN(numId)) return;
-    try { await apiClient.put(`/courses/${numId}`, courseToApi(course)); } catch { /* silent */ }
+    if (isNaN(numId)) { console.warn("[CourseService] non-numeric id, skipping update:", id); return; }
+    try {
+      await apiClient.put(`/courses/${numId}`, courseToApi(course));
+    } catch (err) {
+      console.error("[CourseService] update failed for course", numId, err);
+    }
   },
 
   async delete(id: string): Promise<void> {
