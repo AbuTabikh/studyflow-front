@@ -177,11 +177,9 @@ export default function FocusPage() {
       const token = localStorage.getItem("studyflow_auth_token");
       if (token) {
         apiClient.post("/focus-sessions", {
-          session_duration: durations.pomodoro,
-          break_duration: durations.rest,
-          completed: true,
-          session_date: new Date().toISOString().slice(0, 10),
-        }).catch(() => {});
+          minutes: durations.pomodoro,
+          type: "pomodoro",
+        }).catch((err) => console.error("[Focus] save failed:", err));
       }
     }
 
