@@ -138,6 +138,15 @@ export default function FocusPage() {
 
   const [totalFocusMinutes, setTotalFocusMinutes] = useState(0);
 
+  // Load today's focus minutes from DB on mount
+  useEffect(() => {
+    const token = typeof window !== "undefined" && localStorage.getItem("studyflow_auth_token");
+    if (!token) return;
+    apiClient.get<{ total_minutes: number }>("/focus-sessions/stats")
+      .then((res) => { if (res?.total_minutes) setTotalFocusMinutes(res.total_minutes); })
+      .catch(() => {});
+  }, []);
+
   // Calculate total challenge minutes from hours and minutes input
   const totalChallengeMinutes = challengeHours * 60 + challengeMinutes;
 

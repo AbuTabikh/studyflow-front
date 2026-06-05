@@ -3,6 +3,7 @@
 import { Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppState } from "@/hooks/use-app-state";
+import { AuthService } from "@/services/auth.service";
 
 export function LangSwitcher({ className }: { className?: string }) {
   const { state, updateState } = useAppState();
@@ -14,6 +15,7 @@ export function LangSwitcher({ className }: { className?: string }) {
       ...prev,
       userProfile: { ...prev.userProfile, language: next },
     }));
+    AuthService.updateProfile({ language: next }).catch(() => {});
   };
 
   return (

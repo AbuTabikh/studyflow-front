@@ -27,7 +27,7 @@ export function useApiSync() {
     synced.current = true;
 
     (async () => {
-      const [apiCourses, apiTasks, apiSemesters, apiPlans, apiReflections, apiNotifications] =
+      const [apiCourses, apiTasks, apiSemesters, apiPlans, apiReflections, apiNotifications, apiUser] =
         await Promise.all([
           CourseService.list(),
           TaskService.list(),
@@ -35,6 +35,7 @@ export function useApiSync() {
           LearningPlanService.list(),
           ReflectionService.list(),
           apiClient.get<any[]>("/notifications").catch(() => []),
+          apiClient.get<any>("/user").catch(() => null),
         ]);
 
       updateState((prev) => {
@@ -146,8 +147,28 @@ export function useApiSync() {
             }))
           : [];
 
+        // ── User profile from API (DB values override stale localStorage) ──
+        const u = apiUser?.user;
+        const mergedProfile = u ? {
+          ...prev.userProfile,
+          ...(u.name                   ? { name: u.name }                                              : {}),
+          ...(u.university             ? { university: u.university }                                  : {}),
+          ...(u.major                  ? { major: u.major }                                            : {}),
+          ...(u.academic_year          ? { academicYear: u.academic_year }                             : {}),
+          ...(u.current_gpa != null    ? { currentGPA: String(u.current_gpa) }                        : {}),
+          ...(u.total_credit_hours     ? { totalCreditHours: String(u.total_credit_hours) }            : {}),
+          ...(u.completed_credit_hours ? { completedCreditHours: String(u.completed_credit_hours) }    : {}),
+          ...(u.theme                  ? { themePreference: u.theme as any }                           : {}),
+          ...(u.language               ? { language: u.language as any }                               : {}),
+          ...(u.reminder_preferences   ? { reminderPreferences: u.reminder_preferences }               : {}),
+          ...(u.onboarding_completed != null ? { onboardingCompleted: !!u.onboarding_completed }       : {}),
+          ...(u.avatar_url             ? { avatarUrl: u.avatar_url }                                   : {}),
+        } : prev.userProfile;
+
         return {
           ...prev,
+          userProfile: mergedProfile,
+          onboardingCompleted: prev.onboardingCompleted || !!u?.onboarding_completed,
           courses: [...mergedCourses, ...localOnlyCourses],
           tasks: [...apiTasksFull, ...localOnlyTasks],
           academicPlanning: {

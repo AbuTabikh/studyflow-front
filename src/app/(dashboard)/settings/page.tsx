@@ -13,6 +13,8 @@ import { Save, CheckCircle2, LogOut, RefreshCcw } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { HeaderSkeleton, ListSkeleton } from "@/components/shared/skeletons";
 import { ConfirmActionDialog } from "@/components/shared/confirm-action-dialog";
+import { AuthService } from "@/services/auth.service";
+import { AppStore } from "@/lib/store/app-store";
 
 export default function SettingsPage() {
   const { state, isLoaded, updateState } = useAppState();
@@ -23,9 +25,8 @@ export default function SettingsPage() {
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("studyflow_setup_complete");
-    localStorage.removeItem("studyflow_user_data");
-    window.location.href = "/";
+    AppStore.clearAll();
+    AuthService.logout();
   };
 
   // Sync with central state when it loads
@@ -67,8 +68,9 @@ export default function SettingsPage() {
 
     setIsSaving(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    await AuthService.updateProfile(localProfile).catch((err) =>
+      console.error("[Settings] profile save failed", err)
+    );
 
     // Update central state
     updateState({

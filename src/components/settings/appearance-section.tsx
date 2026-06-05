@@ -6,6 +6,7 @@ import { Sun, Moon, Monitor, Languages } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/hooks/use-app-state";
 import { useTranslation } from "@/lib/i18n/use-translation";
+import { AuthService } from "@/services/auth.service";
 
 export function AppearanceSection() {
   const { theme, setTheme } = useTheme();
@@ -24,11 +25,21 @@ export function AppearanceSection() {
     { value: "ar", native: "العربية" },
   ];
 
+  const handleThemeChange = (thm: string) => {
+    setTheme(thm);
+    updateState((prev) => ({
+      ...prev,
+      userProfile: { ...prev.userProfile, themePreference: thm as any },
+    }));
+    AuthService.updateProfile({ themePreference: thm as any }).catch(() => {});
+  };
+
   const setLanguage = (lang: "en" | "ar") => {
     updateState((prev) => ({
       ...prev,
       userProfile: { ...prev.userProfile, language: lang },
     }));
+    AuthService.updateProfile({ language: lang }).catch(() => {});
   };
 
   return (
@@ -46,7 +57,7 @@ export function AppearanceSection() {
             {themes.map((thm) => (
               <button
                 key={thm.value}
-                onClick={() => setTheme(thm.value)}
+                onClick={() => handleThemeChange(thm.value)}
                 className={cn(
                   "flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-medium transition-all duration-200",
                   theme === thm.value

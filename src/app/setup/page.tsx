@@ -46,42 +46,47 @@ export default function SetupPage() {
 
   const handleComplete = async () => {
     setIsLoading(true)
-    
-    // Simulate saving data
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    // Import store dynamically to avoid hydration issues if needed
+
     const { AppStore } = await import("@/lib/store/app-store");
     const { EMPTY_APP_STATE } = await import("@/types/app-state");
-    
-    // Merge only profile info into a fresh empty state
+    const { AuthService } = await import("@/services/auth.service");
+
     const currentState = AppStore.get();
     const cleanState = { ...EMPTY_APP_STATE };
-    
+
+    const profileUpdate = {
+      name: currentState.userProfile.name,
+      academicYear: formData.academicYear,
+      totalCreditHours: formData.totalCreditHours,
+      completedCreditHours: formData.completedCreditHours,
+      currentGPA: formData.currentGPA,
+      university: formData.university,
+      major: formData.major,
+      onboardingCompleted: true,
+    };
+
+    // Persist to DB then update local state
+    await AuthService.updateProfile(profileUpdate).catch((err) =>
+      console.error("[Setup] profile save failed", err)
+    );
+
     AppStore.set({
       ...cleanState,
       onboardingCompleted: true,
       userProfile: {
         ...cleanState.userProfile,
-        name: currentState.userProfile.name, // Preserve name from registration
-        academicYear: formData.academicYear,
-        totalCreditHours: formData.totalCreditHours,
-        completedCreditHours: formData.completedCreditHours,
-        currentGPA: formData.currentGPA,
-        university: formData.university,
-        major: formData.major,
-        onboardingCompleted: true,
-        updatedAt: new Date().toISOString()
+        ...profileUpdate,
+        updatedAt: new Date().toISOString(),
       },
       academicPlanning: {
         ...cleanState.academicPlanning,
         config: {
           ...cleanState.academicPlanning.config,
-          totalRequiredCredits: parseInt(formData.totalCreditHours) || 144
-        }
-      }
+          totalRequiredCredits: parseInt(formData.totalCreditHours) || 144,
+        },
+      },
     });
-    
+
     router.push("/dashboard")
   }
 
