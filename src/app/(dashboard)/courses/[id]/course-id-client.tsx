@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useAppState } from "@/hooks/use-app-state";
 import { Course, StudyTask, Assignment, Exam, Resource, WeeklyPlan } from "@/types/course";
+import { CourseService } from "@/services/course.service";
 import { HeaderSkeleton, ListSkeleton } from "@/components/shared/skeletons";
 import { Card } from "@/components/ui/card";
 import { CourseHeroCard } from "@/components/course-details/course-hero-card";
@@ -19,6 +20,11 @@ export function CourseDetailsClient() {
   const { isLoaded, courses, updateCourse } = useAppState();
 
   const course = courses.find(c => c.id === courseId) || null;
+
+  const syncCourse = (updated: Course) => {
+    updateCourse(updated);
+    CourseService.update(updated.id, updated);
+  };
 
   const getFullWeeklyPlan = (course: Course): WeeklyPlan[] => {
     const totalWeeks = course.durationWeeks || 0;
@@ -65,7 +71,7 @@ export function CourseDetailsClient() {
     const completedCount = updatedWeeklyPlan.filter(w => w.completed).length;
     const progress = Math.round((completedCount / updatedWeeklyPlan.length) * 100);
 
-    updateCourse({
+    syncCourse({
       ...course,
       weeklyPlan: updatedWeeklyPlan,
       progress
@@ -87,7 +93,7 @@ export function CourseDetailsClient() {
       return w;
     });
 
-    updateCourse({
+    syncCourse({
       ...course,
       weeklyPlan: updatedWeeklyPlan
     });
@@ -115,7 +121,7 @@ export function CourseDetailsClient() {
     const completedCount = updatedWeeklyPlan.filter(w => w.completed).length;
     const progress = Math.round((completedCount / updatedWeeklyPlan.length) * 100);
 
-    updateCourse({
+    syncCourse({
       ...course,
       weeklyPlan: updatedWeeklyPlan,
       progress
@@ -139,7 +145,7 @@ export function CourseDetailsClient() {
       };
     });
 
-    updateCourse({
+    syncCourse({
       ...course,
       weeklyPlan: updatedWeeklyPlan
     });
@@ -157,7 +163,7 @@ export function CourseDetailsClient() {
       };
     });
 
-    updateCourse({
+    syncCourse({
       ...course,
       weeklyPlan: updatedWeeklyPlan
     });
@@ -165,7 +171,7 @@ export function CourseDetailsClient() {
 
   const handleResourcesChange = (resources: Resource[]) => {
     if (!course) return;
-    updateCourse({ ...course, resources });
+    syncCourse({ ...course, resources });
   };
 
   if (!course || !isLoaded) {

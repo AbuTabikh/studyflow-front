@@ -40,6 +40,7 @@ import { ReminderBadge } from "@/components/shared/reminder-badge";
 import { ConfirmActionDialog } from "@/components/shared/confirm-action-dialog";
 import { useAppState } from "@/hooks/use-app-state";
 import { useTranslation } from "@/lib/i18n/use-translation";
+import { LearningPlanService } from "@/services/learning-plan.service";
 
 
 export function SelfLearningDetailClient() {
@@ -103,6 +104,7 @@ export function SelfLearningDetailClient() {
       newPlans[idx] = updated;
       return { ...prev, selfLearningPlans: newPlans };
     });
+    LearningPlanService.update(updated.id, updated);
   };
 
   const progress = useMemo(() => (plan ? calcPlanProgress(plan) : 0), [plan]);

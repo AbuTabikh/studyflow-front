@@ -19,6 +19,8 @@ export function courseFromApi(a: any): Partial<Course> {
     status:        a.status ?? "planned",
     semesterId:    a.semester_id ? String(a.semester_id) : "",
     numericGrade:  a.numeric_grade ?? undefined,
+    weeklyPlan:    Array.isArray(a.weekly_plan) ? a.weekly_plan : (a.weekly_plan ? JSON.parse(a.weekly_plan) : []),
+    resources:     Array.isArray(a.resources) ? a.resources : (a.resources ? JSON.parse(a.resources) : []),
   };
 }
 
@@ -33,6 +35,8 @@ export function courseToApi(c: Course) {
     image_url:      c.imageUrl || null,
     status:         c.status || "planned",
     semester_id:    null,
+    weekly_plan:    c.weeklyPlan || [],
+    resources:      c.resources || [],
   };
 }
 

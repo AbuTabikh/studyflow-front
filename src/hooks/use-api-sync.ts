@@ -42,17 +42,18 @@ export function useApiSync() {
         const localById = Object.fromEntries(prev.courses.map((c) => [c.id, c]));
         const mergedCourses: Course[] = apiCourses.map((apiC) => {
           const local = localById[apiC.id!] ?? {};
+          // API weeklyPlan/resources take priority if non-empty, else fallback to local
+          const weeklyPlan = (apiC.weeklyPlan?.length) ? apiC.weeklyPlan : (local.weeklyPlan ?? []);
+          const resources  = (apiC.resources?.length)  ? apiC.resources  : (local.resources  ?? []);
           return {
-            // Rich defaults
-            weeklyPlan: [],
             assignments: [],
             exams: [],
-            resources: [],
             academicEvents: [],
             upcomingTasks: [],
             ...local,
-            // API fields override
             ...apiC,
+            weeklyPlan,
+            resources,
           } as Course;
         });
         // Keep localStorage-only courses (not yet in DB, e.g. UUID ids)
