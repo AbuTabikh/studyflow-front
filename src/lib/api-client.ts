@@ -41,24 +41,20 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
 
   try {
     const response = await fetch(url.toString(), config);
-    
-    // Handle specific status codes
-    if (response.status === 401) {
-      // Unauthorized - handle logout or token refresh if needed
-      console.warn("Unauthorized request - potential session expiry");
-    }
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `API request failed with status ${response.status}`);
+      const msg = errorData.message || errorData.error || `HTTP ${response.status}`;
+      console.error(`[API] ${method} ${endpoint} → ${response.status}`, errorData);
+      throw new Error(msg);
     }
 
-    // Handle empty responses
     if (response.status === 204) return {} as T;
-
     return await response.json();
   } catch (error) {
-    console.error("API Client Error:", error);
+    if (!(error instanceof Error && error.message.startsWith("HTTP"))) {
+      console.error(`[API] ${method} ${endpoint} network error:`, error);
+    }
     throw error;
   }
 }
