@@ -31,6 +31,7 @@ export interface TaskItem {
   linkedCourseTitle?: string;
   linkedWeekId?: string;
   linkedWeekLabel?: string;
+  linkedWeekNumber?: number;
   linkedLearningPlanId?: string;
   linkedLearningPlanTitle?: string;
   

@@ -57,18 +57,19 @@ export function taskFromApi(a: any): Partial<TaskItem> {
     pending: "todo", "in-progress": "in-progress", completed: "done",
   };
   return {
-    id:           String(a.id),
-    title:        a.title ?? "",
-    description:  a.description ?? "",
-    type:         a.type ?? "study-task",
-    priority:     a.priority ?? "medium",
-    status:       (statusMap[a.status] ?? "todo") as any,
-    dueDate:      a.due_date ?? undefined,
-    dueTime:      a.due_time ?? undefined,
-    sourceModule: "general" as const,
-    linkedCourseId: a.course_id ? String(a.course_id) : undefined,
-    createdAt:    a.created_at ?? new Date().toISOString(),
-    updatedAt:    a.updated_at ?? new Date().toISOString(),
+    id:               String(a.id),
+    title:            a.title ?? "",
+    description:      a.description ?? "",
+    type:             a.type ?? "study-task",
+    priority:         a.priority ?? "medium",
+    status:           (statusMap[a.status] ?? "todo") as any,
+    dueDate:          a.due_date ?? undefined,
+    dueTime:          a.due_time ?? undefined,
+    sourceModule:     (a.course_id ? "course" : "general") as any,
+    linkedCourseId:   a.course_id ? String(a.course_id) : undefined,
+    linkedWeekNumber: a.week_number ?? undefined,
+    createdAt:        a.created_at ?? new Date().toISOString(),
+    updatedAt:        a.updated_at ?? new Date().toISOString(),
   };
 }
 
@@ -84,8 +85,8 @@ export function taskToApi(t: TaskItem) {
     status:      statusMap[t.status] ?? "pending",
     dueDate:     t.dueDate || null,
     dueTime:     t.dueTime || null,
-    course_id:   null,
-    week_number: null,
+    course_id:   t.linkedCourseId ? (parseInt(t.linkedCourseId, 10) || null) : null,
+    week_number: t.linkedWeekNumber ?? null,
   };
 }
 

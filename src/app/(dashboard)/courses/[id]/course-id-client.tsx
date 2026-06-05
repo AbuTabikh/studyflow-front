@@ -5,6 +5,8 @@ import { useState } from "react";
 import { useAppState } from "@/hooks/use-app-state";
 import { Course, StudyTask, Assignment, Exam, Resource, WeeklyPlan } from "@/types/course";
 import { CourseService } from "@/services/course.service";
+import { TaskService } from "@/services/task.service";
+import { TaskItem } from "@/types/tasks";
 import { HeaderSkeleton, ListSkeleton } from "@/components/shared/skeletons";
 import { Card } from "@/components/ui/card";
 import { CourseHeroCard } from "@/components/course-details/course-hero-card";
@@ -24,6 +26,41 @@ export function CourseDetailsClient() {
   const syncCourse = (updated: Course) => {
     updateCourse(updated);
     CourseService.update(updated.id, updated);
+  };
+
+  // Persists a newly added week item to MySQL as a Task row
+  const persistWeekItem = async (weekNumber: number, type: ItemType, item: StudyTask | Assignment | Exam) => {
+    const now = new Date().toISOString();
+    let task: TaskItem;
+
+    if (type === "study-task") {
+      const st = item as StudyTask;
+      task = {
+        id: st.id, title: st.title, type: "study-task", priority: "medium",
+        status: st.completed ? "done" : "todo", dueDate: st.dueDate,
+        sourceModule: "course", linkedCourseId: courseId, linkedWeekNumber: weekNumber,
+        createdAt: now, updatedAt: now,
+      };
+    } else if (type === "assignment" || type === "quiz") {
+      const a = item as Assignment;
+      task = {
+        id: a.id, title: a.title, description: a.description, type,
+        priority: "medium", status: "todo", dueDate: a.dueDate,
+        sourceModule: "course", linkedCourseId: courseId, linkedWeekNumber: weekNumber,
+        createdAt: now, updatedAt: now,
+      };
+    } else {
+      const e = item as Exam;
+      task = {
+        id: e.id, title: e.title, type: "exam", priority: "high",
+        status: e.completed ? "done" : "todo", dueDate: e.date, dueTime: e.time,
+        sourceModule: "course", linkedCourseId: courseId, linkedWeekNumber: weekNumber,
+        createdAt: now, updatedAt: now,
+      };
+    }
+
+    const mysqlId = await TaskService.create(task);
+    return mysqlId ? String(mysqlId) : task.id;
   };
 
   const getFullWeeklyPlan = (course: Course): WeeklyPlan[] => {
@@ -78,25 +115,26 @@ export function CourseDetailsClient() {
     });
   };
 
-  const handleAddItem = (weekNumber: number, type: ItemType, item: StudyTask | Assignment | Exam) => {
+  const handleAddItem = async (weekNumber: number, type: ItemType, item: StudyTask | Assignment | Exam) => {
     if (!course) return;
+
+    // Persist to MySQL tasks table (uses existing backend, no migration needed)
+    const savedId = await persistWeekItem(weekNumber, type, item);
+    const savedItem = { ...item, id: savedId };
 
     const fullPlan = getFullWeeklyPlan(course);
     const updatedWeeklyPlan = fullPlan.map(w => {
       if (w.weekNumber !== weekNumber) return w;
       if (type === "study-task")
-        return { ...w, studyTasks: [...w.studyTasks, item as StudyTask] };
+        return { ...w, studyTasks: [...w.studyTasks, savedItem as StudyTask] };
       if (type === "assignment" || type === "quiz")
-        return { ...w, assignments: [...w.assignments, item as Assignment] };
+        return { ...w, assignments: [...w.assignments, savedItem as Assignment] };
       if (type === "exam")
-        return { ...w, exams: [...w.exams, item as Exam] };
+        return { ...w, exams: [...w.exams, savedItem as Exam] };
       return w;
     });
 
-    syncCourse({
-      ...course,
-      weeklyPlan: updatedWeeklyPlan
-    });
+    syncCourse({ ...course, weeklyPlan: updatedWeeklyPlan });
   };
 
   const handleWeekComplete = (weekNumber: number) => {
