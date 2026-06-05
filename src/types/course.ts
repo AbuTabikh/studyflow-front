@@ -101,6 +101,7 @@ export interface Exam {
   reminderConfig?: ReminderConfig;
   completed?: boolean;
   grade?: string;
+  topics?: import("@/types/exam-mode").ExamPreparationTopic[];
 }
 
 export interface Resource {
