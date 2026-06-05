@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useCallback, useSyncExternalStore } from "react";
+import { useRouter } from "next/navigation";
 import { Settings2, RotateCcw ,X} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TimerDisplay } from "@/components/focus/timer-display";
@@ -98,6 +99,15 @@ function useHydrated() {
 
 export default function FocusPage() {
   const mounted = useHydrated();
+  const router = useRouter();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    const token = localStorage.getItem("studyflow_auth_token");
+    if (!token) {
+      router.replace("/login");
+    }
+  }, [router]);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -118,6 +128,7 @@ export default function FocusPage() {
   );
 
   const [activeSession, setActiveSession] = useState<SessionType>("pomodoro");
+  const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
 
   const [sessionCounts, setSessionCounts] = useState({
     pomodoro: 0,
@@ -173,14 +184,17 @@ export default function FocusPage() {
     if (activeSession === "pomodoro") {
       const durations = getCurrentDurations();
       setTotalFocusMinutes((prev) => prev + durations.pomodoro);
-      // Save to DB
-      const token = localStorage.getItem("studyflow_auth_token");
-      if (token) {
-        apiClient.post("/focus-sessions", {
-          minutes: durations.pomodoro,
-          type: "pomodoro",
-        }).catch((err) => console.error("[Focus] save failed:", err));
-      }
+      // Save to DB — apiClient automatically includes the Bearer token
+      const taskNumId = activeTaskId ? (parseInt(activeTaskId, 10) || null) : null;
+      apiClient.post("/focus-sessions", {
+        minutes: durations.pomodoro,
+        type: "pomodoro",
+        ...(taskNumId ? { task_id: taskNumId } : {}),
+      }).then(() => {
+        console.log("[Focus] session saved:", durations.pomodoro, "min");
+      }).catch((err) => {
+        console.error("[Focus] save failed:", err);
+      });
     }
 
     if (activeSession === "pomodoro") {
@@ -194,7 +208,7 @@ export default function FocusPage() {
     } else {
       setActiveSession("pomodoro");
     }
-  }, [activeSession, sessionCounts.pomodoro, getCurrentDurations]);
+  }, [activeSession, activeTaskId, sessionCounts.pomodoro, getCurrentDurations]);
 
   const { time, state, start, pause, reset, setTime } = useTimer({
     initialTime: getDurationForSession("pomodoro"),
@@ -385,7 +399,7 @@ export default function FocusPage() {
         </main>
 
         <aside className="w-full lg:col-span-1 border-t lg:border-t-0 lg:border-l p-4 bg-muted/5 lg:bg-transparent">
-          <TasksPanel />
+          <TasksPanel onActiveTaskChange={setActiveTaskId} />
         </aside>
       </div>
 
