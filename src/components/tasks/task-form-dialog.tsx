@@ -75,6 +75,7 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
 
   const handleSave = () => {
     if (!title.trim()) return;
+    if (!dueDate) return;
 
     const now = new Date().toISOString();
     onSave({
@@ -103,7 +104,7 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
     onOpenChange(false);
   };
 
-  const isSaveDisabled = !title.trim();
+  const isSaveDisabled = !title.trim() || !dueDate;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -190,14 +191,19 @@ export function TaskFormDialog({ open, onOpenChange, onSave, initialData }: Task
 
             {/* Due Date */}
             <div className="space-y-2">
-              <Label htmlFor="task-due-date" className="font-semibold text-muted-foreground">{tr(t.tasks.dueDate)}</Label>
+              <Label htmlFor="task-due-date" className="font-semibold text-muted-foreground">
+                {tr(t.tasks.dueDate)} <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="task-due-date"
                 type="date"
                 value={dueDate}
                 onChange={e => setDueDate(e.target.value)}
-                className="h-10"
+                className={`h-10 ${!dueDate ? "border-red-400" : ""}`}
               />
+              {!dueDate && (
+                <p className="text-xs text-red-500">Due date is required</p>
+              )}
             </div>
 
             {/* Due Time */}

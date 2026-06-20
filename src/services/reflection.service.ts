@@ -17,7 +17,7 @@ export const ReflectionService = {
     if (!ok()) return null;
     try {
       const res = await apiClient.post<any>("/reflections", reflectionToApi(reflection));
-      return res?.id ?? null;
+      return res?.reflection?.id ?? res?.id ?? null;
     } catch { return null; }
   },
 

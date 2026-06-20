@@ -120,9 +120,15 @@ export function PlanResourcesPanel({ resources, onResourcesChange }: PlanResourc
               <div key={r.id} className="flex items-start gap-3 p-3 rounded-xl border border-border/50 bg-card hover:bg-muted/50 transition-colors group">
                 <div className={`p-2 rounded-lg shrink-0 ${getColor(r.type)}`}>{getIcon(r.type)}</div>
                 <div className="flex-1 min-w-0">
-                  <a href={r.url} target="_blank" rel="noopener noreferrer"
-                    className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
-                    {r.title}<ExternalLink className="h-3 w-3 shrink-0 text-muted-foreground" />
+                  <a
+                    href={r.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download={r.type === "file" ? r.title : undefined}
+                    className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1"
+                  >
+                    {r.title}
+                    <ExternalLink className="h-3 w-3 shrink-0 text-muted-foreground" />
                   </a>
                   {r.description && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{r.description}</p>}
                 </div>

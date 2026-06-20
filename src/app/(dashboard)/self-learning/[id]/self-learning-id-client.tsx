@@ -160,7 +160,13 @@ export function SelfLearningDetailClient() {
     const stages = plan.stages.map((s) =>
       s.id === id ? { ...s, status: "completed" as const, updatedAt: new Date().toISOString() } : s,
     );
-    persistPlan({ ...plan, stages, updatedAt: new Date().toISOString() });
+    const allDone = stages.length > 0 && stages.every((s) => s.status === "completed");
+    persistPlan({
+      ...plan,
+      stages,
+      status: allDone ? "completed" : plan.status,
+      updatedAt: new Date().toISOString(),
+    });
   };
 
   const handleSaveMilestone = (milestone: LearningMilestone) => {
@@ -210,7 +216,13 @@ export function SelfLearningDetailClient() {
       else if (hasTasks && !allDone && s.status === "completed") newStatus = "active";
       return { ...s, tasks, status: newStatus, updatedAt: new Date().toISOString() };
     });
-    persistPlan({ ...plan, stages, updatedAt: new Date().toISOString() });
+    const allStagesDone = stages.length > 0 && stages.every((s) => s.status === "completed");
+    persistPlan({
+      ...plan,
+      stages,
+      status: allStagesDone ? "completed" : plan.status,
+      updatedAt: new Date().toISOString(),
+    });
   };
 
   const toggleStage = (id: string) =>

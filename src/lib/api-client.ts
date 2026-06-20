@@ -43,6 +43,11 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     const response = await fetch(url.toString(), config);
 
     if (!response.ok) {
+      if (response.status === 401 && typeof window !== "undefined") {
+        localStorage.removeItem("studyflow_auth_token");
+        window.location.href = "/login";
+        throw new Error("Unauthorized");
+      }
       const errorData = await response.json().catch(() => ({}));
       const msg = errorData.message || errorData.error || `HTTP ${response.status}`;
       console.error(`[API] ${method} ${endpoint} → ${response.status}`, errorData);

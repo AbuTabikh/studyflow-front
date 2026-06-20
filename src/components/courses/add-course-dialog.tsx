@@ -99,7 +99,8 @@ export function AddCourseDialog({
         });
       }
     }
-  }, [open, isEditing, initialData, semesterId, semesters]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, isEditing, initialData, semesterId]);
 
   // Handle semester-driven week inheritance
   useEffect(() => {

@@ -17,7 +17,7 @@ export const CourseService = {
     if (!ok()) return null;
     try {
       const res = await apiClient.post<any>("/courses", courseCreateToApi(course));
-      return res?.id ?? null;
+      return res?.course?.id ?? res?.id ?? null;
     } catch { return null; }
   },
 

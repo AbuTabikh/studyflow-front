@@ -17,7 +17,7 @@ export const LearningPlanService = {
     if (!ok()) return null;
     try {
       const res = await apiClient.post<any>("/learning-plans", learningPlanToApi(plan));
-      return res?.id ?? null;
+      return res?.plan?.id ?? res?.id ?? null;
     } catch { return null; }
   },
 
