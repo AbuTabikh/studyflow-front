@@ -27,7 +27,7 @@ export class AppStore {
       if (stored) {
         return JSON.parse(stored);
       }
-      
+
       return EMPTY_APP_STATE;
     } catch (error) {
       console.error("Failed to load AppStore state", error);
@@ -45,8 +45,12 @@ export class AppStore {
         ...state,
         lastUpdated: new Date().toISOString()
       };
-      localStorage.setItem(APP_STATE_KEY, JSON.stringify(newState));
-      
+      try {
+        localStorage.setItem(APP_STATE_KEY, JSON.stringify(newState));
+      } catch (error) {
+        console.warn("LocalStorage quota exceeded, clearing cache...");
+        localStorage.removeItem(APP_STATE_KEY); // مسح البيانات القديمة ليفسح مجالاً للجديدة
+      }
       // Notify all active listeners in this window
       this.listeners.forEach(listener => listener(newState));
     } catch (error) {
@@ -77,7 +81,7 @@ export class AppStore {
     if (!this.isClient) return;
     const legacyKeys = [
       "studyflow_tasks", "studyflow-courses", "studyflow_planner_semesters",
-      "studyflow_planner_courses", "studyflow_planner_config", 
+      "studyflow_planner_courses", "studyflow_planner_config",
       "studyflow_reflections", "studyflow_learning_plans", "studyflow_user_data"
     ];
     legacyKeys.forEach(key => localStorage.removeItem(key));
@@ -105,7 +109,7 @@ export class AppStore {
       const plannerSemesters = localStorage.getItem("studyflow_planner_semesters");
       const plannerCourses = localStorage.getItem("studyflow_planner_courses");
       const plannerConfig = localStorage.getItem("studyflow_planner_config");
-      
+
       if (plannerSemesters) newState.academicPlanning.semesters = JSON.parse(plannerSemesters);
       if (plannerCourses) newState.courses = JSON.parse(plannerCourses);
       if (plannerConfig) newState.academicPlanning.config = JSON.parse(plannerConfig);

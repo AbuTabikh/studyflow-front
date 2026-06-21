@@ -11,6 +11,7 @@ import { apiClient } from "@/lib/api-client";
 import { Course, WeeklyPlan, StudyTask, Assignment, Exam } from "@/types/course";
 import { TaskItem } from "@/types/tasks";
 import { Notification } from "@/types/notifications";
+import { toDateOnly } from "@/lib/utils/date-utils";
 
 /**
  * Loads all user data from MySQL on dashboard mount.
@@ -80,9 +81,9 @@ export function useApiSync() {
               const localAssign  = existing.assignments.filter(a => !dbIds.has(a.id));
               const localExam    = existing.exams.filter(e => !dbIds.has(e.id));
 
-              const newStudy: StudyTask[]   = dbTasks.filter(t => t.type === "study-task").map(t => ({ id: t.id, title: t.title, completed: t.status === "done", dueDate: t.dueDate }));
-              const newAssign: Assignment[] = dbTasks.filter(t => t.type === "assignment" || t.type === "quiz").map(t => ({ id: t.id, title: t.title, description: t.description, dueDate: t.dueDate ?? new Date().toISOString().slice(0,10), status: (t.status === "done" ? "submitted_on_time" : "pending") as Assignment["status"] }));
-              const newExam: Exam[]         = dbTasks.filter(t => t.type === "exam").map(t => ({ id: t.id, title: t.title, date: t.dueDate ?? "", time: t.dueTime ?? "09:00", duration: 60, completed: t.status === "done" }));
+              const newStudy: StudyTask[]   = dbTasks.filter(t => t.type === "study-task").map(t => ({ id: t.id, title: t.title, completed: t.status === "done", dueDate: toDateOnly(t.dueDate) }));
+              const newAssign: Assignment[] = dbTasks.filter(t => t.type === "assignment" || t.type === "quiz").map(t => ({ id: t.id, title: t.title, description: t.description, dueDate: toDateOnly(t.dueDate) ?? toDateOnly(new Date())!, status: (t.status === "done" ? "submitted_on_time" : "pending") as Assignment["status"] }));
+              const newExam: Exam[]         = dbTasks.filter(t => t.type === "exam").map(t => ({ id: t.id, title: t.title, date: toDateOnly(t.dueDate) ?? "", time: t.dueTime ?? "09:00", duration: 60, completed: t.status === "done" }));
 
               return {
                 ...existing,

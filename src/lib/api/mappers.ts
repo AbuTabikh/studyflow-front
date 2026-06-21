@@ -1,8 +1,28 @@
-import { Course } from "@/types/course";
+import { Course, WeeklyPlan } from "@/types/course";
 import { TaskItem } from "@/types/tasks";
 import { PlannerSemester } from "@/types/academic-planning";
 import { LearningPlan } from "@/types/self-learning";
 import { ReflectionEntry } from "@/types/reflections";
+import { toDateOnly } from "@/lib/utils/date-utils";
+
+function normalizeWeeklyPlanForApi(weeklyPlan: WeeklyPlan[]) {
+  const today = toDateOnly(new Date())!;
+  return (weeklyPlan || []).map((week) => ({
+    ...week,
+    studyTasks: (week.studyTasks || []).map((st) => ({
+      ...st,
+      dueDate: toDateOnly(st.dueDate),
+    })),
+    assignments: (week.assignments || []).map((a) => ({
+      ...a,
+      dueDate: toDateOnly(a.dueDate) ?? today,
+    })),
+    exams: (week.exams || []).map((e) => ({
+      ...e,
+      date: toDateOnly(e.date) ?? today,
+    })),
+  }));
+}
 
 // ── Courses ─────────────────────────────────────────────────────────────────
 
@@ -45,7 +65,7 @@ export function courseToApi(c: Course) {
     image_url:      c.imageUrl || null,
     status:         c.status || "planned",
     // semester_id intentionally omitted — backend keeps existing value unless explicitly changed
-    weekly_plan:    c.weeklyPlan || [],
+    weekly_plan:    normalizeWeeklyPlanForApi(c.weeklyPlan || []),
     resources:      c.resources || [],
   };
 }
@@ -63,7 +83,7 @@ export function taskFromApi(a: any): Partial<TaskItem> {
     type:             a.type ?? "study-task",
     priority:         a.priority ?? "medium",
     status:           (statusMap[a.status] ?? "todo") as any,
-    dueDate:          a.due_date ?? undefined,
+    dueDate:          toDateOnly(a.due_date),
     dueTime:          a.due_time ?? undefined,
     sourceModule:     (a.course_id ? "course" : "general") as any,
     linkedCourseId:   a.course_id ? String(a.course_id) : undefined,
@@ -83,7 +103,7 @@ export function taskToApi(t: TaskItem) {
     type:        t.type || "study-task",
     priority:    t.priority || "medium",
     status:      statusMap[t.status] ?? "pending",
-    dueDate:     t.dueDate || null,
+    dueDate:     toDateOnly(t.dueDate) ?? null,
     dueTime:     t.dueTime || null,
     course_id:   t.linkedCourseId ? (parseInt(t.linkedCourseId, 10) || null) : null,
     week_number: t.linkedWeekNumber ?? null,

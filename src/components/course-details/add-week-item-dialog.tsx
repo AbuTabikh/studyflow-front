@@ -12,6 +12,7 @@ import { StudyTask, Assignment, Exam } from "@/types/course";
 import { ReminderFields } from "@/components/shared/reminder-fields";
 import { ReminderConfig } from "@/types/reminders";
 import { getDefaultReminderConfig } from "@/lib/reminders/utils";
+import { toDateOnly } from "@/lib/utils/date-utils";
 
 type ItemType = "study-task" | "assignment" | "quiz" | "exam";
 
@@ -59,28 +60,27 @@ export function AddWeekItemDialog({ open, onOpenChange, weekNumber, onAdd }: Add
   }, [open]);
 
   const handleSave = () => {
-    if (!title.trim()) return;
+    if (!title.trim() || !dueDate) return;
 
-    const now = new Date().toISOString();
     const id = genId();
 
     if (type === "study-task") {
-      onAdd(type, { 
-        id, 
-        title: title.trim(), 
-        completed: false, 
-        dueDate: dueDate || undefined,
+      onAdd(type, {
+        id,
+        title: title.trim(),
+        completed: false,
+        dueDate: dueDate,
         reminderConfig: reminderConfig.enabled ? reminderConfig : undefined
       } as StudyTask);
     } else if (type === "assignment" || type === "quiz") {
       onAdd(type, {
         id, title: title.trim(), description: description.trim() || undefined,
-        dueDate: dueDate || now, status: "pending",
+        dueDate: dueDate, status: "pending",
         reminderConfig: reminderConfig.enabled ? reminderConfig : undefined
       } as Assignment);
     } else if (type === "exam") {
       onAdd(type, {
-        id, title: title.trim(), date: dueDate || now,
+        id, title: title.trim(), date: dueDate,
         time: dueTime || "09:00", duration: parseInt(duration) || 60,
         location: location.trim() || undefined,
         reminderConfig: reminderConfig.enabled ? reminderConfig : undefined
@@ -89,9 +89,9 @@ export function AddWeekItemDialog({ open, onOpenChange, weekNumber, onAdd }: Add
     onOpenChange(false);
   };
 
-  const needsDueDate = type !== "study-task";
+  const needsDueDate = true;
   const isExam = type === "exam";
-  const canSave = !!title.trim();
+  const canSave = !!title.trim() && !!dueDate;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -143,10 +143,19 @@ export function AddWeekItemDialog({ open, onOpenChange, weekNumber, onAdd }: Add
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label className={needsDueDate ? "" : "text-muted-foreground"}>
-                {isExam ? tr(t.courseDetails.examDateLabel) : tr(t.courseDetails.dueDateLabel)}
+              <Label className="font-semibold text-muted-foreground">
+                {isExam ? tr(t.courseDetails.examDateLabel) : tr(t.courseDetails.dueDateLabel)} <span className="text-red-500">*</span>
               </Label>
-              <Input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="h-10" />
+              <Input
+                type="date"
+                value={dueDate}
+                onChange={e => setDueDate(e.target.value)}
+                className={`h-10 ${!dueDate ? "border-red-400" : ""}`}
+                required
+              />
+              {!dueDate && (
+                <p className="text-xs text-red-500">Date is required</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -170,8 +179,8 @@ export function AddWeekItemDialog({ open, onOpenChange, weekNumber, onAdd }: Add
 
           <div className="space-y-2 pt-2">
             <Label className="font-semibold">Reminder</Label>
-            <ReminderFields 
-              config={reminderConfig} 
+            <ReminderFields
+              config={reminderConfig}
               onChange={(updates) => setReminderConfig({ ...reminderConfig, ...updates })}
             />
           </div>

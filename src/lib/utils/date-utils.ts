@@ -1,3 +1,12 @@
+/** Normalize any date input to MySQL-compatible YYYY-MM-DD. */
+export function toDateOnly(value: string | Date | null | undefined): string | undefined {
+  if (value == null || value === "") return undefined;
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  const d = typeof value === "string" ? new Date(value) : value;
+  if (isNaN(d.getTime())) return undefined;
+  return d.toISOString().slice(0, 10);
+}
+
 /**
  * Formats a date string into a relative time string (e.g., "2 hours ago").
  * Simple replacement for date-fns formatDistanceToNow.

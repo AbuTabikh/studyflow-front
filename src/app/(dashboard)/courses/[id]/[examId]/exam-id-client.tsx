@@ -35,6 +35,15 @@ function generateId(): string {
     : Math.random().toString(36).slice(2);
 }
 
+const formatUrl = (url: string) => {
+  if (!url) return "#";
+  const trimmed = url.trim();
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("data:") || trimmed.startsWith("blob:")) {
+    return trimmed;
+  }
+  return `https://${trimmed}`;
+};
+
 function useCountdown(targetDate?: string, targetTime?: string) {
   const getRemaining = useCallback(() => {
     if (!targetDate) return null;
@@ -380,9 +389,35 @@ export function ExamModeClient() {
                   {resources.map(r => (
                     <a
                       key={r.id}
-                      href={r.url}
+                      href={formatUrl(r.url)}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (r.url.startsWith("data:")) {
+                          e.preventDefault();
+                          try {
+                            const parts = r.url.split(",");
+                            const mime = parts[0].match(/:(.*?);/)?.[1] || "application/octet-stream";
+                            const bstr = atob(parts[1]);
+                            let n = bstr.length;
+                            const u8arr = new Uint8Array(n);
+                            while (n--) {
+                              u8arr[n] = bstr.charCodeAt(n);
+                            }
+                            const blob = new Blob([u8arr], { type: mime });
+                            const blobUrl = URL.createObjectURL(blob);
+                            window.open(blobUrl, "_blank");
+                          } catch (err) {
+                            const newWindow = window.open();
+                            if (newWindow) {
+                              newWindow.document.write(
+                                `<iframe src="${r.url}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`
+                              );
+                            }
+                          }
+                        }
+                      }}
                       className="flex items-center gap-3 p-3 rounded-xl border border-border/60 bg-card hover:bg-muted/50 transition-colors group"
                     >
                       <div className="p-1.5 rounded-lg bg-primary/10 text-primary shrink-0">

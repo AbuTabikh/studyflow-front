@@ -21,6 +21,15 @@ function genId(): string {
     : Math.random().toString(36).slice(2);
 }
 
+const formatUrl = (url: string) => {
+  if (!url) return "#";
+  const trimmed = url.trim();
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("data:") || trimmed.startsWith("blob:")) {
+    return trimmed;
+  }
+  return `https://${trimmed}`;
+};
+
 export function Resources({ resources = [], onResourcesChange }: ResourcesProps) {
   const { tr, t } = useTranslation();
   const [showAddForm, setShowAddForm] = useState(false);
@@ -31,21 +40,21 @@ export function Resources({ resources = [], onResourcesChange }: ResourcesProps)
 
   const getResourceIcon = (type: string) => {
     switch (type) {
-      case "pdf":      return <FileText className="h-4 w-4" />;
-      case "video":    return <Play className="h-4 w-4" />;
+      case "pdf": return <FileText className="h-4 w-4" />;
+      case "video": return <Play className="h-4 w-4" />;
       case "document": return <FileText className="h-4 w-4" />;
-      default:         return <Link className="h-4 w-4" />;
+      default: return <Link className="h-4 w-4" />;
     }
   };
 
   const getResourceColor = (type: string) => {
     switch (type) {
-      case "pdf":      return "text-red-600 dark:text-red-400 bg-red-100/20 dark:bg-red-900/20";
-      case "video":    return "text-purple-600 dark:text-purple-400 bg-purple-100/20 dark:bg-purple-900/20";
-      case "link":     return "text-blue-600 dark:text-blue-400 bg-blue-100/20 dark:bg-blue-900/20";
+      case "pdf": return "text-red-600 dark:text-red-400 bg-red-100/20 dark:bg-red-900/20";
+      case "video": return "text-purple-600 dark:text-purple-400 bg-purple-100/20 dark:bg-purple-900/20";
+      case "link": return "text-blue-600 dark:text-blue-400 bg-blue-100/20 dark:bg-blue-900/20";
       case "document": return "text-amber-600 dark:text-amber-400 bg-amber-100/20 dark:bg-amber-900/20";
-      case "image":    return "text-teal-600 dark:text-teal-400 bg-teal-100/20 dark:bg-teal-900/20";
-      default:         return "text-slate-600 dark:text-slate-400 bg-slate-100/20 dark:bg-slate-900/20";
+      case "image": return "text-teal-600 dark:text-teal-400 bg-teal-100/20 dark:bg-teal-900/20";
+      default: return "text-slate-600 dark:text-slate-400 bg-slate-100/20 dark:bg-slate-900/20";
     }
   };
 
@@ -90,9 +99,9 @@ export function Resources({ resources = [], onResourcesChange }: ResourcesProps)
               <div className="flex gap-2">
                 <Input placeholder="https://..." value={newUrl} onChange={e => setNewUrl(e.target.value)} className="h-9 text-sm flex-1" />
                 <div className="relative w-28">
-                  <Input 
-                    type="file" 
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
+                  <Input
+                    type="file"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (!file) return;
@@ -107,7 +116,7 @@ export function Resources({ resources = [], onResourcesChange }: ResourcesProps)
                         else setNewType('document');
                       };
                       reader.readAsDataURL(file);
-                    }} 
+                    }}
                   />
                   <Button type="button" variant="outline" size="sm" className="w-full h-9">
                     {tr(t.courseDetails.uploadBtn)}
@@ -156,7 +165,35 @@ export function Resources({ resources = [], onResourcesChange }: ResourcesProps)
               </div>
               <div className="flex-1 min-w-0">
                 <a
-                  href={resource.url} target="_blank" rel="noopener noreferrer"
+                  href={formatUrl(resource.url)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (resource.url.startsWith("data:")) {
+                      e.preventDefault();
+                      try {
+                        const parts = resource.url.split(",");
+                        const mime = parts[0].match(/:(.*?);/)?.[1] || "application/octet-stream";
+                        const bstr = atob(parts[1]);
+                        let n = bstr.length;
+                        const u8arr = new Uint8Array(n);
+                        while (n--) {
+                          u8arr[n] = bstr.charCodeAt(n);
+                        }
+                        const blob = new Blob([u8arr], { type: mime });
+                        const blobUrl = URL.createObjectURL(blob);
+                        window.open(blobUrl, "_blank");
+                      } catch (err) {
+                        const newWindow = window.open();
+                        if (newWindow) {
+                          newWindow.document.write(
+                            `<iframe src="${resource.url}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`
+                          );
+                        }
+                      }
+                    }
+                  }}
                   className="text-xs font-medium text-slate-900 dark:text-slate-100 hover:underline line-clamp-2 flex items-center gap-1"
                 >
                   {resource.title}

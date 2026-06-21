@@ -15,6 +15,15 @@ interface PlanResourcesPanelProps {
   onResourcesChange: (resources: LearningResource[]) => void;
 }
 
+const formatUrl = (url: string) => {
+  if (!url) return "#";
+  const trimmed = url.trim();
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("data:") || trimmed.startsWith("blob:")) {
+    return trimmed;
+  }
+  return `https://${trimmed}`;
+};
+
 export function PlanResourcesPanel({ resources, onResourcesChange }: PlanResourcesPanelProps) {
   const { tr, t } = useTranslation();
   const [showForm, setShowForm] = useState(false);
@@ -121,10 +130,36 @@ export function PlanResourcesPanel({ resources, onResourcesChange }: PlanResourc
                 <div className={`p-2 rounded-lg shrink-0 ${getColor(r.type)}`}>{getIcon(r.type)}</div>
                 <div className="flex-1 min-w-0">
                   <a
-                    href={r.url}
+                    href={formatUrl(r.url)}
                     target="_blank"
                     rel="noopener noreferrer"
                     download={r.type === "file" ? r.title : undefined}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (r.url.startsWith("data:")) {
+                        e.preventDefault();
+                        try {
+                          const parts = r.url.split(",");
+                          const mime = parts[0].match(/:(.*?);/)?.[1] || "application/octet-stream";
+                          const bstr = atob(parts[1]);
+                          let n = bstr.length;
+                          const u8arr = new Uint8Array(n);
+                          while (n--) {
+                            u8arr[n] = bstr.charCodeAt(n);
+                          }
+                          const blob = new Blob([u8arr], { type: mime });
+                          const blobUrl = URL.createObjectURL(blob);
+                          window.open(blobUrl, "_blank");
+                        } catch (err) {
+                          const newWindow = window.open();
+                          if (newWindow) {
+                            newWindow.document.write(
+                              `<iframe src="${r.url}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`
+                            );
+                          }
+                        }
+                      }
+                    }}
                     className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1"
                   >
                     {r.title}

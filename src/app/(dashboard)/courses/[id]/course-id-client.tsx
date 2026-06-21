@@ -13,6 +13,7 @@ import { CourseHeroCard } from "@/components/course-details/course-hero-card";
 import { WeeklyTimeline } from "@/components/course-details/weekly-timeline";
 import { UpcomingTasks } from "@/components/course-details/upcoming-tasks";
 import { Resources } from "@/components/course-details/resources";
+import { toDateOnly } from "@/lib/utils/date-utils";
 
 type ItemType = "study-task" | "assignment" | "quiz" | "exam";
 
@@ -42,7 +43,7 @@ export function CourseDetailsClient() {
       const st = item as StudyTask;
       task = {
         id: st.id, title: st.title, type: "study-task", priority: "medium",
-        status: st.completed ? "done" : "todo", dueDate: st.dueDate,
+        status: st.completed ? "done" : "todo", dueDate: toDateOnly(st.dueDate),
         sourceModule: "course", linkedCourseId: courseId, linkedWeekNumber: weekNumber,
         createdAt: now, updatedAt: now,
       };
@@ -50,7 +51,7 @@ export function CourseDetailsClient() {
       const a = item as Assignment;
       task = {
         id: a.id, title: a.title, description: a.description, type,
-        priority: "medium", status: "todo", dueDate: a.dueDate,
+        priority: "medium", status: "todo", dueDate: toDateOnly(a.dueDate),
         sourceModule: "course", linkedCourseId: courseId, linkedWeekNumber: weekNumber,
         createdAt: now, updatedAt: now,
       };
@@ -58,7 +59,7 @@ export function CourseDetailsClient() {
       const e = item as Exam;
       task = {
         id: e.id, title: e.title, type: "exam", priority: "high",
-        status: e.completed ? "done" : "todo", dueDate: e.date, dueTime: e.time,
+        status: e.completed ? "done" : "todo", dueDate: toDateOnly(e.date), dueTime: e.time,
         sourceModule: "course", linkedCourseId: courseId, linkedWeekNumber: weekNumber,
         createdAt: now, updatedAt: now,
       };
@@ -151,7 +152,7 @@ export function CourseDetailsClient() {
 
       const newState = !w.completed;
       const newStudyTasks = newState
-        ? w.studyTasks.map(t => ({...t, completed: true}))
+        ? w.studyTasks.map(t => ({ ...t, completed: true }))
         : w.studyTasks;
 
       return {
