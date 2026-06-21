@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAppState } from "@/hooks/use-app-state";
 import { Course, StudyTask, Assignment, Exam, Resource, WeeklyPlan } from "@/types/course";
 import { CourseService } from "@/services/course.service";
@@ -34,9 +34,21 @@ export function CourseDetailsClient() {
     }
   };
 
+  // Auto-sync course to DB on first load if it only has a UUID (never saved to DB).
+  // This ensures course_id is numeric before the user adds tasks/assignments.
+  useEffect(() => {
+    if (!isLoaded || !course) return;
+    if (isNaN(parseInt(course.id, 10))) {
+      syncCourse(course);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, course?.id]);
+
   // Persists a newly added week item to MySQL as a Task row
   const persistWeekItem = async (weekNumber: number, type: ItemType, item: StudyTask | Assignment | Exam) => {
     const now = new Date().toISOString();
+    // Use the course id from state (updated by syncCourse) — prefer numeric DB id over URL param
+    const effectiveCourseId = course?.id ?? courseId;
     let task: TaskItem;
 
     if (type === "study-task") {
@@ -44,7 +56,7 @@ export function CourseDetailsClient() {
       task = {
         id: st.id, title: st.title, type: "study-task", priority: "medium",
         status: st.completed ? "done" : "todo", dueDate: toDateOnly(st.dueDate),
-        sourceModule: "course", linkedCourseId: courseId, linkedWeekNumber: weekNumber,
+        sourceModule: "course", linkedCourseId: effectiveCourseId, linkedWeekNumber: weekNumber,
         createdAt: now, updatedAt: now,
       };
     } else if (type === "assignment" || type === "quiz") {
@@ -52,7 +64,7 @@ export function CourseDetailsClient() {
       task = {
         id: a.id, title: a.title, description: a.description, type,
         priority: "medium", status: "todo", dueDate: toDateOnly(a.dueDate),
-        sourceModule: "course", linkedCourseId: courseId, linkedWeekNumber: weekNumber,
+        sourceModule: "course", linkedCourseId: effectiveCourseId, linkedWeekNumber: weekNumber,
         createdAt: now, updatedAt: now,
       };
     } else {
@@ -60,7 +72,7 @@ export function CourseDetailsClient() {
       task = {
         id: e.id, title: e.title, type: "exam", priority: "high",
         status: e.completed ? "done" : "todo", dueDate: toDateOnly(e.date), dueTime: e.time,
-        sourceModule: "course", linkedCourseId: courseId, linkedWeekNumber: weekNumber,
+        sourceModule: "course", linkedCourseId: effectiveCourseId, linkedWeekNumber: weekNumber,
         createdAt: now, updatedAt: now,
       };
     }
