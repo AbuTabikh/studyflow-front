@@ -194,7 +194,7 @@ export default function FocusPage() {
       const durations = getCurrentDurations();
       setTotalFocusMinutes((prev) => prev + durations.pomodoro);
       // Save to DB — apiClient automatically includes the Bearer token
-      const taskNumId = activeTaskId ? (parseInt(activeTaskId, 10) || null) : null;
+      const taskNumId = activeTaskId && /^\d+$/.test(activeTaskId) ? parseInt(activeTaskId, 10) : null;
       apiClient.post("/focus-sessions", {
         minutes: durations.pomodoro,
         type: "pomodoro",

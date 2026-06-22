@@ -25,7 +25,17 @@ export function TasksPanel({ className, onActiveTaskChange }: TasksPanelProps) {
 
   const addTask = async () => {
     if (!newTaskText.trim()) return;
-    const now = new Date().toISOString();
+
+    const now = new Date();
+    // التاريخ بصيغة YYYY-MM-DD
+    const today = now.toISOString().split('T')[0];
+
+    // الوقت بصيغة HH:MM (مثلاً 13:30)
+    const currentTime = now.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
     const tempTask: TaskItem = {
       id: crypto.randomUUID(),
       title: newTaskText.trim(),
@@ -33,8 +43,10 @@ export function TasksPanel({ className, onActiveTaskChange }: TasksPanelProps) {
       priority: "medium",
       status: "todo",
       sourceModule: "general",
-      createdAt: now,
-      updatedAt: now,
+      dueDate: today,        // تاريخ اليوم
+      dueTime: currentTime,  // الوقت الحالي بدقة
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString(),
     };
     const mysqlId = await TaskService.create(tempTask);
     const finalTask = mysqlId ? { ...tempTask, id: String(mysqlId) } : tempTask;

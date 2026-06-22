@@ -41,7 +41,7 @@ export function CourseDetailsClient() {
     if (isNaN(parseInt(course.id, 10))) {
       syncCourse(course);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, course?.id]);
 
   // Persists a newly added week item to MySQL as a Task row

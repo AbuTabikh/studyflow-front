@@ -102,23 +102,28 @@ export function Resources({ resources = [], onResourcesChange }: ResourcesProps)
     }
   };
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const url = await uploadFile(file);
-    if (url) {
-      setNewUrl(url);
-      setNewTitle(prev => prev || file.name);
-      const ft = file.type;
-      if (ft.includes("pdf")) setNewType("pdf");
-      else if (ft.includes("video")) setNewType("video");
-      else if (ft.includes("image")) setNewType("image");
-      else setNewType("document");
-    } else {
-      alert("File upload failed. Please try again.");
-    }
-    setUploading(false);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (reader.result) {
+        setNewUrl(reader.result as string);
+        setNewTitle(prev => prev || file.name);
+        const ft = file.type;
+        if (ft.includes("pdf")) setNewType("pdf");
+        else if (ft.includes("video")) setNewType("video");
+        else if (ft.includes("image")) setNewType("image");
+        else setNewType("document");
+      }
+      setUploading(false);
+    };
+    reader.onerror = () => {
+      alert("File reading failed. Please try again.");
+      setUploading(false);
+    };
+    reader.readAsDataURL(file);
     e.target.value = "";
   };
 

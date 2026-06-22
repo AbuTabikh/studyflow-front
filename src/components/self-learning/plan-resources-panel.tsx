@@ -87,19 +87,24 @@ export function PlanResourcesPanel({ resources, onResourcesChange }: PlanResourc
     return "text-blue-600 dark:text-blue-400 bg-blue-100/20 dark:bg-blue-900/20";
   };
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const uploaded = await uploadFile(file);
-    if (uploaded) {
-      setUrl(uploaded);
-      setTitle(prev => prev || file.name);
-      setType("file");
-    } else {
-      alert("File upload failed. Please try again.");
-    }
-    setUploading(false);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (reader.result) {
+        setUrl(reader.result as string);
+        setTitle(prev => prev || file.name);
+        setType("file");
+      }
+      setUploading(false);
+    };
+    reader.onerror = () => {
+      alert("File reading failed. Please try again.");
+      setUploading(false);
+    };
+    reader.readAsDataURL(file);
     e.target.value = "";
   };
 
